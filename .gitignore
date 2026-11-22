@@ -7,6 +7,7 @@ env/
 *.log
 backend/data/temp_*
 backend/data/*.wav
+backend/data/*.db
 backend/models/vosk-*
 
 
