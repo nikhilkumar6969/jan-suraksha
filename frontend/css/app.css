@@ -112,10 +112,23 @@ a:hover {
   flex-shrink: 0;
 }
 
+.brand-logo-img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+}
+
 @media (min-width: 768px) {
   .brand-logo-svg {
     width: 32px;
     height: 32px;
+  }
+  .brand-logo-img {
+    width: 42px;
+    height: 42px;
   }
 }
 
