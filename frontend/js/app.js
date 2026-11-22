@@ -33,6 +33,14 @@ window.App = {
   },
 
   setupNavigation() {
+    // Desktop nav
+    document.querySelectorAll('.desktop-nav .desktop-nav-link').forEach((item) => {
+      item.addEventListener('click', () => {
+        const targetView = item.getAttribute('data-nav');
+        this.navigate(targetView);
+      });
+    });
+
     // Bottom nav
     document.querySelectorAll('.bottom-nav .nav-item').forEach((item) => {
       item.addEventListener('click', () => {
@@ -95,11 +103,12 @@ window.App = {
 
     // Update bottom nav active state
     document.querySelectorAll('.bottom-nav .nav-item').forEach((btn) => {
-      if (btn.getAttribute('data-nav') === viewName) {
-        btn.classList.add('active');
-      } else {
-        btn.classList.remove('active');
-      }
+      btn.classList.toggle('active', btn.getAttribute('data-nav') === viewName);
+    });
+
+    // Update desktop nav active state
+    document.querySelectorAll('.desktop-nav .desktop-nav-link').forEach((btn) => {
+      btn.classList.toggle('active', btn.getAttribute('data-nav') === viewName);
     });
 
     if (viewName === 'insights') {

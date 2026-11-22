@@ -74,7 +74,7 @@ const LearnManager = {
     utterance.rate = 0.9;
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(utterance);
-    if (window.App) window.App.showToast('🔊 पाठ सुनाया जा रहा है (Playing lesson)');
+    if (window.App) window.App.showToast('पाठ सुनाया जा रहा है (Playing lesson)');
   },
 
   renderCurrentQuiz() {

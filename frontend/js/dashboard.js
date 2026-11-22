@@ -55,12 +55,12 @@ const DashboardManager = {
       const y = idx * (barHeight + gap) + 10;
       const widthPct = Math.round((item.count / maxCount) * 60); // max 60% of svg
       const displayVal = item.suppressed ? '< 5 (k-suppressed)' : `${item.count} conf.`;
-      const barColor = item.suppressed ? '#9ca3af' : (idx === 0 ? 'var(--primary)' : 'var(--primary-light)');
+      const barColor = item.suppressed ? 'var(--neutral-400)' : 'var(--accent)';
 
       barsHtml += `
-        <text x="10" y="${y + 16}" fill="var(--text-main)" font-size="12" font-weight="600">${item.category}</text>
-        <rect x="140" y="${y}" width="${widthPct}%" height="${barHeight}" rx="6" fill="${barColor}" />
-        <text x="calc(145px + ${widthPct}%)" y="${y + 16}" fill="var(--text-muted)" font-size="11" font-weight="700">${displayVal}</text>
+        <text x="10" y="${y + 16}" fill="var(--text-primary)" font-size="12" font-weight="600">${item.category}</text>
+        <rect x="140" y="${y}" width="${widthPct}%" height="${barHeight}" rx="4" fill="${barColor}" />
+        <text x="calc(145px + ${widthPct}%)" y="${y + 16}" fill="var(--text-secondary)" font-size="11" font-weight="700">${displayVal}</text>
       `;
     });
 
@@ -85,12 +85,12 @@ const DashboardManager = {
       const y = idx * (barHeight + gap) + 10;
       const widthPct = Math.round((item.count / maxCount) * 60);
       const displayVal = item.suppressed ? '< 5 (suppressed)' : `${item.count} reports`;
-      const barColor = item.suppressed ? '#9ca3af' : '#d97706';
+      const barColor = item.suppressed ? 'var(--neutral-400)' : 'var(--warning)';
 
       barsHtml += `
-        <text x="10" y="${y + 16}" fill="var(--text-main)" font-size="12" font-weight="600">${item.district}</text>
-        <rect x="120" y="${y}" width="${widthPct}%" height="${barHeight}" rx="6" fill="${barColor}" />
-        <text x="calc(125px + ${widthPct}%)" y="${y + 16}" fill="var(--text-muted)" font-size="11" font-weight="700">${displayVal}</text>
+        <text x="10" y="${y + 16}" fill="var(--text-primary)" font-size="12" font-weight="600">${item.district}</text>
+        <rect x="120" y="${y}" width="${widthPct}%" height="${barHeight}" rx="4" fill="${barColor}" />
+        <text x="calc(125px + ${widthPct}%)" y="${y + 16}" fill="var(--text-secondary)" font-size="11" font-weight="700">${displayVal}</text>
       `;
     });
 

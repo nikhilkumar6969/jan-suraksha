@@ -49,7 +49,7 @@ const HelpManager = {
       data[key] = chk.checked;
     });
     localStorage.setItem(this.storageKey, JSON.stringify(data));
-    if (window.App) window.App.showToast('✓ चेकलिस्ट फोन में सुरक्षित कर ली गई है (Checklist Saved)');
+    if (window.App) window.App.showToast('चेकलिस्ट सुरक्षित कर ली गई है (Checklist Saved)');
   },
 
   printOrDownloadSummary() {
@@ -91,6 +91,6 @@ const HelpManager = {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    if (window.App) window.App.showToast('📄 साक्ष्य सारांश डाउनलोड हो गया है (Evidence Summary Downloaded)');
+    if (window.App) window.App.showToast('साक्ष्य सारांश डाउनलोड हो गया है (Evidence Summary Downloaded)');
   }
 };
