@@ -87,6 +87,57 @@ window.App = {
         this.switchSubtab(target);
       });
     });
+
+    // Quick Fraud Search in Header (MyGov Search)
+    const searchForm = document.getElementById('headerSearchForm');
+    const searchInput = document.getElementById('headerSearchInput');
+    if (searchForm && searchInput) {
+      searchForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const val = searchInput.value.trim();
+        if (!val) return;
+        this.navigate('check');
+        this.switchSubtab('subtab-sms');
+        const scamInput = document.getElementById('scamTextInput');
+        if (scamInput) {
+          scamInput.value = val;
+          const btn = document.getElementById('btnAnalyzeScam');
+          if (btn) btn.click();
+        }
+      });
+    }
+
+    // Floating Civic Dock buttons
+    const flReport = document.getElementById('floatingReportBtn');
+    if (flReport) {
+      flReport.addEventListener('click', () => {
+        if (window.ReportsManager) ReportsManager.openModal();
+      });
+    }
+    const flTop = document.getElementById('floatingScrollTopBtn');
+    if (flTop) {
+      flTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    // Accessibility Font Size Controls
+    const a11yDec = document.getElementById('btnA11yDecrease');
+    const a11yReset = document.getElementById('btnA11yReset');
+    const a11yInc = document.getElementById('btnA11yIncrease');
+    const setA11ySize = (size, activeBtn) => {
+      document.documentElement.setAttribute('data-a11y-size', size);
+      localStorage.setItem('suraksha_a11y_size', size);
+      [a11yDec, a11yReset, a11yInc].forEach(b => b && b.classList.remove('active'));
+      if (activeBtn) activeBtn.classList.add('active');
+    };
+    if (a11yDec) a11yDec.addEventListener('click', () => setA11ySize('small', a11yDec));
+    if (a11yReset) a11yReset.addEventListener('click', () => setA11ySize('normal', a11yReset));
+    if (a11yInc) a11yInc.addEventListener('click', () => setA11ySize('large', a11yInc));
+
+    const savedSize = localStorage.getItem('suraksha_a11y_size') || 'normal';
+    if (savedSize === 'small' && a11yDec) setA11ySize('small', a11yDec);
+    else if (savedSize === 'large' && a11yInc) setA11ySize('large', a11yInc);
   },
 
   navigate(viewName) {

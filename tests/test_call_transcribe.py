@@ -27,7 +27,15 @@ def test_transcribe_sample_audio_file():
     res = transcribe_audio_file(sample_file, lang="en")
     assert res["success"] is True
     assert "arrest" in res["text"].lower() or "police" in res["text"].lower()
-    assert "transcribed offline with vosk" in res["notice"].lower()
+    assert "vosk" in res["notice"].lower()
+
+def test_transcribe_sample_audio_auto():
+    """Verify dual-model auto-detection selects correct language model."""
+    sample_file = Path("frontend/assets/samples/digital_arrest_call.wav")
+    res = transcribe_audio_file(sample_file, lang="auto")
+    assert res["success"] is True
+    assert res["detected_lang"] == "en"
+    assert "arrest" in res["text"].lower() or "police" in res["text"].lower()
 
 def test_detect_call_api_with_audio_upload():
     """Verify /api/detect/call with multipart audio upload."""

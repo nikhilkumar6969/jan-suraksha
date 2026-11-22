@@ -46,6 +46,17 @@
   --success-border:#bbf7d0;
   --success-text:  #14532d;
 
+  /* MyGov Official Civic Palette */
+  --gov-navy:         #0b2948;
+  --gov-navy-light:   #153d6b;
+  --gov-saffron:      #e65100;
+  --gov-saffron-light:#f97316;
+  --gov-saffron-subtle:#fff7ed;
+  --gov-saffron-border:#ffedd5;
+  --gov-green:        #166534;
+  --gov-green-subtle: #f0fdf4;
+  --gov-card-radius:  16px;
+
   /* Surfaces & Canvas */
   --bg-canvas:     var(--neutral-50);
   --bg-surface:    #ffffff;
@@ -217,4 +228,11 @@
   --shadow-lg:   0 10px 15px -3px rgba(0, 0, 0, 0.6);
 
   --focus-ring: 0 0 0 2px var(--bg-surface), 0 0 0 4px var(--accent);
+
+  /* MyGov Civic Dark Mode Tokens */
+  --gov-navy:         #071626;
+  --gov-navy-light:   #0f2842;
+  --gov-saffron-subtle:#2d1502;
+  --gov-saffron-border:#431407;
+  --gov-green-subtle: #052e16;
 }

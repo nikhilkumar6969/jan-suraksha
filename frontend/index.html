@@ -86,6 +86,50 @@
   </svg>
 
   <div class="app-container">
+    <!-- Top Citizen / Government Utility Bar (MyGov Style) -->
+    <div class="civic-top-bar" role="banner">
+      <div class="top-bar-content">
+        <div class="gov-identity-left">
+          <span class="tiranga-flag" aria-hidden="true">
+            <span class="flag-stripe saffron"></span>
+            <span class="flag-stripe white"><span class="chakra">☸</span></span>
+            <span class="flag-stripe green"></span>
+          </span>
+          <span class="gov-label" data-i18n="gov_portal_sub">छत्तीसगढ़ शासन • जन सुरक्षा नागरिक पोर्टल</span>
+        </div>
+
+        <div class="top-bar-right">
+          <!-- Accessibility Font Size Controls -->
+          <div class="a11y-font-group" title="अक्षर का आकार (Text Size)">
+            <button type="button" class="a11y-btn" id="btnA11yDecrease" aria-label="Decrease text size">A-</button>
+            <button type="button" class="a11y-btn active" id="btnA11yReset" aria-label="Reset text size">A</button>
+            <button type="button" class="a11y-btn" id="btnA11yIncrease" aria-label="Increase text size">A+</button>
+          </div>
+
+          <!-- Language Selector -->
+          <div class="top-lang-box">
+            <span class="lang-symbol" aria-hidden="true">अ/A</span>
+            <select class="lang-select" id="langSelector" aria-label="Select Language">
+              <option value="hi" selected>हिन्दी</option>
+              <option value="chg">छत्तीसगढ़ी</option>
+              <option value="en">English</option>
+            </select>
+          </div>
+
+          <!-- Offline / Online Status Indicator -->
+          <span class="status-badge" id="netStatusBadge" role="status">
+            <span class="status-dot"></span>
+            <span id="netStatusText" data-i18n="working_offline">ऑफलाइन</span>
+          </span>
+
+          <!-- Theme Switcher -->
+          <button class="icon-btn" id="themeToggleBtn" aria-label="Toggle Dark/Light Mode" title="डार्क / लाइट मोड">
+            <svg viewBox="0 0 24 24"><use href="#icon-moon"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- App Header -->
     <header class="app-header">
       <a href="#" class="brand-wrapper" id="brandHomeLink" aria-label="Jan Suraksha Home">
@@ -95,6 +139,14 @@
           <div class="sub" data-i18n="app_tagline">ऑफलाइन साइबर फ्रॉड व स्कैम रक्षक</div>
         </div>
       </a>
+
+      <!-- Quick Fraud Search in Header (MyGov Style) -->
+      <form class="header-search-form" id="headerSearchForm" role="search" aria-label="Quick Fraud Check">
+        <input type="text" id="headerSearchInput" class="header-search-input" placeholder="संदिग्ध SMS, नंबर या लिंक खोजें..." aria-label="Search or check scam indicator" />
+        <button type="submit" class="header-search-btn" id="headerSearchBtn" aria-label="Search / Check">
+          <svg viewBox="0 0 24 24"><use href="#icon-search"/></svg>
+        </button>
+      </form>
 
       <!-- Desktop Header Navigation Bar -->
       <nav class="desktop-nav" aria-label="Desktop Navigation">
@@ -123,27 +175,24 @@
           <span data-i18n="nav_eval">समीक्षा</span>
         </button>
       </nav>
-
-      <div class="header-actions">
-        <!-- Status Indicator -->
-        <span class="status-badge" id="netStatusBadge" role="status">
-          <span class="status-dot"></span>
-          <span id="netStatusText" data-i18n="working_offline">ऑफलाइन</span>
-        </span>
-
-        <!-- Language Selector -->
-        <select class="lang-select" id="langSelector" aria-label="Select Language">
-          <option value="hi" selected>हिन्दी</option>
-          <option value="chg">छत्तीसगढ़ी</option>
-          <option value="en">English</option>
-        </select>
-
-        <!-- Theme Switcher -->
-        <button class="icon-btn" id="themeToggleBtn" aria-label="Toggle Dark/Light Mode">
-          <svg viewBox="0 0 24 24"><use href="#icon-moon"/></svg>
-        </button>
-      </div>
     </header>
+
+    <!-- Advisory Ticker Ribbon (MyGov Live Breaking Alert Style) -->
+    <div class="advisory-ticker-ribbon" role="alert" aria-label="Citizen Advisory">
+      <div class="ticker-badge">
+        <span class="live-pulse"></span>
+        <span data-i18n="ticker_title">नागरिक अलर्ट</span>
+      </div>
+      <div class="ticker-marquee-wrapper">
+        <div class="ticker-marquee-text" data-i18n="ticker_msg">
+          फर्जी बिजली बिल SMS, बैंक KYC या अनजान APK फाइल डाउनलोड करने से बचें! किसी भी वित्तीय ठगी पर तुरंत 1930 डायल करें।
+        </div>
+      </div>
+      <a href="tel:1930" class="ticker-call-action" title="1930 डायल करें">
+        <svg viewBox="0 0 24 24"><use href="#icon-phone"/></svg>
+        <span>1930</span>
+      </a>
+    </div>
 
     <!-- Main Container -->
     <main class="app-main">
@@ -155,13 +204,155 @@
       </div>
 
       <!-- ============================================== -->
-      <!-- VIEW 1: HOME -->
+      <!-- VIEW 1: HOME (MyGov Inspired Citizen Portal) -->
       <!-- ============================================== -->
       <section class="view-panel active" id="view-home">
-        <!-- Header -->
-        <div class="hero-header">
-          <h2 data-i18n="home_greeting">नमस्ते! अपनी गाढ़ी कमाई को साइबर ठगों से सुरक्षित रखें।</h2>
-          <p data-i18n="home_sub">संदिग्ध SMS, फर्जी कॉल और फर्जी क्यूआर कोड की तुरंत जांच करें।</p>
+
+        <!-- MyGov Style Hero Campaign Card -->
+        <div class="mygov-hero-banner">
+          <div class="hero-banner-content">
+            <span class="hero-badge" data-i18n="hero_mission_badge">राष्ट्रीय साइबर सुरक्षा मिशन • छत्तीसगढ़</span>
+            <h2 class="hero-title" data-i18n="home_greeting">सतर्क नागरिक, सुरक्षित छत्तीसगढ़</h2>
+            <p class="hero-desc" data-i18n="home_sub">गाढ़ी कमाई की सुरक्षा, हर नागरिक का अधिकार — बिना इंटरनेट के 100% गोपनीय और सुरक्षित।</p>
+            <div class="hero-cta-group">
+              <button class="btn btn-hero-primary action-tile" data-nav="check" data-subtab="sms">
+                <svg viewBox="0 0 24 24"><use href="#icon-shield"/></svg>
+                <span data-i18n="hero_cta_check">संदिग्ध संदेश/कॉल जांचें</span>
+              </button>
+              <a href="tel:1930" class="btn btn-hero-secondary">
+                <svg viewBox="0 0 24 24"><use href="#icon-phone"/></svg>
+                <span data-i18n="hero_cta_call">1930 आपातकालीन हेल्पलाइन</span>
+              </a>
+            </div>
+          </div>
+          <div class="hero-banner-art" aria-hidden="true">
+            <div class="shield-badge-decor">
+              <img src="/assets/icons/logo.png" alt="" class="hero-emblem-img" />
+            </div>
+          </div>
+        </div>
+
+        <!-- MyGov Citizen Impact Counter Card -->
+        <div class="mygov-metrics-card">
+          <div class="metric-item">
+            <div class="metric-num">33</div>
+            <div class="metric-lbl" data-i18n="metrics_districts">ज़िले सक्रिय (Districts)</div>
+          </div>
+          <div class="metric-divider"></div>
+          <div class="metric-item">
+            <div class="metric-num">100%</div>
+            <div class="metric-lbl" data-i18n="metrics_offline">ऑफलाइन AI (Zero Data Leak)</div>
+          </div>
+          <div class="metric-divider"></div>
+          <div class="metric-item">
+            <div class="metric-num">1930</div>
+            <div class="metric-lbl" data-i18n="metrics_helpline">24x7 राष्ट्रीय हेल्पलाइन</div>
+          </div>
+          <div class="metric-divider"></div>
+          <div class="metric-item">
+            <div class="metric-num">14,500+</div>
+            <div class="metric-lbl" data-i18n="metrics_citizens">जागरूक नागरिक</div>
+          </div>
+        </div>
+
+        <!-- Section Title: Citizen Services (Get Involved style) -->
+        <div class="civic-section-header">
+          <div class="section-title-wrap">
+            <span class="section-pretitle">GET INVOLVED & STAY PROTECTED</span>
+            <h3 data-i18n="services_title">नागरिक सेवाएं एवं सुविधाएं (Citizen Services)</h3>
+          </div>
+          <p data-i18n="services_sub">साइबर ठगी, फर्जी कॉल और डिजिटल अरेस्ट से बचाव के त्वरित साधन</p>
+        </div>
+
+        <!-- Core Actions Grid (MyGov App Grid Style with Notification Badges) -->
+        <div class="actions-grid mygov-services-grid">
+          <div class="action-tile" data-nav="check" data-subtab="sms">
+            <div class="tile-badge">SMS</div>
+            <div class="tile-icon-box tone-blue">
+              <svg viewBox="0 0 24 24"><use href="#icon-message-square"/></svg>
+            </div>
+            <div class="tile-content">
+              <h3 data-i18n="action_check_msg">संदेश / SMS की जांच</h3>
+              <p data-i18n="action_check_msg_sub">बिजली बिल, लॉटरी, बैंक KYC, फर्जी लोन व OTP स्कैम पकड़ें</p>
+            </div>
+          </div>
+
+          <div class="action-tile" data-nav="check" data-subtab="call">
+            <div class="tile-badge">AI</div>
+            <div class="tile-icon-box tone-purple">
+              <svg viewBox="0 0 24 24"><use href="#icon-phone-call"/></svg>
+            </div>
+            <div class="tile-content">
+              <h3 data-i18n="action_check_call">संदिग्ध कॉल की जांच</h3>
+              <p data-i18n="action_check_call_sub">डिजिटल अरेस्ट, फर्जी पुलिस, पार्सल व CBI कॉल का सच जानें</p>
+            </div>
+          </div>
+
+          <div class="action-tile" data-nav="check" data-subtab="qr">
+            <div class="tile-badge">UPI</div>
+            <div class="tile-icon-box tone-orange">
+              <svg viewBox="0 0 24 24"><use href="#icon-qr-code"/></svg>
+            </div>
+            <div class="tile-content">
+              <h3 data-i18n="action_scan_qr">UPI क्यूआर कोड जांचें</h3>
+              <p data-i18n="action_scan_qr_sub">पेमेंट करने से पहले पक्का करें कि पैसा सही व्यक्ति को जा रहा है</p>
+            </div>
+          </div>
+
+          <div class="action-tile" data-nav="learn">
+            <div class="tile-badge tone-badge-green">ज्ञान</div>
+            <div class="tile-icon-box tone-green">
+              <svg viewBox="0 0 24 24"><use href="#icon-book"/></svg>
+            </div>
+            <div class="tile-content">
+              <h3 data-i18n="action_learn">सुरक्षा पाठ व क्विज</h3>
+              <p data-i18n="action_learn_sub">OTP, ATM और UPI सुरक्षा सीखें सिर्फ 5 मिनट में</p>
+            </div>
+          </div>
+
+          <div class="action-tile" data-nav="help">
+            <div class="tile-badge tone-badge-red">24x7</div>
+            <div class="tile-icon-box tone-red">
+              <svg viewBox="0 0 24 24"><use href="#icon-phone"/></svg>
+            </div>
+            <div class="tile-content">
+              <h3>1930 सहायता व चेकलिस्ट</h3>
+              <p>पैसे कटने पर 1930 पर कॉल, बैंक फ्रीज व थाने के आवेदन का प्रारूप</p>
+            </div>
+          </div>
+
+          <div class="action-tile" data-nav="insights">
+            <div class="tile-badge tone-badge-blue">लाइव</div>
+            <div class="tile-icon-box tone-teal">
+              <svg viewBox="0 0 24 24"><use href="#icon-bar-chart"/></svg>
+            </div>
+            <div class="tile-content">
+              <h3>छत्तीसगढ़ स्कैम रडार</h3>
+              <p>रायपुर, बिलासपुर, दुर्ग सहित सभी ज़िलों की ताज़ा ठगी के आँकड़े</p>
+            </div>
+          </div>
+
+          <div class="action-tile" id="openReportModalTile">
+            <div class="tile-badge tone-badge-amber">अलर्ट</div>
+            <div class="tile-icon-box tone-amber">
+              <svg viewBox="0 0 24 24"><use href="#icon-alert-triangle"/></svg>
+            </div>
+            <div class="tile-content">
+              <h3 data-i18n="action_report">गुमनाम रिपोर्ट करें</h3>
+              <p data-i18n="action_report_sub">बिना निजी संदेश साझा किए अपने जिले को सतर्क करें</p>
+            </div>
+          </div>
+
+          <div class="action-tile" data-nav="eval">
+            <div class="tile-badge tone-badge-indigo">समीक्षा</div>
+            <div class="tile-icon-box tone-indigo">
+              <svg viewBox="0 0 24 24"><use href="#icon-check"/></svg>
+            </div>
+            <div class="tile-content">
+              <h3>AI मॉडल पारदर्शिता</h3>
+              <p>ऑफलाइन AI सटीकता, भाषा-वार स्कोर व कन्फ्यूजन मैट्रिक्स देखें</p>
+            </div>
+          </div>
         </div>
 
         <!-- Emergency 1930 Helpline Banner -->
@@ -192,59 +383,6 @@
             <h3 data-i18n="score_title">डिजिटल सुरक्षा स्कोर</h3>
             <span class="score-badge" id="homeScoreBadge" data-i18n="score_badge_safe">सुरक्षित नागरिक (Safe)</span>
             <p data-i18n="score_improve">अपना स्कोर बढ़ाने के लिए 5 मिनट का सुरक्षा क्विज खेलें।</p>
-          </div>
-        </div>
-
-        <!-- Core Actions Grid -->
-        <div class="actions-grid">
-          <div class="action-tile" data-nav="check" data-subtab="sms">
-            <div class="tile-icon-box">
-              <svg viewBox="0 0 24 24"><use href="#icon-message-square"/></svg>
-            </div>
-            <div class="tile-content">
-              <h3 data-i18n="action_check_msg">संदेश / SMS की जांच</h3>
-              <p data-i18n="action_check_msg_sub">बिजली बिल, लॉटरी, बैंक KYC, फर्जी लोन व OTP स्कैम पकड़ें</p>
-            </div>
-          </div>
-
-          <div class="action-tile" data-nav="check" data-subtab="call">
-            <div class="tile-icon-box">
-              <svg viewBox="0 0 24 24"><use href="#icon-phone-call"/></svg>
-            </div>
-            <div class="tile-content">
-              <h3 data-i18n="action_check_call">संदिग्ध कॉल की जांच</h3>
-              <p data-i18n="action_check_call_sub">डिजिटल अरेस्ट, फर्जी पुलिस, पार्सल व CBI कॉल का सच जानें</p>
-            </div>
-          </div>
-
-          <div class="action-tile" data-nav="check" data-subtab="qr">
-            <div class="tile-icon-box">
-              <svg viewBox="0 0 24 24"><use href="#icon-qr-code"/></svg>
-            </div>
-            <div class="tile-content">
-              <h3 data-i18n="action_scan_qr">UPI क्यूआर कोड जांचें</h3>
-              <p data-i18n="action_scan_qr_sub">पेमेंट करने से पहले पक्का करें कि पैसा सही व्यक्ति को जा रहा है</p>
-            </div>
-          </div>
-
-          <div class="action-tile" data-nav="learn">
-            <div class="tile-icon-box">
-              <svg viewBox="0 0 24 24"><use href="#icon-book"/></svg>
-            </div>
-            <div class="tile-content">
-              <h3 data-i18n="action_learn">सुरक्षा पाठ व क्विज</h3>
-              <p data-i18n="action_learn_sub">OTP, ATM और UPI सुरक्षा सीखें सिर्फ 5 मिनट में</p>
-            </div>
-          </div>
-
-          <div class="action-tile" id="openReportModalTile">
-            <div class="tile-icon-box" style="background-color: var(--neutral-100); border-color: var(--neutral-300); color: var(--neutral-700);">
-              <svg viewBox="0 0 24 24"><use href="#icon-alert-triangle"/></svg>
-            </div>
-            <div class="tile-content">
-              <h3 data-i18n="action_report">गुमनाम रिपोर्ट करें</h3>
-              <p data-i18n="action_report_sub">बिना निजी संदेश साझा किए अपने जिले को सतर्क करें</p>
-            </div>
           </div>
         </div>
       </section>
@@ -375,9 +513,17 @@
 
             <div style="display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap; margin-bottom: var(--space-3);">
               <input type="file" id="callAudioFile" accept="audio/*" style="font-size: var(--text-sm); flex: 1; min-width: 200px;" />
+              
+              <!-- Call Audio Language Selector -->
+              <select id="callAudioLang" class="lang-select" style="height: 36px; padding: 0 var(--space-2); font-size: var(--text-xs);" title="ऑडियो भाषा">
+                <option value="auto" selected>🌐 ऑटो पहचान (Hindi / English)</option>
+                <option value="en">🇮🇳 English / Hinglish</option>
+                <option value="hi">🇮🇳 हिन्दी (Hindi)</option>
+              </select>
+
               <button type="button" class="btn btn-secondary" id="btnMicRecordCall" style="padding: 0 var(--space-3); height: 36px; font-size: var(--text-xs);">
                 <svg viewBox="0 0 24 24"><use href="#icon-mic"/></svg>
-                <span id="micBtnText">माइक से बोलें</span>
+                <span id="micBtnText">माइक से बोलें / रिकॉर्ड करें</span>
               </button>
             </div>
 
@@ -828,6 +974,22 @@
         </div>
       </div>
     </div>
+
+    <!-- MyGov Style Floating Civic Action Dock (Speed Dial / Emergency Shortcuts) -->
+    <aside class="floating-civic-dock" aria-label="त्वरित नागरिक सहायता">
+      <a href="tel:1930" class="floating-dock-btn dock-btn-danger" title="राष्ट्रीय हेल्पलाइन 1930 (कॉल करें)" aria-label="Call 1930 Helpline">
+        <svg viewBox="0 0 24 24"><use href="#icon-phone"/></svg>
+        <span class="dock-tooltip">1930 हेल्पलाइन</span>
+      </a>
+      <button type="button" class="floating-dock-btn dock-btn-warning" id="floatingReportBtn" title="गुमनाम ठगी रिपोर्ट" aria-label="Report Scam">
+        <svg viewBox="0 0 24 24"><use href="#icon-alert-triangle"/></svg>
+        <span class="dock-tooltip">ठगी रिपोर्ट</span>
+      </button>
+      <button type="button" class="floating-dock-btn dock-btn-neutral" id="floatingScrollTopBtn" title="ऊपर जाएं" aria-label="Scroll to top">
+        <svg viewBox="0 0 24 24"><path d="m18 15-6-6-6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="dock-tooltip">ऊपर जाएं</span>
+      </button>
+    </aside>
 
     <!-- Toast Notification -->
     <div class="toast-msg" id="appToast" role="alert" aria-live="polite"></div>

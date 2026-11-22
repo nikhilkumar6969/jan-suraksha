@@ -13,6 +13,8 @@ const CallDetector = {
   },
 
   speechRecognizer: null,
+  mediaRecorder: null,
+  audioChunks: [],
   isRecordingMic: false,
   activeAudioFile: null,
 
@@ -87,6 +89,9 @@ const CallDetector = {
     const url = this.audioSamples[key];
     if (!url) return;
 
+    const transcriptInput = document.getElementById('callTranscriptInput');
+    if (transcriptInput) transcriptInput.value = '';
+
     this.showStatus('⏳ सैंपल ऑडियो लोड हो रहा है...', 'info');
     try {
       const resp = await fetch(url);
@@ -101,7 +106,7 @@ const CallDetector = {
         audioPlayer.style.display = 'block';
       }
 
-      this.showStatus(`✅ ऑडियो लोड हुआ (${file.name})। ऑफलाइन Vosk से ट्रांसक्रिप्शन शुरू हो रहा है...`, 'success');
+      this.showStatus(`✅ ऑडियो लोड हुआ (${file.name})। ऑफलाइन Vosk से ट्रांसक्रिप्शन शुरू हो रहा है...`, 'info');
       // Trigger analysis directly
       await this.analyzeCall();
     } catch (err) {
@@ -110,63 +115,128 @@ const CallDetector = {
     }
   },
 
-  toggleMic() {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  async toggleMic() {
     const btnMicText = document.getElementById('micBtnText');
     const transcriptInput = document.getElementById('callTranscriptInput');
 
-    if (!SpeechRecognition) {
-      if (window.App) window.App.showToast('आपका ब्राउज़र माइक स्पीच-टू-टेक्स्ट सपोर्ट नहीं करता। कृपया ऑडियो फाइल अपलोड करें।');
-      return;
-    }
-
     if (this.isRecordingMic) {
-      if (this.speechRecognizer) this.speechRecognizer.stop();
+      // Stop recording
       this.isRecordingMic = false;
-      if (btnMicText) btnMicText.textContent = 'माइक से बोलें';
-      this.showStatus('माइक रिकॉर्डिंग बंद की गई।', 'info');
+      if (btnMicText) btnMicText.textContent = 'माइक से बोलें / रिकॉर्ड करें';
+      
+      if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
+        this.mediaRecorder.stop();
+      }
+      if (this.speechRecognizer) {
+        try { this.speechRecognizer.stop(); } catch (e) {}
+      }
+      this.showStatus('माइक रिकॉर्डिंग बंद की गई। ऑफलाइन Vosk से विश्लेषण हो रहा है...', 'info');
       return;
     }
 
+    // Start recording audio
     try {
-      this.speechRecognizer = new SpeechRecognition();
-      const lang = (window.I18n && window.I18n.currentLang === 'en') ? 'en-IN' : 'hi-IN';
-      this.speechRecognizer.lang = lang;
-      this.speechRecognizer.continuous = true;
-      this.speechRecognizer.interimResults = true;
-
-      this.speechRecognizer.onstart = () => {
-        this.isRecordingMic = true;
-        if (btnMicText) btnMicText.textContent = '🛑 बोलना बंद करें';
-        this.showStatus('🔴 माइक चालू है... कृपया कॉल की बातचीत बोलें (हिंदी/English)', 'info');
-      };
-
-      this.speechRecognizer.onresult = (event) => {
-        let finalStr = '';
-        for (let i = 0; i < event.results.length; ++i) {
-          finalStr += event.results[i][0].transcript + ' ';
-        }
-        if (transcriptInput && finalStr.trim()) {
-          transcriptInput.value = finalStr.trim();
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      this.audioChunks = [];
+      
+      const mimeType = MediaRecorder.isTypeSupported('audio/webm') 
+        ? 'audio/webm' 
+        : (MediaRecorder.isTypeSupported('audio/ogg') ? 'audio/ogg' : '');
+      
+      this.mediaRecorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+      
+      this.mediaRecorder.ondataavailable = (e) => {
+        if (e.data && e.data.size > 0) {
+          this.audioChunks.push(e.data);
         }
       };
 
-      this.speechRecognizer.onerror = (err) => {
-        console.warn('Speech recognition error:', err);
-        this.isRecordingMic = false;
-        if (btnMicText) btnMicText.textContent = 'माइक से बोलें';
-        this.showStatus('माइक अनुमति या त्रुटि: ' + (err.error || ''), 'error');
+      this.mediaRecorder.onstop = async () => {
+        stream.getTracks().forEach(t => t.stop());
+        if (this.audioChunks.length > 0) {
+          const blob = new Blob(this.audioChunks, { type: mimeType || 'audio/wav' });
+          const file = new File([blob], 'mic_record.wav', { type: blob.type });
+          this.activeAudioFile = file;
+
+          const audioPlayer = document.getElementById('callAudioPlayer');
+          if (audioPlayer) {
+            audioPlayer.src = URL.createObjectURL(blob);
+            audioPlayer.style.display = 'block';
+          }
+
+          await this.analyzeCall();
+        }
       };
 
-      this.speechRecognizer.onend = () => {
-        this.isRecordingMic = false;
-        if (btnMicText) btnMicText.textContent = 'माइक से बोलें';
-      };
+      this.mediaRecorder.start(250);
+      this.isRecordingMic = true;
+      if (btnMicText) btnMicText.textContent = '🛑 रिकॉर्डिंग पूरी करें';
+      this.showStatus('🔴 माइक रिकॉर्डिंग चालू है... बातचीत बोलें, पूरा होने पर रोकें', 'info');
 
-      this.speechRecognizer.start();
+      // Also start SpeechRecognition as instant live preview if browser supports it
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        try {
+          this.speechRecognizer = new SpeechRecognition();
+          const audioLang = document.getElementById('callAudioLang')?.value;
+          this.speechRecognizer.lang = (audioLang === 'en') ? 'en-IN' : 'hi-IN';
+          this.speechRecognizer.continuous = true;
+          this.speechRecognizer.interimResults = true;
+          this.speechRecognizer.onresult = (event) => {
+            let finalStr = '';
+            for (let i = 0; i < event.results.length; ++i) {
+              finalStr += event.results[i][0].transcript + ' ';
+            }
+            if (transcriptInput && finalStr.trim()) {
+              transcriptInput.value = finalStr.trim();
+            }
+          };
+          this.speechRecognizer.start();
+        } catch (e) {
+          console.log('Interim speech recognition notice:', e);
+        }
+      }
+
     } catch (e) {
-      console.error('Mic start error:', e);
-      if (window.App) window.App.showToast('माइक चालू करने में त्रुटि: ' + e.message);
+      console.warn('Microphone access notice:', e);
+      // Fallback to pure SpeechRecognition if MediaDevices unavailable
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        try {
+          this.speechRecognizer = new SpeechRecognition();
+          this.speechRecognizer.lang = 'hi-IN';
+          this.speechRecognizer.continuous = true;
+          this.speechRecognizer.interimResults = true;
+          this.speechRecognizer.onstart = () => {
+            this.isRecordingMic = true;
+            if (btnMicText) btnMicText.textContent = '🛑 बोलना बंद करें';
+            this.showStatus('🔴 माइक चालू है... कृपया बोलें', 'info');
+          };
+          this.speechRecognizer.onresult = (event) => {
+            let finalStr = '';
+            for (let i = 0; i < event.results.length; ++i) {
+              finalStr += event.results[i][0].transcript + ' ';
+            }
+            if (transcriptInput && finalStr.trim()) {
+              transcriptInput.value = finalStr.trim();
+            }
+          };
+          this.speechRecognizer.onerror = (err) => {
+            this.isRecordingMic = false;
+            if (btnMicText) btnMicText.textContent = 'माइक से बोलें / रिकॉर्ड करें';
+            this.showStatus('माइक त्रुटि: ' + (err.error || ''), 'error');
+          };
+          this.speechRecognizer.onend = () => {
+            this.isRecordingMic = false;
+            if (btnMicText) btnMicText.textContent = 'माइक से बोलें / रिकॉर्ड करें';
+          };
+          this.speechRecognizer.start();
+        } catch (err2) {
+          this.showStatus('माइक अनुमति उपलब्ध नहीं है: ' + e.message, 'error');
+        }
+      } else {
+        this.showStatus('माइक उपलब्ध नहीं: ' + e.message + '। कृपया ऑडियो फाइल अपलोड करें।', 'error');
+      }
     }
   },
 
@@ -195,6 +265,7 @@ const CallDetector = {
   async analyzeCall() {
     const audioInput = document.getElementById('callAudioFile');
     const transcriptInput = document.getElementById('callTranscriptInput');
+    const audioLangSelect = document.getElementById('callAudioLang');
 
     const file = this.activeAudioFile || (audioInput && audioInput.files ? audioInput.files[0] : null);
     const text = transcriptInput ? transcriptInput.value.trim() : '';
@@ -207,10 +278,13 @@ const CallDetector = {
     const formData = new FormData();
     if (file) {
       formData.append('audio', file);
-      this.showStatus('🎙️ ऑफलाइन वोस्क (Vosk) मॉडल द्वारा ऑडियो का विश्लेषण हो रहा है... कृपया प्रतीक्षा करें', 'info');
+      this.showStatus('🎙️ ऑफलाइन वोस्क (Vosk) मॉडल द्वारा आवाज़ से टेक्स्ट निकाला जा रहा है...', 'info');
     }
     if (text) formData.append('transcript', text);
     formData.append('language', (window.I18n && window.I18n.currentLang) || 'hi');
+    
+    const callLang = (audioLangSelect && audioLangSelect.value) || 'auto';
+    formData.append('call_lang', callLang);
 
     const btnAnalyze = document.getElementById('btnAnalyzeCall');
     if (btnAnalyze) {
@@ -222,8 +296,8 @@ const CallDetector = {
       const res = await fetch('/api/detect/call', { method: 'POST', body: formData });
       const data = await res.json();
       
-      // Auto-populate transcript box if server transcribed audio
-      if (data.transcript && transcriptInput && !transcriptInput.value.trim()) {
+      // Auto-populate transcript box whenever server transcribes audio
+      if (data.transcript && transcriptInput) {
         transcriptInput.value = data.transcript;
       }
 

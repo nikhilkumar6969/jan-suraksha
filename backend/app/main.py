@@ -51,6 +51,11 @@ frontend_dir = workspace_dir / "frontend"
 @app.on_event("startup")
 def startup_event():
     init_db()
+    try:
+        from app.calls.transcribe import prewarm_models
+        prewarm_models()
+    except Exception as e:
+        logger.warning(f"Speech model prewarm notice: {e}")
 
 # Models
 class MessageCheckRequest(BaseModel):
@@ -80,7 +85,8 @@ def detect_message_endpoint(req: MessageCheckRequest):
 async def detect_call_endpoint(
     audio: Optional[UploadFile] = File(None),
     transcript: Optional[str] = Form(None),
-    language: Optional[str] = Form("hi")
+    language: Optional[str] = Form("hi"),
+    call_lang: Optional[str] = Form("auto")
 ):
     final_transcript = ""
     notice = ""
@@ -91,7 +97,8 @@ async def detect_call_endpoint(
         content = await audio.read()
         temp_path.write_bytes(content)
         try:
-            trans_res = transcribe_audio_file(temp_path, lang=language or "hi")
+            target_lang = call_lang or "auto"
+            trans_res = transcribe_audio_file(temp_path, lang=target_lang)
             final_transcript = trans_res.get("text", "")
             notice = trans_res.get("notice", "")
         finally:
