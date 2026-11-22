@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="hi" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suraksha - Cyber Fraud Shield</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0e6e66">
+  <meta name="description" content="Offline Scam & Cyber Fraud Detection for Chhattisgarh">
+  <link rel="stylesheet" href="/css/tokens.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+
+  <!-- Inline SVG Definitions -->
+  <svg style="display: none;">
+    <defs>
+      <g id="icon-shield">
+        <path d="M12 2L3 6v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V6l-9-4zm0 2.18l7 3.12v4.7c0 4.67-3.13 8.99-7 10.15-3.87-1.16-7-5.48-7-10.15V7.3l7-3.12z"/>
+      </g>
+      <g id="icon-phone">
+        <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+      </g>
+      <g id="icon-qr">
+        <path d="M3 3h8v8H3V3zm2 2v4h4V5H5zm8-2h8v8h-8V3zm2 2v4h4V5h-4zM3 13h8v8H3v-8zm2 2v4h4v-4H5zm13-2h3v2h-3v-2zm-3 0h2v5h-2v-5zm3 3h3v5h-3v-5zm-5 2h2v3h-2v-3z"/>
+      </g>
+      <g id="icon-book">
+        <path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/>
+      </g>
+      <g id="icon-help">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16h-2v-2h2v2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/>
+      </g>
+      <g id="icon-chart">
+        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+      </g>
+      <g id="icon-alert">
+        <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+      </g>
+      <g id="icon-volume">
+        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+      </g>
+      <g id="icon-check-circle">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+      </g>
+    </defs>
+  </svg>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <a href="#" class="brand-wrapper" id="brandHomeLink" aria-label="Suraksha Home">
+      <svg class="brand-logo-svg" viewBox="0 0 24 24"><use href="#icon-shield"/></svg>
+      <div class="brand-title-group">
+        <h1 data-i18n="app_name">सुरक्षा (Suraksha)</h1>
+        <div class="sub" data-i18n="app_tagline">ऑफलाइन साइबर फ्रॉड व स्कैम रक्षक</div>
+      </div>
+    </a>
+
+    <div class="header-actions">
+      <!-- Offline / Online Badge -->
+      <span class="status-badge" id="netStatusBadge" role="status">
+        <span class="status-dot"></span>
+        <span id="netStatusText" data-i18n="working_offline">ऑफलाइन</span>
+      </span>
+
+      <!-- Language Selector -->
+      <select class="lang-select" id="langSelector" aria-label="Select Language">
+        <option value="hi" selected>हिन्दी</option>
+        <option value="chg">छत्तीसगढ़ी</option>
+        <option value="en">English</option>
+      </select>
+
+      <!-- Theme Switcher -->
+      <button class="icon-btn" id="themeToggleBtn" aria-label="Toggle Dark/Light Mode">
+        🌓
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="app-main">
+
+    <!-- Offline Rule Update Strip -->
+    <div class="notice-strip" id="rulePackStrip">
+      <span data-i18n="last_updated">सुरक्षा नियम: 22 नवम्बर 2026</span>
+      <span class="status-badge" style="font-size:11px;" id="signatureVerifiedBadge">Ed25519 Verified ✓</span>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- VIEW 1: HOME -->
+    <!-- ============================================== -->
+    <section class="view-panel active" id="view-home">
+      <!-- Greeting -->
+      <h2 style="font-size: 1.3rem; margin-bottom: var(--space-sm); font-weight: 700;" data-i18n="home_greeting">
+        नमस्ते! अपनी गाढ़ी कमाई को साइबर ठगों से सुरक्षित रखें।
+      </h2>
+
+      <!-- Emergency Red Banner -->
+      <div class="emergency-card" id="homeEmergencyCard" role="region" aria-label="Financial Loss Emergency Helpline">
+        <div class="emergency-info">
+          <h2 data-i18n="home_lost_money">🚨 पैसे कट गए / ठगी हो गई?</h2>
+          <p data-i18n="home_lost_money_sub">तुरंत 1930 पर कॉल करें व बैंक खाता फ्रीज कराएं</p>
+        </div>
+        <a href="tel:1930" class="emergency-call-btn">
+          📞 1930
+        </a>
+      </div>
+
+      <!-- Literacy Score Ring Card -->
+      <div class="score-card">
+        <div class="score-circle-wrapper">
+          <svg class="score-svg" viewBox="0 0 100 100">
+            <circle class="score-track" cx="50" cy="50" r="40" />
+            <circle class="score-bar" id="scoreBarCircle" cx="50" cy="50" r="40" stroke-dasharray="251.2" stroke-dashoffset="100" />
+          </svg>
+          <div class="score-number" id="homeScoreNumber">70</div>
+        </div>
+        <div class="score-details">
+          <h3 data-i18n="score_title">डिजिटल सुरक्षा स्कोर</h3>
+          <span class="score-badge" id="homeScoreBadge" data-i18n="score_badge_safe">सुरक्षित नागरिक (Safe)</span>
+          <p data-i18n="score_improve">अपना स्कोर बढ़ाने के लिए 5 मिनट का सुरक्षा क्विज खेलें।</p>
+        </div>
+      </div>
+
+      <!-- Action Grid -->
+      <div class="actions-grid">
+        <div class="action-tile" data-nav="check" data-subtab="sms">
+          <div class="tile-icon-box">
+            <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>
+          </div>
+          <div class="tile-content">
+            <h3 data-i18n="action_check_msg">संदेश / SMS की जांच</h3>
+            <p data-i18n="action_check_msg_sub">बिजली बिल, लॉटरी, बैंक KYC, फर्जी लोन व OTP स्कैम पकड़ें</p>
+          </div>
+        </div>
+
+        <div class="action-tile" data-nav="check" data-subtab="call">
+          <div class="tile-icon-box">
+            <svg viewBox="0 0 24 24"><use href="#icon-phone"/></svg>
+          </div>
+          <div class="tile-content">
+            <h3 data-i18n="action_check_call">संदिग्ध कॉल की जांच</h3>
+            <p data-i18n="action_check_call_sub">डिजिटल अरेस्ट, फर्जी पुलिस, पार्सल व CBI कॉल का सच जानें</p>
+          </div>
+        </div>
+
+        <div class="action-tile" data-nav="check" data-subtab="qr">
+          <div class="tile-icon-box">
+            <svg viewBox="0 0 24 24"><use href="#icon-qr"/></svg>
+          </div>
+          <div class="tile-content">
+            <h3 data-i18n="action_scan_qr">UPI क्यूआर कोड जांचें</h3>
+            <p data-i18n="action_scan_qr_sub">पेमेंट करने से पहले पक्का करें कि पैसा सही व्यक्ति को जा रहा है</p>
+          </div>
+        </div>
+
+        <div class="action-tile" data-nav="learn">
+          <div class="tile-icon-box">
+            <svg viewBox="0 0 24 24"><use href="#icon-book"/></svg>
+          </div>
+          <div class="tile-content">
+            <h3 data-i18n="action_learn">सुरक्षा पाठ व क्विज</h3>
+            <p data-i18n="action_learn_sub">OTP, ATM और UPI सुरक्षा सीखें सिर्फ 5 मिनट में</p>
+          </div>
+        </div>
+
+        <div class="action-tile" id="openReportModalTile">
+          <div class="tile-icon-box" style="background-color: var(--accent-soft); color: var(--accent-warm);">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+          </div>
+          <div class="tile-content">
+            <h3 data-i18n="action_report">गुमनाम रिपोर्ट करें</h3>
+            <p data-i18n="action_report_sub">बिना निजी संदेश साझा किए अपने जिले को सतर्क करें</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- VIEW 2: CHECK (SMS / CALL / QR) -->
+    <!-- ============================================== -->
+    <section class="view-panel" id="view-check">
+      <h2 style="font-size: 1.5rem; margin-bottom: var(--space-sm); font-weight: 800;" data-i18n="check_title">
+        स्कैम व फ्रॉड पहचान केंद्र
+      </h2>
+
+      <!-- Sub Tabs -->
+      <div class="subtabs" role="tablist">
+        <button class="subtab-btn active" data-target="subtab-sms" role="tab" aria-selected="true">
+          💬 <span data-i18n="tab_sms">संदेश / SMS</span>
+        </button>
+        <button class="subtab-btn" data-target="subtab-call" role="tab" aria-selected="false">
+          📞 <span data-i18n="tab_call">फ़ोन कॉल / आवाज़</span>
+        </button>
+        <button class="subtab-btn" data-target="subtab-qr" role="tab" aria-selected="false">
+          📷 <span data-i18n="tab_qr">UPI क्यूआर कोड</span>
+        </button>
+      </div>
+
+      <!-- Subtab SMS -->
+      <div class="subtab-content" id="subtab-sms">
+        <div class="input-card">
+          <textarea class="scam-textarea" id="smsInput" placeholder="यहाँ संदिग्ध SMS, व्हाट्सएप संदेश या लिंक पेस्ट करें..." data-i18n-attr="placeholder:paste_msg_placeholder"></textarea>
+          <div class="btn-row">
+            <button class="btn btn-primary" id="btnAnalyzeSms">
+              🔍 <span data-i18n="btn_analyze">अभी जांचें</span>
+            </button>
+            <button class="btn btn-secondary" id="btnClearSms">
+              ✖ <span data-i18n="btn_clear">हटाएं</span>
+            </button>
+          </div>
+
+          <div style="margin-top: var(--space-md);">
+            <div style="font-size: var(--font-size-xs); font-weight: 700; color: var(--text-muted);" data-i18n="sample_scams_title">
+              उदाहरण संदेश से जांचें:
+            </div>
+            <div class="sample-chips">
+              <span class="sample-chip" data-sample="electricity">⚡ CSPDCL Electricity Bill Scam</span>
+              <span class="sample-chip" data-sample="digital_arrest">👮 CBI Digital Arrest Notice</span>
+              <span class="sample-chip" data-sample="kyc_block">⚠️ SBI KYC Block Alert</span>
+              <span class="sample-chip" data-sample="genuine_bank">✅ Genuine Bank Transaction</span>
+              <span class="sample-chip" data-sample="lottery">🎁 WhatsApp KBC Lottery</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Verdict Display Area -->
+        <div class="verdict-box" id="smsVerdictBox" role="status">
+          <div class="verdict-header">
+            <div class="verdict-icon-large" id="verdictIcon">
+              <svg viewBox="0 0 24 24"><use href="#icon-alert"/></svg>
+            </div>
+            <div>
+              <div class="verdict-title" id="verdictTitle">Likely Scam</div>
+              <div class="verdict-confidence" id="verdictConfidence">Confidence: 96%</div>
+            </div>
+          </div>
+
+          <!-- Stage Timeline -->
+          <div class="stage-timeline" id="stageTimeline">
+            <div class="stage-step" id="stageStep1">
+              <div class="step-dot">1</div>
+              <span>Authority Claim</span>
+            </div>
+            <div class="stage-step" id="stageStep2">
+              <div class="step-dot">2</div>
+              <span>Urgency Panic</span>
+            </div>
+            <div class="stage-step" id="stageStep3">
+              <div class="step-dot">3</div>
+              <span>Sensitive Info</span>
+            </div>
+            <div class="stage-step" id="stageStep4">
+              <div class="step-dot">4</div>
+              <span>Payment Demand</span>
+            </div>
+          </div>
+
+          <div class="verdict-body">
+            <div style="font-weight: 700; font-size: var(--font-size-sm); margin-bottom: 4px;">संदेश में खतरे वाले शब्द (Risky Phrases):</div>
+            <div class="highlighted-text-box" id="smsHighlightedText"></div>
+
+            <div style="font-weight: 700; font-size: var(--font-size-sm); margin-top: 10px;">विश्लेषण व सलाह (Explanation):</div>
+            <p id="verdictExplanation" style="margin-top: 4px; font-size: var(--font-size-base);"></p>
+
+            <div id="ngramTokensBox" style="margin-top: 8px; font-size: var(--font-size-xs); color: var(--text-muted);"></div>
+
+            <!-- Action buttons -->
+            <div class="btn-row" style="margin-top: var(--space-md);">
+              <button class="btn btn-secondary" id="btnSmsReadAloud">
+                🔊 <span data-i18n="btn_read_aloud">बोलकर सुनाएं</span>
+              </button>
+              <button class="btn btn-accent" id="btnReportFromVerdict">
+                📢 <span data-i18n="btn_report_scam">गुमनाम रिपोर्ट भेजें</span>
+              </button>
+              <button class="btn btn-danger" id="btnHelpFromVerdict">
+                🚨 <span data-i18n="btn_get_help">सरकारी सहायता लें</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Subtab Call -->
+      <div class="subtab-content" id="subtab-call" style="display: none;">
+        <div class="input-card">
+          <label style="font-weight: 700; display: block; margin-bottom: 6px;" data-i18n="call_upload_label">
+            कॉल रिकॉर्डिंग (WAV, MP3) अपलोड करें या बातचीत पेस्ट करें
+          </label>
+          <div style="font-size: var(--font-size-xs); color: var(--text-muted); margin-bottom: 12px;" data-i18n="call_transcribe_notice">
+            ऑफलाइन आवाज़ पहचान वोस्क (Vosk) से होती है। यदि मॉडल न हो तो बातचीत नीचे पेस्ट करें।
+          </div>
+
+          <input type="file" id="callAudioFile" accept="audio/*" style="margin-bottom: var(--space-sm); font-size: var(--font-size-sm);" />
+
+          <textarea class="scam-textarea" id="callTranscriptInput" placeholder="फ़ोन पर हुई बातचीत यहाँ लिखें (जैसे: 'मैं क्राइम ब्रांच से बोल रहा हूँ...')" data-i18n-attr="placeholder:call_paste_placeholder"></textarea>
+
+          <div class="btn-row">
+            <button class="btn btn-primary" id="btnAnalyzeCall">
+              🔍 <span data-i18n="btn_analyze">कॉल का सच जांचें</span>
+            </button>
+            <button class="btn btn-secondary" id="btnClearCall">
+              ✖ <span data-i18n="btn_clear">हटाएं</span>
+            </button>
+          </div>
+
+          <div style="margin-top: var(--space-md);">
+            <div style="font-size: var(--font-size-xs); font-weight: 700; color: var(--text-muted);">
+              कॉल ऑडियो / स्क्रिप्ट के उदाहरण:
+            </div>
+            <div class="sample-chips">
+              <span class="sample-chip" data-call-sample="fedex">📦 Fake FedEx Courier Customs Call</span>
+              <span class="sample-chip" data-call-sample="arrest">🚔 Mumbai Police Video Arrest</span>
+              <span class="sample-chip" data-call-sample="bank_kyc">🏦 Bank Officer KYC Block Call</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="verdict-box" id="callVerdictBox">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
+
+      <!-- Subtab QR -->
+      <div class="subtab-content" id="subtab-qr" style="display: none;">
+        <div class="input-card">
+          <label style="font-weight: 700; display: block; margin-bottom: 6px;" data-i18n="qr_scan_label">
+            कैमरे से क्यूआर स्कैन करें या फोटो अपलोड करें
+          </label>
+          <div class="btn-row">
+            <button class="btn btn-primary" id="btnOpenQrCamera">
+              📷 <span data-i18n="qr_open_camera">कैमरा खोलें</span>
+            </button>
+            <label class="btn btn-secondary" style="margin:0;">
+              📁 <span data-i18n="qr_upload_image">QR फोटो चुनें</span>
+              <input type="file" id="qrImageInput" accept="image/*" style="display: none;" />
+            </label>
+          </div>
+
+          <div id="cameraScannerBox" style="display:none; margin-top: var(--space-md); text-align: center;">
+            <video id="qrVideoFeed" playsinline style="width: 100%; max-height: 280px; border-radius: var(--radius-md); background: #000;"></video>
+            <canvas id="qrCanvas" style="display: none;"></canvas>
+            <button class="btn btn-secondary" id="btnCloseCamera" style="margin-top: 8px;">कैमरा बंद करें</button>
+          </div>
+
+          <!-- Raw UPI String input fallback -->
+          <div style="margin-top: var(--space-md);">
+            <div style="font-size: var(--font-size-xs); font-weight: 600; color: var(--text-muted); margin-bottom: 4px;">
+              या UPI कोड लिंक सीधे दर्ज करें (upi://pay?...):
+            </div>
+            <input type="text" id="rawUpiInput" class="scam-textarea" style="min-height: 48px; padding: 10px;" placeholder="upi://pay?pa=scammer@okhdfcbank&pn=Electricity%20Board&am=5000" />
+            <button class="btn btn-primary" id="btnAnalyzeUpiStr" style="margin-top: 8px;">QR कोड डिकोड करें</button>
+          </div>
+
+          <div style="margin-top: var(--space-md);">
+            <div style="font-size: var(--font-size-xs); font-weight: 700; color: var(--text-muted);">
+              परीक्षण क्यूआर उदाहरण:
+            </div>
+            <div class="sample-chips">
+              <span class="sample-chip" data-qr-sample="mismatch">⚠️ Fake CSPDCL Personal Account</span>
+              <span class="sample-chip" data-qr-sample="collect">🚨 Collect Request Scam</span>
+              <span class="sample-chip" data-qr-sample="genuine_shop">✅ Genuine Kirana Merchant</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="verdict-box" id="qrVerdictBox">
+          <!-- Populated via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- VIEW 3: LEARN & QUIZ -->
+    <!-- ============================================== -->
+    <section class="view-panel" id="view-learn">
+      <h2 style="font-size: 1.5rem; margin-bottom: var(--space-sm); font-weight: 800;" data-i18n="action_learn">
+        सुरक्षा पाठ व क्विज
+      </h2>
+
+      <!-- Flashcards Carousel -->
+      <div class="lesson-card-wrapper" id="lessonCardBox">
+        <div class="lesson-svg-illustration" id="lessonIllustration">
+          <svg viewBox="0 0 100 100" width="100" height="100">
+            <circle cx="50" cy="50" r="45" fill="var(--primary-soft)"/>
+            <path d="M50 20 L75 35 V60 C75 75 60 85 50 88 C40 85 25 75 25 60 V35 Z" fill="var(--primary)"/>
+            <circle cx="50" cy="50" r="8" fill="#fff"/>
+          </svg>
+        </div>
+        <div class="quiz-question-num" id="lessonTopicName">TOPIC 1 / 6</div>
+        <h3 class="lesson-title" id="lessonTitle">अपना OTP किसी को न बताएं</h3>
+        <p class="lesson-text" id="lessonSummary">बैंक कर्मचारी, पुलिस या लॉटरी अधिकारी कभी भी आपका OTP नहीं मांगते।</p>
+        <div style="background: var(--bg-card-subtle); padding: 10px; border-radius: var(--radius-md); font-weight: 700; color: var(--status-danger); margin-bottom: 12px;" id="lessonRule">
+          नियम: OTP बताते ही आपका बैंक खाता खाली हो सकता है।
+        </div>
+
+        <div class="btn-row" style="justify-content: center;">
+          <button class="btn btn-secondary" id="btnLessonAudio">
+            🔊 <span data-i18n="btn_read_aloud">बोलकर सुनाएं</span>
+          </button>
+        </div>
+
+        <div class="carousel-nav">
+          <button class="btn btn-secondary" id="btnPrevLesson">◀ पिछला पाठ</button>
+          <span id="lessonCounter" style="font-size: var(--font-size-sm); font-weight: 700;">1 / 6</span>
+          <button class="btn btn-secondary" id="btnNextLesson">अगला पाठ ▶</button>
+        </div>
+      </div>
+
+      <!-- Quiz Card -->
+      <div class="quiz-box" id="quizContainer">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <span class="quiz-question-num" id="quizProgressNum">QUESTION 1 OF 10</span>
+          <span class="status-badge" id="quizScoreTracker">Score: 0</span>
+        </div>
+        <div class="quiz-question-text" id="quizQuestionText">Question text loading...</div>
+        <div class="quiz-options" id="quizOptionsList">
+          <!-- Options rendered via JS -->
+        </div>
+
+        <div id="quizFeedbackBox" style="display:none; margin-top: var(--space-md); padding: 12px; border-radius: var(--radius-md); font-size: var(--font-size-base);"></div>
+
+        <div class="btn-row" style="margin-top: var(--space-md); justify-content: flex-end;">
+          <button class="btn btn-primary" id="btnNextQuiz" style="display: none;">अगला सवाल ▶</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- VIEW 4: OFFICIAL HELP SCREEN -->
+    <!-- ============================================== -->
+    <section class="view-panel" id="view-help">
+      <h2 style="font-size: 1.5rem; margin-bottom: var(--space-sm); font-weight: 800;" data-i18n="help_emergency_title">
+        आधिकारिक साइबर अपराध सहायता
+      </h2>
+
+      <!-- Path A: I Lost Money -->
+      <div style="background-color: var(--status-danger-bg); border: 2px solid var(--status-danger-border); border-radius: var(--radius-xl); padding: var(--space-lg); margin-bottom: var(--space-lg);">
+        <h3 style="color: var(--status-danger); font-size: var(--font-size-xl); font-weight: 800; margin-bottom: 6px;" data-i18n="help_lost_title">
+          रास्ता अ: मेरे पैसे कट चुके हैं (तुरंत कार्रवाई)
+        </h3>
+        <p style="font-size: var(--font-size-base); margin-bottom: var(--space-md); color: var(--text-main);">
+          ठगी होने के 1-2 घंटे के अंदर तुरंत 1930 पर कॉल करें। यह भारत सरकार की वित्तीय धोखाधड़ी रोकने वाली आपातकालीन हेल्पलाइन है।
+        </p>
+        <div class="btn-row">
+          <a href="tel:1930" class="btn btn-danger" style="font-size: var(--font-size-lg); padding: 12px 24px;">
+            📞 1930 पर कॉल करें
+          </a>
+          <a href="https://cybercrime.gov.in" target="_blank" rel="noopener" class="btn btn-secondary ext-link">
+            🌐 CyberCrime.gov.in <span class="net-req-chip" style="font-size:10px; background:var(--accent-soft); padding:2px 6px; border-radius:4px;">(नेट जरूरी)</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Path B: Suspected Fraud (No Loss Yet) -->
+      <div style="background-color: var(--status-warning-bg); border: 2px solid var(--status-warning-border); border-radius: var(--radius-xl); padding: var(--space-lg); margin-bottom: var(--space-lg);">
+        <h3 style="color: var(--status-warning); font-size: var(--font-size-xl); font-weight: 800; margin-bottom: 6px;" data-i18n="help_suspect_title">
+          रास्ता ब: केवल संदिग्ध कॉल या मैसेज आया है (पैसे नहीं कटे)
+        </h3>
+        <p style="font-size: var(--font-size-base); margin-bottom: var(--space-md); color: var(--text-main);">
+          यदि किसी ने आपको ठगने का प्रयास किया है, तो उस फोन नंबर या व्हाट्सएप को संचार साथी के <strong>चक्षु (Chakshu)</strong> पोर्टल पर रिपोर्ट करें ताकि उस ठग का सिम ब्लॉक किया जा सके।
+        </p>
+        <div class="btn-row">
+          <a href="https://sancharsaathi.gov.in/sfc/" target="_blank" rel="noopener" class="btn btn-accent ext-link">
+            🛡️ चक्षु (Chakshu) पोर्टल पर नंबर रिपोर्ट करें <span style="font-size:10px; opacity:0.8;">(नेट जरूरी)</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Evidence Checklist -->
+      <div class="checklist-container">
+        <h3 style="font-size: var(--font-size-xl); font-weight: 800; margin-bottom: 6px;" data-i18n="help_checklist_title">
+          ऑफलाइन साक्ष्य चेकलिस्ट (Evidence Checklist)
+        </h3>
+        <p style="font-size: var(--font-size-sm); color: var(--text-muted); margin-bottom: var(--space-md);" data-i18n="help_checklist_desc">
+          शिकायत दर्ज करने से पहले ये प्रमाण इकट्ठा कर लें। इसे आप ऑफलाइन सेव या प्रिंट कर सकते हैं।
+        </p>
+
+        <div id="checklistItemsList">
+          <div class="checklist-item">
+            <input type="checkbox" id="chk_utr" class="checklist-checkbox" data-key="utr">
+            <label for="chk_utr" class="checklist-label">
+              लेन-देन आईडी / UTR नंबर (Transaction ID / UTR)
+              <div class="checklist-desc">बैंक SMS या UPI पासबुक में 12-अंकों का संदर्भ नंबर</div>
+            </label>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" id="chk_amt" class="checklist-checkbox" data-key="amt">
+            <label for="chk_amt" class="checklist-label">
+              कटी हुई राशि व सटीक समय (Exact Amount, Date & Time)
+              <div class="checklist-desc">रुपये और मिनट का रिकॉर्ड रखें</div>
+            </label>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" id="chk_num" class="checklist-checkbox" data-key="num">
+            <label for="chk_num" class="checklist-label">
+              ठग का फोन नंबर / व्हाट्सएप नंबर (Scammer's Phone Number)
+              <div class="checklist-desc">जिस नंबर से कॉल या मैसेज आया</div>
+            </label>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" id="chk_upi" class="checklist-checkbox" data-key="upi">
+            <label for="chk_upi" class="checklist-label">
+              ठग की UPI आईडी या खाता नंबर (Fraudulent UPI ID / Account)
+              <div class="checklist-desc">जिस पते पर पैसे ट्रांसफर हुए</div>
+            </label>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" id="chk_ss" class="checklist-checkbox" data-key="ss">
+            <label for="chk_ss" class="checklist-label">
+              मैसेज व बातचीत के स्क्रीनशॉट (Screenshots of Chat & SMS)
+              <div class="checklist-desc">व्हाट्सएप या मैसेज को डिलीट न करें</div>
+            </label>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" id="chk_stmt" class="checklist-checkbox" data-key="stmt">
+            <label for="chk_stmt" class="checklist-label">
+              बैंक पासबुक / मिनी स्टेटमेंट कॉपी (Bank Statement / Passbook Entry)
+              <div class="checklist-desc">जिसमें अवैध निकासी दर्ज हो</div>
+            </label>
+          </div>
+        </div>
+
+        <div class="btn-row" style="margin-top: var(--space-md);">
+          <button class="btn btn-primary" id="btnSaveChecklist">
+            💾 <span data-i18n="btn_save_checklist">चेकलिस्ट सहेजें</span>
+          </button>
+          <button class="btn btn-secondary" id="btnPrintChecklist">
+            🖨️ <span data-i18n="btn_print_checklist">प्रिंट / डाउनलोड रसीद</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- VIEW 5: CHHATTISGARH RADAR & POLICY DASHBOARD -->
+    <!-- ============================================== -->
+    <section class="view-panel" id="view-insights">
+      <h2 style="font-size: 1.5rem; margin-bottom: var(--space-sm); font-weight: 800;" data-i18n="radar_title">
+        छत्तीसगढ़ साइबर फ्रॉड रडar व प्रशासन डैशबोर्ड
+      </h2>
+      <p style="font-size: var(--font-size-sm); color: var(--text-muted); margin-bottom: var(--space-md);" data-i18n="radar_desc">
+        जिलेवार स्कैम ट्रेंड। निजता सुरक्षा: 5 से कम रिपोर्ट वाले आंकड़े गुप्त रखे जाते हैं।
+      </p>
+
+      <!-- Emerging Scam Alert Banner -->
+      <div style="background-color: #fef2f2; border: 2px solid #f87171; border-radius: var(--radius-lg); padding: var(--space-md); margin-bottom: var(--space-lg);" id="radarEmergingAlertBox">
+        <div style="display:flex; align-items:center; gap:8px; color:#dc2626; font-weight:800; font-size:var(--font-size-base);">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="#dc2626"><use href="#icon-alert"/></svg>
+          <span data-i18n="alert_banner_title">छत्तीसगढ़ में नया स्कैम ट्रेंड अलर्ट</span>
+        </div>
+        <div id="radarAlertDetails" style="font-size: var(--font-size-sm); margin-top: 6px; color: var(--text-main);">
+          Loading live cluster analysis...
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div style="display: flex; flex-wrap: wrap; gap: var(--space-md); margin-bottom: var(--space-md); align-items: center;">
+        <div>
+          <label style="font-size: var(--font-size-xs); font-weight: 700;" data-i18n="filter_district">जिला:</label>
+          <select id="radarDistrictFilter" class="lang-select" style="min-width: 160px;">
+            <option value="ALL">सभी जिले (All Districts)</option>
+            <option value="Raipur">Raipur (रायपुर)</option>
+            <option value="Durg">Durg (दुर्ग)</option>
+            <option value="Bilaspur">Bilaspur (बिलासपुर)</option>
+            <option value="Korba">Korba (कोरबा)</option>
+            <option value="Raigarh">Raigarh (रायगढ़)</option>
+            <option value="Bastar">Bastar (बस्तर)</option>
+            <option value="Rajnandgaon">Rajnandgaon (राजनंदगांव)</option>
+            <option value="Surguja">Surguja (सरगुजा)</option>
+          </select>
+        </div>
+
+        <div>
+          <label style="font-size: var(--font-size-xs); font-weight: 700;" data-i18n="filter_time">समय सीमा:</label>
+          <select id="radarTimeFilter" class="lang-select" style="min-width: 140px;">
+            <option value="7d" data-i18n="time_7d">पिछले 7 दिन</option>
+            <option value="30d" data-i18n="time_30d">पिछले 30 दिन</option>
+            <option value="all" data-i18n="time_all" selected>संपूर्ण समय</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- KPI Summary Cards -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: var(--space-sm); margin-bottom: var(--space-lg);">
+        <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:12px; text-align:center;">
+          <div style="font-size:11px; color:var(--text-muted); font-weight:600;">पुष्ट मामले (Confirmed)</div>
+          <div style="font-size:1.6rem; font-weight:800; color:var(--primary);" id="kpiConfirmedCount">--</div>
+        </div>
+        <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:12px; text-align:center;">
+          <div style="font-size:11px; color:var(--text-muted); font-weight:600;">कुल रिपोर्ट (Reports)</div>
+          <div style="font-size:1.6rem; font-weight:800; color:var(--accent-warm);" id="kpiTotalReports">--</div>
+        </div>
+        <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:12px; text-align:center;">
+          <div style="font-size:11px; color:var(--text-muted); font-weight:600;">सक्रिय अलर्ट (Alerts)</div>
+          <div style="font-size:1.6rem; font-weight:800; color:var(--status-danger);" id="kpiAlertCount">--</div>
+        </div>
+      </div>
+
+      <!-- Chart: Scam Breakdown by Category -->
+      <div class="chart-container">
+        <div class="chart-title">
+          <span>ठगी के मुख्य प्रकार (Scams by Category)</span>
+          <span style="font-size: 11px; color: var(--text-muted);">Conf. Reports</span>
+        </div>
+        <div id="scamTypeSvgChartBox" style="width: 100%; min-height: 220px;">
+          <!-- SVG Bar Chart Rendered Locally -->
+        </div>
+      </div>
+
+      <!-- Chart: District Distribution -->
+      <div class="chart-container">
+        <div class="chart-title">
+          <span>जिलेवार वितरण (Chhattisgarh Districts)</span>
+          <span style="font-size: 11px; color: var(--text-muted);">k &ge; 5 rule</span>
+        </div>
+        <div id="districtSvgChartBox" style="width: 100%; min-height: 220px;">
+          <!-- SVG Bar Chart Rendered Locally -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- VIEW 6: EVALUATION METRICS -->
+    <!-- ============================================== -->
+    <section class="view-panel" id="view-eval">
+      <h2 style="font-size: 1.5rem; margin-bottom: var(--space-sm); font-weight: 800;">
+        📊 Model Training & Evaluation Metrics
+      </h2>
+      <p style="font-size: var(--font-size-sm); color: var(--text-muted); margin-bottom: var(--space-md);">
+        Held-out test set performance (80/20 stratified split, 3,000+ synthetic messages across English, Hindi & Hinglish).
+      </p>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: var(--space-sm); margin-bottom: var(--space-lg);">
+        <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:12px; text-align:center;">
+          <div style="font-size:12px; color:var(--text-muted); font-weight:600;">Overall Accuracy</div>
+          <div style="font-size:1.6rem; font-weight:800; color:var(--status-safe);" id="evalAcc">--</div>
+        </div>
+        <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:12px; text-align:center;">
+          <div style="font-size:12px; color:var(--text-muted); font-weight:600;">Precision</div>
+          <div style="font-size:1.6rem; font-weight:800; color:var(--primary);" id="evalPrec">--</div>
+        </div>
+        <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:12px; text-align:center;">
+          <div style="font-size:12px; color:var(--text-muted); font-weight:600;">Recall</div>
+          <div style="font-size:1.6rem; font-weight:800; color:var(--accent-warm);" id="evalRec">--</div>
+        </div>
+        <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:12px; text-align:center;">
+          <div style="font-size:12px; color:var(--text-muted); font-weight:600;">F1 Score</div>
+          <div style="font-size:1.6rem; font-weight:800; color:var(--primary-dark);" id="evalF1">--</div>
+        </div>
+        <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:12px; text-align:center;">
+          <div style="font-size:12px; color:var(--text-muted); font-weight:600;">False Positive Rate</div>
+          <div style="font-size:1.6rem; font-weight:800; color:var(--status-danger);" id="evalFPR">--</div>
+        </div>
+      </div>
+
+      <!-- Breakdown by Language Table -->
+      <div class="chart-container">
+        <div class="chart-title">Language-Specific Performance (Held-out Test Split)</div>
+        <table style="width: 100%; border-collapse: collapse; font-size: var(--font-size-sm); margin-top: 8px;" id="evalLangTable">
+          <thead>
+            <tr style="border-bottom: 2px solid var(--border-color); text-align: left;">
+              <th style="padding: 8px;">Language</th>
+              <th style="padding: 8px;">Samples</th>
+              <th style="padding: 8px;">Accuracy</th>
+              <th style="padding: 8px;">Precision</th>
+              <th style="padding: 8px;">Recall</th>
+              <th style="padding: 8px;">F1</th>
+              <th style="padding: 8px;">FPR</th>
+            </tr>
+          </thead>
+          <tbody id="evalLangTbody">
+            <tr><td colspan="7" style="padding: 12px; text-align: center;">Loading evaluation data...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Confusion Matrix Card -->
+      <div class="chart-container">
+        <div class="chart-title">Confusion Matrix (Held-out Test Set)</div>
+        <div id="confusionMatrixBox" style="padding: 12px; font-family: monospace;"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Anonymous Report Modal -->
+  <div class="modal-overlay" id="reportModalOverlay" role="dialog" aria-modal="true" aria-labelledby="reportModalTitle">
+    <div class="modal-content">
+      <h3 class="modal-title" id="reportModalTitle" data-i18n="consent_title">गोपनीय व सुरक्षित रिपोर्ट</h3>
+      <p class="modal-body" data-i18n="consent_body">
+        सुरक्षा ऐप आपके संदेश या निजी जानकारी को कभी नहीं भेजता। केवल स्कैम का प्रकार, जिला और नंबर/UPI का गुप्त कोड (Hashed) भेजा जाता है ताकि दूसरों को बचाया जा सके।
+      </p>
+
+      <div style="display: flex; flex-direction: column; gap: var(--space-sm); margin-bottom: var(--space-md);">
+        <div>
+          <label style="font-size: var(--font-size-xs); font-weight: 700;">स्कैम का प्रकार (Scam Type):</label>
+          <select id="modalScamType" class="lang-select" style="width: 100%;">
+            <option value="OTP Request">OTP / Bank Fraud</option>
+            <option value="Electricity Bill">Electricity Bill Scam</option>
+            <option value="Digital Arrest">CBI / Police Digital Arrest</option>
+            <option value="Fake KYC">Fake Bank/SIM KYC</option>
+            <option value="Fake QR">Fake UPI QR Code</option>
+            <option value="Loan App">Predatory Loan App</option>
+            <option value="Courier Scam">Fake Customs / Courier Parcel</option>
+          </select>
+        </div>
+
+        <div>
+          <label style="font-size: var(--font-size-xs); font-weight: 700;">जिला (Chhattisgarh District):</label>
+          <select id="modalDistrict" class="lang-select" style="width: 100%;">
+            <option value="Raipur">Raipur (रायपुर)</option>
+            <option value="Durg">Durg (दुर्ग)</option>
+            <option value="Bilaspur">Bilaspur (बिलासपुर)</option>
+            <option value="Korba">Korba (कोरबा)</option>
+            <option value="Raigarh">Raigarh (रायगढ़)</option>
+            <option value="Bastar">Bastar (बस्तर)</option>
+            <option value="Rajnandgaon">Rajnandgaon (राजनंदगांव)</option>
+            <option value="Surguja">Surguja (सरगुजा)</option>
+          </select>
+        </div>
+
+        <div>
+          <label style="font-size: var(--font-size-xs); font-weight: 700;">संदिग्ध नंबर, लिंक या UPI आईडी (Indicator):</label>
+          <input type="text" id="modalIndicator" class="scam-textarea" style="min-height: 48px; padding: 10px;" placeholder="उदा. 9876543210 या scammer@okhdfc" />
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" id="btnSubmitReportModal" data-i18n="consent_agree">
+          सहमति है, गुमनाम रिपोर्ट भेजें
+        </button>
+        <button class="btn btn-secondary" id="btnCloseReportModal" data-i18n="consent_cancel">
+          रद्द करें
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-msg" id="appToast" role="alert" aria-live="polite"></div>
+
+  <!-- Bottom Navigation Bar -->
+  <nav class="bottom-nav" aria-label="Bottom Navigation">
+    <button class="nav-item active" data-nav="home" aria-label="Home">
+      <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      <span data-i18n="nav_home">होम</span>
+    </button>
+    <button class="nav-item" data-nav="check" aria-label="Check Scam">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+      <span data-i18n="nav_check">जांचें</span>
+    </button>
+    <button class="nav-item" data-nav="learn" aria-label="Learn and Quiz">
+      <svg viewBox="0 0 24 24"><use href="#icon-book"/></svg>
+      <span data-i18n="nav_learn">सीखें</span>
+    </button>
+    <button class="nav-item" data-nav="help" aria-label="Help and 1930">
+      <svg viewBox="0 0 24 24"><use href="#icon-help"/></svg>
+      <span data-i18n="nav_help">मदद</span>
+    </button>
+    <button class="nav-item" data-nav="insights" aria-label="Scam Radar">
+      <svg viewBox="0 0 24 24"><use href="#icon-chart"/></svg>
+      <span data-i18n="nav_insights">रडार</span>
+    </button>
+    <button class="nav-item" data-nav="eval" aria-label="Model Evaluation">
+      <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+      <span data-i18n="nav_eval">समीक्षा</span>
+    </button>
+  </nav>
+
+  <!-- Client-Side Scripts -->
+  <script src="/js/i18n.js"></script>
+  <script src="/js/detector.js"></script>
+  <script src="/js/qr.js"></script>
+  <script src="/js/call.js"></script>
+  <script src="/js/learn.js"></script>
+  <script src="/js/help.js"></script>
+  <script src="/js/reports.js"></script>
+  <script src="/js/dashboard.js"></script>
+  <script src="/js/crypto_verify.js"></script>
+  <script src="/js/app.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,115 @@
+{
+  "pack_version": "2026.11.22-v1",
+  "released_at": "2026-11-22 18:13:02Z",
+  "model_version": "Suraksha-Scam-LR-v1.0",
+  "rules_version": "rules-2026-v2",
+  "confirmed_blacklist": [
+    {
+      "indicator": "cspdcl-pay.top",
+      "type": "Electricity Bill",
+      "reports": 3
+    },
+    {
+      "indicator": "9827104921",
+      "type": "Electricity Bill",
+      "reports": 6
+    },
+    {
+      "indicator": "9876543210",
+      "type": "Electricity Bill",
+      "reports": 4
+    },
+    {
+      "indicator": "cspdcl-bill.xyz",
+      "type": "Electricity Bill",
+      "reports": 3
+    },
+    {
+      "indicator": "cbi-clearance-desk",
+      "type": "Digital Arrest",
+      "reports": 4
+    },
+    {
+      "indicator": "919820011223",
+      "type": "Digital Arrest",
+      "reports": 7
+    },
+    {
+      "indicator": "mumbai-cyber-arrest.in",
+      "type": "Digital Arrest",
+      "reports": 4
+    },
+    {
+      "indicator": "sbi-yono-update.vip",
+      "type": "Fake KYC",
+      "reports": 3
+    },
+    {
+      "indicator": "9425201928",
+      "type": "Fake KYC",
+      "reports": 6
+    },
+    {
+      "indicator": "anydesk-support-desk",
+      "type": "Fake KYC",
+      "reports": 5
+    },
+    {
+      "indicator": "electricity@okhdfc",
+      "type": "Fake QR",
+      "reports": 7
+    },
+    {
+      "indicator": "police-fine@paytm",
+      "type": "Fake QR",
+      "reports": 4
+    },
+    {
+      "indicator": "cspdcl-bill@okaxis",
+      "type": "Fake QR",
+      "reports": 7
+    },
+    {
+      "indicator": "instant-cash-chhattisgarh.apk",
+      "type": "Loan App",
+      "reports": 4
+    },
+    {
+      "indicator": "fast-rupee-loan.in",
+      "type": "Loan App",
+      "reports": 5
+    },
+    {
+      "indicator": "fedex-customs-parcel.cc",
+      "type": "Courier Scam",
+      "reports": 5
+    },
+    {
+      "indicator": "9981203948",
+      "type": "Courier Scam",
+      "reports": 4
+    },
+    {
+      "indicator": "9826102938",
+      "type": "OTP Request",
+      "reports": 6
+    },
+    {
+      "indicator": "sbi-otp-verification",
+      "type": "OTP Request",
+      "reports": 6
+    },
+    {
+      "indicator": "9406102931",
+      "type": "OTP Request",
+      "reports": 3
+    },
+    {
+      "indicator": "test_fraudster_1ba182b6@okaxis",
+      "type": "Fake QR",
+      "reports": 3
+    }
+  ],
+  "signature": "ad3aaee1e55783609a0c97f75a47ca6e28b381f9e836c1293d0e46580e7af54a721a08e5ec517e6c84ebabda5366f2bbc5de6eaeaa2aec889b828354245f9000",
+  "public_key": "56c1c7088a16b76b1683c020376ab5e0a5b97b7d0d8763736f238cf2d0225ec9"
+}

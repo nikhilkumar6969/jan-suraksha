@@ -1,0 +1,22 @@
+{
+  "name": "Suraksha - Cyber Fraud Shield",
+  "short_name": "Suraksha",
+  "description": "Offline Scam Detection, Call Analysis, UPI QR Verification and Financial Literacy for Chhattisgarh",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#094e48",
+  "theme_color": "#0e6e66",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/assets/icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/assets/icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

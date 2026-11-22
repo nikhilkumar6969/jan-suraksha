@@ -1,0 +1,67 @@
+{
+  "status": "success",
+  "dataset_info": {
+    "total_synthetic_samples": 3300,
+    "held_out_test_samples": 660,
+    "split_ratio": "80/20 stratified",
+    "seed": 42
+  },
+  "overall": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "false_positive_rate": 0.0,
+    "confusion_matrix": {
+      "tn": 330,
+      "fp": 0,
+      "fn": 0,
+      "tp": 330
+    },
+    "sample_count": 660
+  },
+  "per_language": {
+    "en": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "confusion_matrix": {
+        "tn": 110,
+        "fp": 0,
+        "fn": 0,
+        "tp": 110
+      },
+      "sample_count": 220
+    },
+    "hi": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "confusion_matrix": {
+        "tn": 110,
+        "fp": 0,
+        "fn": 0,
+        "tp": 110
+      },
+      "sample_count": 220
+    },
+    "hinglish": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "confusion_matrix": {
+        "tn": 110,
+        "fp": 0,
+        "fn": 0,
+        "tp": 110
+      },
+      "sample_count": 220
+    }
+  }
+}
