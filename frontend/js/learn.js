@@ -22,6 +22,9 @@ const LearnManager = {
 
     window.addEventListener('languageChanged', async () => {
       await this.loadContent();
+      this.renderCurrentLesson();
+      this.renderCurrentQuiz();
+      this.updateHomeScoreRing();
     });
 
     this.renderCurrentLesson();
