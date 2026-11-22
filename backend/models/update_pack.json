@@ -1,6 +1,6 @@
 {
   "pack_version": "2026.11.22-v1",
-  "released_at": "2026-11-22 18:15:17Z",
+  "released_at": "2026-11-22 18:41:46Z",
   "model_version": "Suraksha-Scam-LR-v1.0",
   "rules_version": "rules-2026-v2",
   "confirmed_blacklist": [
@@ -120,6 +120,6 @@
       "reports": 3
     }
   ],
-  "signature": "2db5ba5acfaa6c5616f8eb7649dba055d47bbdd445453f94f3cb0533cf7e2c816c07666188a517e652200cd06361323bb7de3f42e011aa61ef69d8f95b635500",
+  "signature": "c76be6871f31adaba51b76a1d8c1eb02a8c4eb66c5501c03db25eb0a2e825048b43dea20d59f40557849f8781beeb8ed938af6b7e2897f42b9edb3b5607f9107",
   "public_key": "56c1c7088a16b76b1683c020376ab5e0a5b97b7d0d8763736f238cf2d0225ec9"
 }
