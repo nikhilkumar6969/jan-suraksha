@@ -14,32 +14,32 @@ STAGE_DEFINITIONS = {
         "name": "Authority Claim",
         "description": "Scammer poses as Police, CBI, Customs, Electricity Officer, or Bank Manager",
         "patterns": [
-            r"\b(?:cbi|police|crime\s+branch|customs|inspector|officer|manager|cspdcl|sbi|hdfc|kbc)\b",
-            r"पुलिस|कस्टम|क्राइम\s*ब्रांच|बिजली\s*अधिकारी|बैंक\s*अधिकारी"
+            r"\b(?:cbi|police|crime\s+branch|customs|inspector|officer|manager|cspdcl|sbi|hdfc|kbc|thana|kotwali)\b",
+            r"पुलिस|कस्टम|क्राइम\s*ब्रांच|बिजली\s*अधिकारी|बैंक\s*अधिकारी|थाना|कोतवाली|सीबीआई|अधिकारी"
         ]
     },
     "stage_2_urgency": {
         "name": "Urgency & Panic",
         "description": "Creating panic with deadlines (2 hours, tonight 9:30, immediate disconnection)",
         "patterns": [
-            r"\b(?:immediately|urgent|within\s+2\s+hours|tonight\s+at\s+9:30|disconnected|block|jail|arrest)\b",
-            r"तुरंत|आज\s*रात|काट\s*दी\s*जाएगी|जेल|अरेस्ट|ब्लॉक"
+            r"\b(?:immediately|urgent|within\s+2\s+hours|tonight\s+at\s+9:30|disconnected|block|jail|arrest|kat\s+jahi|turte|aaj\s+sanjha)\b",
+            r"तुरंत|आज\s*रात|काट\s*दी\s*जाएगी|जेल|अरेस्ट|ब्लॉक|कट\s*जाही|कटही|तुरते|आज\s*संझा|झन\s*देरी"
         ]
     },
     "stage_3_sensitive_info": {
         "name": "Request for Sensitive Info",
         "description": "Asking for OTP, PIN, CVV, passwords or screen-sharing app installation",
         "patterns": [
-            r"\b(?:otp|pin|cvv|password|anydesk|quicksupport|rustdesk|code)\b",
-            r"ओटीपी|पिन|सीवीवी|पासवर्ड|एनीडेस्क|कोड"
+            r"\b(?:otp|pin|cvv|password|anydesk|quicksupport|rustdesk|code|screen\s+share)\b",
+            r"ओटीपी|पिन|सीवीवी|पासवर्ड|एनीडेस्क|कोड|डारव|बताव"
         ]
     },
     "stage_4_payment": {
         "name": "Payment Demand",
         "description": "Demanding monetary transfer, bond fee, customs tax, or scanning QR",
         "patterns": [
-            r"\b(?:transfer|pay|rs\.?\s*\d+|rupees|upi|qr|bond|fine|tax|security\s+deposit)\b",
-            r"रुपये|पैसे|भुगतान|जमानत|टैक्स|ट्रांसफर|क्यूआर"
+            r"\b(?:transfer|pay|rs\.?\s*\d+|rupees|upi|qr|bond|fine|tax|security\s+deposit|paisa|pataw)\b",
+            r"रुपये|पैसे|पईसा|पइसा|भुगतान|जमानत|टैक्स|ट्रांसफर|क्यूआर|पटाव"
         ]
     }
 }

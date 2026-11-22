@@ -16,6 +16,30 @@ def test_language_detection():
     assert detect_language("This is an official electricity bill") == "en"
     assert detect_language("यह भारतीय स्टेट बैंक का संदेश है") == "hi"
     assert detect_language("Aapka yono account block ho gaya hai") == "hinglish"
+    assert detect_language("तोर बिजली बिल नइ भरे हस आज संझा लाइन कट जाही") == "chg"
+    assert detect_language("tor bijli line kat jahi bill pataw") == "chg"
+
+def test_chhattisgarhi_bijli_scam():
+    sms = "तोर बिजली बिल नइ भरे हस, आज संझा 9:30 बजे लाइन कट जाही। तुरते 9827012345 म फोन लगाके पईसा पटाव।"
+    res = run_detection_pipeline(sms, user_lang="chg")
+    assert res["verdict"] == "likely_scam"
+    assert res["rule_flags"]["fake_kyc"] is True
+    assert res["rule_flags"]["urgency_pressure"] is True
+
+def test_chhattisgarhi_police_arrest_scam():
+    sms = "थाना कोतवाली रायपुर ले बोलत हंव। तोर नाम म वारंट निकल गे हे। कॉल ल झन काटव, वीडियो कॉल म बने रहव अउ तुरते पईसा जमा करव।"
+    res = run_detection_pipeline(sms, user_lang="chg")
+    assert res["verdict"] == "likely_scam"
+    assert res["rule_flags"]["digital_arrest"] is True
+    assert res["stages"]["current_stage"] >= 3
+
+def test_hinglish_police_call_scam():
+    from app.calls.analyzer import analyze_call_transcript
+    call = "Main Crime Branch Mumbai Police se Senior Inspector bol raha hoon. Aapke khilaf Money Laundering aur arrest warrant jari hua hai. Phone cut mat karna, ghar ke andar raho aur turant 50000 rupaye bail security bond transfer karo."
+    res = analyze_call_transcript(call, user_lang="hi")
+    assert res["verdict"] == "likely_scam"
+    assert res["confidence_percent"] >= 90
+    assert res["rule_flags"]["digital_arrest"] is True
 
 def test_genuine_bank_otp_guard():
     # Legitimate bank OTPs with safety warnings must NOT be flagged as scam

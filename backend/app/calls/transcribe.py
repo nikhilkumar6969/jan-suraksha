@@ -25,20 +25,25 @@ except ImportError:
 # In-memory model cache to avoid repeated disk reads
 _MODEL_CACHE: Dict[str, "vosk.Model"] = {}
 
-# Lexical dictionaries for language scoring & scam detection
+# Lexical dictionaries for language scoring & scam detection (English, Hinglish, Hindi, Chhattisgarhi)
 SCAM_KEYWORDS_EN = {
     "police", "customs", "cbi", "arrest", "court", "warrant", "bank", "account",
     "kyc", "otp", "debit", "credit", "money", "laundering", "parcel", "narcotics",
     "drugs", "passports", "bail", "bond", "transfer", "urgent", "immediately",
     "disconnect", "inspector", "officer", "penalty", "charge", "verification",
     "anydesk", "teamviewer", "electricity", "bill", "power", "cut", "lock",
-    "blocked", "suspended", "security", "legal", "action", "order", "call", "service"
+    "blocked", "suspended", "security", "legal", "action", "order", "call", "service",
+    # Hinglish phonetic variants
+    "paisa", "rupaye", "bijli", "line", "khata", "thana", "band", "batao",
+    "bhejo", "karo", "kare", "kat", "pataw", "tor", "tola"
 }
 
 COMMON_WORDS_EN = {
     "this", "is", "from", "you", "are", "do", "not", "the", "and", "in", "to",
     "for", "your", "by", "have", "will", "be", "with", "hello", "sir", "madam",
-    "today", "now", "please", "speaking", "department", "international", "number"
+    "today", "now", "please", "speaking", "department", "international", "number",
+    # Hinglish grammar markers
+    "aapka", "hai", "nahi", "raat", "turant", "bol", "raha", "hoon", "se", "ko"
 }
 
 SCAM_KEYWORDS_HI = {
@@ -47,13 +52,18 @@ SCAM_KEYWORDS_HI = {
     "पैसे", "रुपये", "लांड्रिंग", "पार्सल", "ड्रग्स", "नारकोटिक्स", "पासपोर्ट",
     "बेल", "बांड", "ट्रांसफर", "तुरंत", "अभी", "डिस्कनेक्ट", "फोन", "इंस्पेक्टर",
     "अधिकारी", "पेनल्टी", "चालान", "सत्यापन", "एनीडेस्क", "बिजली", "बिल",
-    "काट", "बंद", "फ्रीज", "सुरक्षा", "कार्रवाई", "कानूनी", "अवैध"
+    "काट", "बंद", "फ्रीज", "सुरक्षा", "कार्रवाई", "कानूनी", "अवैध",
+    # Chhattisgarhi (CG) scam markers
+    "पईसा", "पइसा", "तोर", "तोला", "कट जाही", "कटही", "पटाव", "डारव", "भेजव",
+    "बताव", "झन", "संझा", "ककरो", "चरस", "गांजा", "महतारी"
 }
 
 COMMON_WORDS_HI = {
     "है", "हैं", "से", "का", "की", "के", "में", "पर", "को", "नहीं", "और",
     "यह", "वह", "किया", "गया", "रहा", "रहे", "रही", "बोल", "नमस्कार", "नमस्ते",
-    "सर", "मैडम", "आप", "आपका", "आपके", "हूँ", "हम", "दिए", "करें", "करो"
+    "सर", "मैडम", "आप", "आपका", "आपके", "हूँ", "हम", "दिए", "करें", "करो",
+    # Chhattisgarhi common tokens
+    "हस", "हंव", "हे", "नइ", "बर", "म", "ल", "आए", "गे", "दिखत", "लगाके", "छुवव"
 }
 
 def find_vosk_model(lang: str = "hi") -> Optional[Path]:

@@ -11,60 +11,93 @@ GENUINE_SAFETY_PATTERNS = [
     r"never\s+share\s+(?:your\s+)?(?:otp|pin|password)\b",
     r"bank\s+never\s+(?:calls\s+to\s+)?asks?\s+(?:for\s+)?otp\b",
     r"kisi\s+(?:ko|ke\s+saath)\s+share\s+na\s+kare[mn]?\b",
-    r"kisi\s+ko\s+na\s+bataye[mn]?\b",
+    r"kisi\s+ko\s+(?:bhi\s+)?(?:na|mat)\s+bataye[mn]?\b",
+    r"bank\s+kabhi\s+(?:bhi\s+)?otp\s+nahi\s+mangta\b",
     r"साझा\s+न\s+करें",
     r"किसी\s+को\s+न\s+बताएं",
     r"ओटीपी\s+साझा\s+न\s+करें",
     r"बैंक\s+कभी\s+भी\s+otp\s+नहीं\s+पूछता",
-    r"ककरो\s+ले\s+झन\s+बताव",
-    r"ककरो\s+ले\s+शेयर\s+झन\s+करव"
+    r"ककरो\s+ले\s+(?:शेयर\s+)?झन\s+बताव",
+    r"ककरो\s+ले\s+साझा\s+झन\s+करव",
+    r"बैंक\s+कभू\s+(?:घलो\s+)?otp\s+नइ\s+मांगय",
+    r"kakar\s+sang\s+jhan\s+share\s+karaw\b"
 ]
 
 # Fraudulent OTP demands (demanding customer send or tell the OTP to someone)
 FRAUDULENT_OTP_PATTERNS = [
     r"(?:share|send|tell|give|enter)\s+(?:your\s+)?(?:6\s*[-]?\s*digit\s+)?(?:otp|pin|cvv|password)\s+(?:to|with|on)\b",
-    r"otp\s+(?:batao|bataiye|send\s+karo|share\s+kare|dijiye)\b",
-    r"ओटीपी\s*(?:बताएं|दीजिए|भेजें|दर्ज\s+करें)\b",
-    r"otp\s+(?:बताव|डारव|भेजव)\b",
+    r"otp\s+(?:batao|bataiye|send\s+karo|share\s+kare|dijiye|forward\s+kare)\b",
+    r"apna\s+(?:6\s*[-]?\s*digit\s+)?(?:otp|pin|cvv)\s+batao\b",
+    r"ओटीपी\s*(?:बताएं|दीजिए|भेजें|दर्ज\s+करें)",
+    r"मोबाइल\s+म\s+आए\s+otp\s+ल\s+बताव",
+    r"ओटीपी\s*(?:बताव|डारव|भेजव)",
+    r"otp\s+(?:बताव|डारव|भेजव|la\s+bataw|daraw|bhejaw)",
     r"share\s+your\s+debit\s+card\s+cvv\b",
     r"card\s+ka\s+cvv\s+aur\s+otp\b"
 ]
 
-# Digital Arrest & Extortion
+# Digital Arrest & Extortion (English, Hindi, Hinglish, Chhattisgarhi)
 DIGITAL_ARREST_PATTERNS = [
     r"digital\s+arrest\b",
-    r"डिजिटल\s+अरेस्ट\b",
+    r"डिजिटल\s+अरेस्ट",
     r"stay\s+on\s+(?:the\s+)?(?:video\s+)?call\b",
     r"do\s+not\s+(?:disconnect|cut)\s+(?:this\s+)?call\b",
-    r"call\s+cut\s+mat\s+karna\b",
+    r"call\s+(?:cut|disconnect)\s+mat\s+karna\b",
+    r"video\s+call\s+(?:pe|par)\s+(?:bane\s+raho|raho)\b",
     r"phone\s+mat\s+katna\b",
     r"do\s+not\s+tell\s+anyone\b",
     r"kisi\s+ko\s+mat\s+batana\b",
     r"drugs\s+(?:and\s+passports?\s+)?in\s+(?:your\s+)?parcel\b",
+    r"parcel\s+me\s+(?:drugs|narcotics|passports?)\s+mila\b",
     r"narkotiks|contraband|nashi?li\s+dawa\b",
-    r"(?:mumbai|delhi)?\s*(?:police|crime\s+branch|cbi|customs)\s+(?:notice|warrant|interrogat)\b",
-    r"जमानत\s+राशि|clearance\s+bond\b"
+    r"(?:mumbai|delhi)?\s*(?:police|crime\s+branch|cbi|customs)\s+(?:notice|warrant|interrogat|se\s+bol\s+raha)\b",
+    r"arrest\s+warrant\s+(?:issue|nikla|jari)\s+hua\b",
+    r"bail\s+(?:security\s+)?bond\s+(?:transfer\s+karo|bhejo)\b",
+    r"जमानत\s+राशि|clearance\s+bond",
+    # Chhattisgarhi forms
+    r"थाना\s+ले\s+बोलत\s+हंव",
+    r"तोर\s+नाम\s+म\s+वारंट",
+    r"कॉल\s+ल\s+झन\s+काटव",
+    r"वीडियो\s+कॉल\s+म\s+बने\s+रहव",
+    r"पईसा\s+जमा\s+करव\s+नइ\s+ते\s+जेल",
+    r"तोर\s+पार्सल\s+म\s+(?:चरस|गांजा|ड्रग्स)",
+    r"thana\s+le\s+bolat\s+hanw\b",
+    r"tor\s+naam\s+ma\s+warrant\b",
+    r"call\s+la\s+jhan\s+kataw\b"
 ]
 
-# Fake KYC and Account Suspend Threats
+# Fake KYC and Account Suspend Threats (English, Hindi, Hinglish, Chhattisgarhi)
 FAKE_KYC_PATTERNS = [
     r"(?:account|a/c|yono|sim|debit\s+card)\s+(?:is\s+)?(?:suspended|blocked|deactivated|closed|sealed)\b",
-    r"खाता\s+(?:बंद|ब्लॉक|सील)\s+हो\s+गया\b",
-    r"account\s+block\s+ho\s+gaya\b",
+    r"खाता\s+(?:बंद|ब्लॉक|सील)\s+हो\s+गया",
+    r"account\s+(?:block|freeze|suspend)\s+ho\s+gaya\b",
     r"update\s+(?:your\s+)?kyc\s+immediately\b",
     r"kyc\s+update\s+kar(?:e|o)\b",
-    r"केवाईसी\s+(?:अपडेट|सत्यापन)\b",
+    r"केवाईसी\s+(?:अपडेट|सत्यापन)",
     r"electricity\s+(?:power\s+)?will\s+be\s+disconnected\s+tonight\b",
-    r"bijli\s+kaat\s+di\s+jayegi\b",
-    r"बिजली\s+काट\s+दी\s+जाएगी\b",
-    r"cspdcl\s+electricity\s+officer\b"
+    r"bijli\s+(?:line|connection)\s+(?:aaj\s+raat\s+)?(?:kaat\s+di\s+jayegi|kat\s+jayega|cut\s+ho\s+jayega)\b",
+    r"बिजली\s+(?:काट\s+दी\s+जाएगी|बिल\s+(?:न[इी]|नहीं)\s+भरे|लाइन\s+कट\s*जाही)",
+    r"लाइन\s+कट\s*जाही",
+    r"cspdcl\s+electricity\s+officer\b",
+    # Chhattisgarhi forms
+    r"तोर\s+(?:बिजली|लाइन)\s+कट\s*जाही",
+    r"तोर\s+बिजली",
+    r"बिल\s+(?:न[इी]|नहीं)\s+भरे",
+    r"बिल\s+तुरते\s+पटाव",
+    r"तोर\s+(?:बैंक\s+)?खाता\s+(?:बंद|सील|ब्लॉक)",
+    r"tor\s+bijli\s+line\s+kat\s*jahi\b",
+    r"bill\s+nai\s+bhare\s+has\b",
+    r"bill\s+turte\s+pataw\b",
+    r"tor\s+khata\s+band\s+howat\s+he\b"
 ]
 
 # Remote Access APKs
 REMOTE_ACCESS_PATTERNS = [
     r"\b(?:anydesk|quicksupport|rustdesk|teamviewer|zoho\s+assist)\b",
     r"एनीडेस्क|क्विक\s*सपोर्ट\b",
-    r"install\s+apk|download\s+apk\b"
+    r"install\s+apk|download\s+apk\b",
+    r"apk\s+(?:download|install)\s+kar(?:e|o|aw)\b",
+    r"screen\s+share\s+kar(?:e|o)\b"
 ]
 
 # Suspicious Link Patterns
@@ -75,12 +108,13 @@ SUSPICIOUS_LINK_PATTERNS = [
     r"\b[a-zA-Z0-9.-]+\.apk\b"
 ]
 
-# Urgency and Pressure Tactics
+# Urgency and Pressure Tactics (English, Hindi, Hinglish, Chhattisgarhi)
 URGENCY_PATTERNS = [
     r"\b(?:immediately|urgent(?:ly)?|within\s+2\s+hours?|tonight\s+at\s+9:30|before\s+deadline)\b",
-    r"\b(?:turant|aaj\s+raat|jaldi|aaj\s+hi|2\s+ghante\s+me)\b",
-    r"तुरंत|आज\s+रात|2\s+घंटे\s+में|जल्दी\b",
-    r"तुरते|आज\s+संझा\b"
+    r"\b(?:turant|aaj\s+raat|jaldi|aaj\s+hi|2\s+ghante\s+me|jald\s+se\s+jald)\b",
+    r"तुरंत|आज\s+रात|2\s+घंटे\s+में|जल्दी",
+    r"तुरते|आज\s+संझा|झन\s+देरी\s+करव|2\s+घंटा\s+म",
+    r"\b(?:turte|aaj\s+sanjha|jhan\s+deri\s+karaw)\b"
 ]
 
 def check_rules(text: str) -> dict:

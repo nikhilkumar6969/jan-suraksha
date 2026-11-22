@@ -3,7 +3,9 @@ const CallDetector = {
   samples: {
     fedex: "Hello, this is FedEx Courier Customer Support. An international parcel sent from London to Taiwan under your Aadhaar card has been seized by Mumbai Customs. It contains 5 passports and illegal narcotics drugs. You are placed under digital arrest.",
     arrest: "Main Crime Branch Mumbai Police se Senior Inspector bol raha hoon. Aapke khilaf Money Laundering aur arrest warrant jari hua hai. Phone cut mat karna, ghar ke andar raho aur turant 50000 rupaye bail security bond transfer karo.",
-    bank_kyc: "Namaste sir, main SBI customer care se bol raha hoon. Aapka YONO account aur ATM card aaj shaam 5 baje band ho jayega. Turant चालू rakhne ke liye AnyDesk app download kare aur screen share kare."
+    bank_kyc: "Namaste sir, main SBI customer care se bol raha hoon. Aapka YONO account aur ATM card aaj shaam 5 baje band ho jayega. Turant चालू rakhne ke liye AnyDesk app download kare aur screen share kare.",
+    cg_bijli: "नमस्कार, तोर बिजली बिल नइ भरे हस। आज संझा 9:30 बजे तोर घर के बिजली लाइन कट जाही। लाइन कटने ले बचाए बर तुरते 9827012345 म फोन लगाके पईसा पटाव।",
+    cg_police: "थाना कोतवाली रायपुर ले बोलत हंव। तोर नाम म गैर जमानती वारंट निकल गे हे। कॉल ल झन काटव, वीडियो कॉल म बने रहव अउ तुरते 40000 पईसा जमा करव नइ ते जेल भेज देबो।"
   },
 
   audioSamples: {
