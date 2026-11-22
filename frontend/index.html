@@ -290,7 +290,15 @@
             ऑफलाइन आवाज़ पहचान वोस्क (Vosk) से होती है। यदि मॉडल न हो तो बातचीत नीचे पेस्ट करें।
           </div>
 
-          <input type="file" id="callAudioFile" accept="audio/*" style="margin-bottom: var(--space-sm); font-size: var(--font-size-sm);" />
+          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: var(--space-sm);">
+            <input type="file" id="callAudioFile" accept="audio/*" style="font-size: var(--font-size-sm); flex: 1; min-width: 200px;" />
+            <button type="button" class="btn btn-secondary" id="btnMicRecordCall" style="padding: 6px 14px; font-size: var(--font-size-xs);">
+              🎤 <span id="micBtnText">माइक से बोलें</span>
+            </button>
+          </div>
+
+          <audio id="callAudioPlayer" controls style="display:none; width: 100%; margin: 6px 0 10px; height: 36px;"></audio>
+          <div id="callTranscribeStatus" style="display:none; margin: 6px 0; padding: 8px 12px; border-radius: 6px; background: #e0f2fe; color: #0369a1; font-size: 13px; font-weight: 600;"></div>
 
           <textarea class="scam-textarea" id="callTranscriptInput" placeholder="फ़ोन पर हुई बातचीत यहाँ लिखें (जैसे: 'मैं क्राइम ब्रांच से बोल रहा हूँ...')" data-i18n-attr="placeholder:call_paste_placeholder"></textarea>
 
@@ -304,8 +312,17 @@
           </div>
 
           <div style="margin-top: var(--space-md);">
+            <div style="font-size: var(--font-size-xs); font-weight: 700; color: var(--text-muted); margin-bottom: 4px;">
+              🎧 ऑडियो रिकॉर्डिंग सैंपल से सीधे टेस्ट करें (Offline Audio to Text):
+            </div>
+            <div class="sample-chips" style="margin-bottom: 10px;">
+              <span class="sample-chip" data-audio-sample="digital_arrest">🔊 Digital Arrest Call (.wav)</span>
+              <span class="sample-chip" data-audio-sample="bank_kyc">🔊 Bank KYC Block Call (.wav)</span>
+              <span class="sample-chip" data-audio-sample="fedex_customs">🔊 FedEx Customs Call (.wav)</span>
+            </div>
+
             <div style="font-size: var(--font-size-xs); font-weight: 700; color: var(--text-muted);">
-              कॉल ऑडियो / स्क्रिप्ट के उदाहरण:
+              या कॉल स्क्रिप्ट के उदाहरण पेस्ट करें:
             </div>
             <div class="sample-chips">
               <span class="sample-chip" data-call-sample="fedex">📦 Fake FedEx Courier Customs Call</span>

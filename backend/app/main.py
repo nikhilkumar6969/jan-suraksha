@@ -91,7 +91,7 @@ async def detect_call_endpoint(
         content = await audio.read()
         temp_path.write_bytes(content)
         try:
-            trans_res = transcribe_audio_file(temp_path)
+            trans_res = transcribe_audio_file(temp_path, lang=language or "hi")
             final_transcript = trans_res.get("text", "")
             notice = trans_res.get("notice", "")
         finally:
