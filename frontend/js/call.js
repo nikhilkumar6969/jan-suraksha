@@ -154,8 +154,9 @@ const CallDetector = {
       this.mediaRecorder.onstop = async () => {
         stream.getTracks().forEach(t => t.stop());
         if (this.audioChunks.length > 0) {
+          const ext = mimeType.includes('webm') ? 'webm' : (mimeType.includes('ogg') ? 'ogg' : 'wav');
           const blob = new Blob(this.audioChunks, { type: mimeType || 'audio/wav' });
-          const file = new File([blob], 'mic_record.wav', { type: blob.type });
+          const file = new File([blob], `mic_record.${ext}`, { type: blob.type });
           this.activeAudioFile = file;
 
           const audioPlayer = document.getElementById('callAudioPlayer');

@@ -56,3 +56,17 @@ def test_detect_call_api_with_audio_upload():
     assert len(data["transcript"]) > 0
     assert "confidence_percent" in data
     assert data["verdict"] in ["likely_scam", "unsure"]
+
+def test_prepare_16k_mono_wav_pyav():
+    """Verify PyAV universal decoding resamples to 16kHz mono PCM WAV."""
+    from backend.app.calls.transcribe import prepare_16k_mono_wav
+    in_p = Path("frontend/assets/samples/fedex_customs_call.wav")
+    out_p = Path("backend/data/test_fedex_16k.wav")
+    try:
+        ok = prepare_16k_mono_wav(in_p, out_p)
+        assert ok is True
+        assert out_p.exists()
+        assert out_p.stat().st_size > 44
+    finally:
+        if out_p.exists():
+            out_p.unlink()

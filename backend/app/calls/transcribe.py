@@ -101,51 +101,72 @@ def prewarm_models():
 
 def prepare_16k_mono_wav(input_path: Path, output_path: Path) -> bool:
     """
-    Decodes input audio (WAV, MP3, OGG, FLAC) and converts to 16kHz mono 16-bit PCM WAV.
-    Uses soundfile + scipy.
+    Decodes ANY input audio format (WebM, M4A, AAC, MP3, OGG, Opus, AMR, WAV, etc.)
+    and converts it to standard 16kHz mono 16-bit PCM WAV for Vosk ASR.
+    Primary decoder: PyAV (FFmpeg bindings) - handles all containers and codecs.
+    Fallback decoder: SoundFile + scipy / standard wave.
     """
+    # 1. Primary: PyAV (Universal multi-format decoder)
+    try:
+        import av
+        container = av.open(str(input_path))
+        audio_streams = [s for s in container.streams if s.type == 'audio']
+        if not audio_streams:
+            container.close()
+            raise ValueError("No audio streams found in file")
+
+        resampler = av.AudioResampler(format='s16', layout='mono', rate=16000)
+        frames_count = 0
+        with wave.open(str(output_path), 'wb') as out_wav:
+            out_wav.setnchannels(1)
+            out_wav.setsampwidth(2)
+            out_wav.setframerate(16000)
+            for frame in container.decode(audio=0):
+                for resampled in resampler.resample(frame):
+                    out_wav.writeframes(resampled.to_ndarray().tobytes())
+                    frames_count += 1
+        container.close()
+        if frames_count > 0 and output_path.exists() and output_path.stat().st_size > 44:
+            return True
+    except Exception as e:
+        logger.warning(f"PyAV audio decode fallback: {e}")
+
+    # 2. Secondary: SoundFile + Scipy
     try:
         import soundfile as sf
         import numpy as np
 
         data, sr = sf.read(str(input_path))
-        
-        # 1. Convert stereo/multichannel to mono
         if data.ndim > 1:
             data = data.mean(axis=1)
 
-        # 2. Resample to 16000 Hz if needed
         if sr != 16000:
             try:
                 import scipy.signal
                 num_samples = int(len(data) * 16000 / sr)
                 data = scipy.signal.resample(data, num_samples)
             except Exception:
-                # Simple linear interpolation fallback
                 old_indices = np.arange(len(data))
                 new_indices = np.linspace(0, len(data) - 1, int(len(data) * 16000 / sr))
                 data = np.interp(new_indices, old_indices, data)
 
-        # 3. Normalize & clamp to int16 PCM
         data_int16 = np.clip(data * 32767.0, -32768.0, 32767.0).astype(np.int16)
-        
-        # 4. Write as standard 16kHz mono 16-bit PCM WAV
         sf.write(str(output_path), data_int16, 16000, subtype='PCM_16')
         return True
     except Exception as e:
-        logger.warning(f"SoundFile conversion failed: {e}. Trying standard wave fallback.")
-        
-        # Fallback for already valid WAV files
-        try:
-            with wave.open(str(input_path), "rb") as wf_in:
-                if wf_in.getnchannels() == 1 and wf_in.getframerate() in [8000, 16000] and wf_in.getsampwidth() == 2:
-                    import shutil
-                    shutil.copyfile(str(input_path), str(output_path))
-                    return True
-        except Exception:
-            pass
+        logger.warning(f"SoundFile decode fallback: {e}")
 
-        return False
+    # 3. Tertiary: Standard WAV file copy
+    try:
+        with wave.open(str(input_path), "rb") as wf_in:
+            if wf_in.getnchannels() == 1 and wf_in.getframerate() in [8000, 16000] and wf_in.getsampwidth() == 2:
+                import shutil
+                shutil.copyfile(str(input_path), str(output_path))
+                return True
+    except Exception:
+        pass
+
+    return False
 
 def _run_vosk_recognition(wav_path: Path, model: "vosk.Model", sample_rate: int) -> str:
     """Run KaldiRecognizer on 16kHz mono WAV stream."""
