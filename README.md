@@ -18,6 +18,7 @@ Suraksha follows a strict three-zone decoupled architectural model:
 +-----------------------------------------------------------------------------------+
 |                            1. ON-DEVICE ZONE (100% OFFLINE)                       |
 |  - HTML5/CSS3/Vanilla JS PWA (Zero external CDNs, Zero 3P frameworks)             |
+|  - Native Android App (Kotlin, Room DB, BroadcastReceiver, Background AI Engine)  |
 |  - Offline Text Normalizer & Multi-lingual Rule Checks (EN / HI / Hinglish)       |
 |  - Fake-QR & upi:// URI Decoder (OpenCV QRCodeDetector running offline)           |
 |  - Scam Stage Progression Tracker (Authority -> Urgency -> Sensitive -> Payment)  |
@@ -195,6 +196,55 @@ pytest -v
 - **Chhattisgarhi Localization:** All Chhattisgarhi translations are marked `"needs review by a native speaker"` for regional dialect verification.
 - **Microphone Streaming WebSocket:** Live streaming call transcription is a stretch goal; file uploads and direct transcript pastes are fully supported in v1.0.
 - **Audio Codec Fallback:** Compressed non-WAV formats (e.g. M4A) require local `ffmpeg` on the host machine to convert to 16kHz mono PCM.
+
+---
+
+## 📱 Native Android Application: Offline Automatic SMS Spam Detection
+
+Suraksha includes an idiomatic native Android application in `android/` providing background SMS interception, on-device ML classification, Room database storage, and high-priority fraud alerts.
+
+### Android Architecture Overview
+```
+Incoming SMS Broadcast (SMS_RECEIVED)
+       │
+       ▼
+IncomingSmsReceiver (goAsync + Coroutines)
+       │  (Extracts sender & joins multipart chunks)
+       ▼
+TextNormalizer (Devanagari/Latin NFC, Hinglish phonetic mapping)
+       │
+       ▼
+OfflineSmsClassifier (TF-IDF Word 1-2 + Char 2-5 + Calibrated Logistic Regression)
+       ├──> Evaluates RuleGuardEngine (Genuine Bank OTP guardrail & urgent threat patterns)
+       │
+       ▼
+SmsRepository & Room Database (SmsClassificationEntity stored locally)
+       │
+       ├── If SAFE: Quietly logged in Room DB (no intrusive notification)
+       │
+       └── If SPAM: NotificationHelper triggers High-Priority Alert
+                      ├── Shows sender & safe masked preview (links un-clickable)
+                      ├── Action: "Mark as Safe"
+                      └── Action: "Report Spam"
+```
+
+### Android Permissions & Default SMS Role
+- **`android.permission.RECEIVE_SMS`**: Intercepts and parses incoming SMS messages automatically in background.
+- **`android.permission.POST_NOTIFICATIONS`**: Required on Android 13+ (API 33+) to display high-priority fraud warning notifications.
+- **`android.permission.RECEIVE_BOOT_COMPLETED`**: Re-activates background interception after phone reboot.
+
+#### Is Default SMS App Status Required?
+- **No, not for detection and notification:** On Android, any application granted `RECEIVE_SMS` can intercept `android.provider.Telephony.SMS_RECEIVED`, classify incoming SMS messages in the background, alert the user via notifications, and maintain a local fraud log without replacing the default messaging app.
+- **When is Default SMS App required?** Only if the app intends to silently suppress or delete SMS messages so they never reach the native SMS inbox (`SMS_DELIVER_ACTION`). Suraksha purposefully does not suppress messages silently to respect user autonomy and prevent unintended message loss.
+
+### How to Build and Run in Android Studio
+1. Open **Android Studio** (Hedgehog / Iguana / Jellyfish / Ladybug).
+2. Select **File -> Open...** and navigate to `c:\project\hackasol\android`.
+3. Allow Gradle to sync dependencies (`androidx.room`, `kotlinx.coroutines`, `material3`).
+4. Select an Android emulator (API 26+) or connected physical device.
+5. Click **Run 'app'** (`Shift + F10`).
+6. Tap **"Grant SMS Permission"** when prompted.
+7. Test using the built-in SMS simulator on the dashboard or by sending an SMS from emulator extended controls (`... -> Phone -> SMS`).
 
 ---
 
