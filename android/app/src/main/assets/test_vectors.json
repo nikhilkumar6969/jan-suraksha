@@ -1,0 +1,27 @@
+[
+  {
+    "text": "URGENT: CSPDCL Electricity officer notice. Your electricity power will be disconnected tonight at 9:30 PM due to unpaid bill of Rs 1,450. Call officer at 9876543210 immediately.",
+    "expected_class": "SPAM",
+    "prob_scam": 0.979
+  },
+  {
+    "text": "582910 is your secret One Time Password (OTP) for online purchase of Rs 450 at Amazon. DO NOT SHARE WITH ANYONE. Bank never calls to ask OTP.",
+    "expected_class": "SAFE",
+    "prob_scam": 0.0295
+  },
+  {
+    "text": "CBI Cyber Crime Cell Notice: You are placed under DIGITAL ARREST. Do not disconnect this call or tell anyone. Pay clearance bond immediately.",
+    "expected_class": "SPAM",
+    "prob_scam": 0.9508
+  },
+  {
+    "text": "Hey Ramesh, are you attending the gram panchayat meeting tomorrow morning in Raipur?",
+    "expected_class": "SAFE",
+    "prob_scam": 0.0215
+  },
+  {
+    "text": "Dear user, aapka SBI YONO account block ho gaya hai. KYC update karne ke liye turant link bit.ly/sbi-kyc par click kare.",
+    "expected_class": "SPAM",
+    "prob_scam": 0.9782
+  }
+]

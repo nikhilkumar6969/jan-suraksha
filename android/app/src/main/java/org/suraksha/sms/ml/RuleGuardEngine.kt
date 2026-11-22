@@ -1,0 +1,120 @@
+package org.suraksha.sms.ml
+
+import java.util.regex.Pattern
+
+object RuleGuardEngine {
+
+    // Genuine bank warning patterns (banks explicitly warning NOT to share)
+    private val GENUINE_SAFETY_PATTERNS = listOf(
+        Pattern.compile("do\\s+not\\s+share\\s+(?:this\\s+)?(?:otp|code|password)\\b", Pattern.CASE_INSENSITIVE),
+        Pattern.compile("never\\s+share\\s+(?:your\\s+)?(?:otp|pin|password)\\b", Pattern.CASE_INSENSITIVE),
+        Pattern.compile("bank\\s+never\\s+(?:calls\\s+to\\s+)?asks?\\s+(?:for\\s+)?otp\\b", Pattern.CASE_INSENSITIVE),
+        Pattern.compile("kisi\\s+(?:ko|ke\\s+saath)\\s+share\\s+na\\s+kare[mn]?\\b", Pattern.CASE_INSENSITIVE),
+        Pattern.compile("kisi\\s+ko\\s+na\\s+bataye[mn]?\\b", Pattern.CASE_INSENSITIVE),
+        Pattern.compile("साझा\\s+न\\s+करें", Pattern.CASE_INSENSITIVE),
+        Pattern.compile("किसी\\s+को\\s+न\\s+बताएं", Pattern.CASE_INSENSITIVE),
+        Pattern.compile("ककरो\\s+ले\\s+झन\\s+बताव", Pattern.CASE_INSENSITIVE)
+    )
+
+    // Fraudulent OTP demands
+    private val FRAUDULENT_OTP_PATTERNS = listOf(
+        Pattern.compile("(?:share|send|tell|give|enter)\\s+(?:your\\s+)?(?:6\\s*[-]?\\s*digit\\s+)?(?:otp|pin|cvv|password)\\s+(?:to|with|on)\\b", Pattern.CASE_INSENSITIVE),
+        Pattern.compile("otp\\s+(?:batao|bataiye|send\\s+karo|share\\s+kare|dijiye)\\b", Pattern.CASE_INSENSITIVE),
+        Pattern.compile("ओटीपी\\s*(?:बताएं|दीजिए|भेजें|दर्ज\\s+करें)\\b", Pattern.CASE_INSENSITIVE),
+        Pattern.compile("card\\s+ka\\s+cvv\\s+aur\\s+otp\\b", Pattern.CASE_INSENSITIVE)
+    )
+
+    // Digital Arrest Threats
+    private val DIGITAL_ARREST_PATTERNS = listOf(
+        Pattern.compile("digital\\s+arrest\\b", Pattern.CASE_INSENSITIVE),
+        Pattern.compile("डिजिटल\\s+अरेस्ट\\b", Pattern.CASE_INSENSITIVE),
+        Pattern.compile("stay\\s+on\\s+(?:the\\s+)?(?:video\\s+)?call\\b", Pattern.CASE_INSENSITIVE),
+        Pattern.compile("do\\s+not\\s+(?:disconnect|cut)\\s+(?:this\\s+)?call\\b", Pattern.CASE_INSENSITIVE),
+        Pattern.compile("drugs\\s+(?:and\\s+passports?\\s+)?in\\s+(?:your\\s+)?parcel\\b", Pattern.CASE_INSENSITIVE),
+        Pattern.compile("clearance\\s+bond|जमानत\\s+राशि", Pattern.CASE_INSENSITIVE)
+    )
+
+    // Fake KYC & Disconnection Threats
+    private val FAKE_KYC_PATTERNS = listOf(
+        Pattern.compile("(?:account|a/c|yono|sim|debit\\s+card)\\s+(?:is\\s+)?(?:suspended|blocked|deactivated|closed|sealed)\\b", Pattern.CASE_INSENSITIVE),
+        Pattern.compile("electricity\\s+(?:power\\s+)?will\\s+be\\s+disconnected\\s+tonight\\b", Pattern.CASE_INSENSITIVE),
+        Pattern.compile("bijli\\s+kaat\\s+di\\s+jayegi\\b", Pattern.CASE_INSENSITIVE),
+        Pattern.compile("बिजली\\s+काट\\s+दी\\s+जाएगी\\b", Pattern.CASE_INSENSITIVE),
+        Pattern.compile("cspdcl\\s+electricity\\s+officer\\b", Pattern.CASE_INSENSITIVE),
+        Pattern.compile("update\\s+(?:your\\s+)?kyc\\s+immediately\\b", Pattern.CASE_INSENSITIVE)
+    )
+
+    // Suspicious Shortlinks & Fake Domains
+    private val SUSPICIOUS_LINK_PATTERNS = listOf(
+        Pattern.compile("\\b(?:bit\\.ly|tinyurl\\.com|is\\.gd|cutt\\.ly|t\\.co)/\\S+", Pattern.CASE_INSENSITIVE),
+        Pattern.compile("\\b\\w+[-_](?:kyc|sbi|yono|cspdcl|police|customs)\\.(?:top|vip|xyz|cc|site|live|online|in)\\b", Pattern.CASE_INSENSITIVE),
+        Pattern.compile("\\b[a-zA-Z0-9.-]+\\.apk\\b", Pattern.CASE_INSENSITIVE)
+    )
+
+    data class RuleCheckResult(
+        val isGenuineBankAlert: Boolean,
+        val isExplicitOtpDemand: Boolean,
+        val isDigitalArrest: Boolean,
+        val isFakeKycOrBillCut: Boolean,
+        val hasSuspiciousLink: Boolean,
+        val matchedRules: List<String>
+    )
+
+    fun evaluate(normalizedText: String): RuleCheckResult {
+        var isGenuineAlert = false
+        var isOtpDemand = false
+        var isDigitalArrest = false
+        var isFakeKyc = false
+        var hasSuspiciousLink = false
+        val matched = mutableListOf<String>()
+
+        for (p in GENUINE_SAFETY_PATTERNS) {
+            if (p.matcher(normalizedText).find()) {
+                isGenuineAlert = true
+                matched.add("GENUINE_BANK_GUARD")
+                break
+            }
+        }
+
+        for (p in FRAUDULENT_OTP_PATTERNS) {
+            if (p.matcher(normalizedText).find()) {
+                isOtpDemand = true
+                matched.add("EXPLICIT_OTP_THEFT")
+                break
+            }
+        }
+
+        for (p in DIGITAL_ARREST_PATTERNS) {
+            if (p.matcher(normalizedText).find()) {
+                isDigitalArrest = true
+                matched.add("DIGITAL_ARREST_EXTORTION")
+                break
+            }
+        }
+
+        for (p in FAKE_KYC_PATTERNS) {
+            if (p.matcher(normalizedText).find()) {
+                isFakeKyc = true
+                matched.add("FAKE_KYC_DISCONNECTION")
+                break
+            }
+        }
+
+        for (p in SUSPICIOUS_LINK_PATTERNS) {
+            if (p.matcher(normalizedText).find()) {
+                hasSuspiciousLink = true
+                matched.add("SUSPICIOUS_PHISHING_LINK")
+                break
+            }
+        }
+
+        return RuleCheckResult(
+            isGenuineBankAlert = isGenuineAlert,
+            isExplicitOtpDemand = isOtpDemand,
+            isDigitalArrest = isDigitalArrest,
+            isFakeKycOrBillCut = isFakeKyc,
+            hasSuspiciousLink = hasSuspiciousLink,
+            matchedRules = matched
+        )
+    }
+}

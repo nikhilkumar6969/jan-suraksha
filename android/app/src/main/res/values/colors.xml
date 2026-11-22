@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary_teal">#0E6E66</color>
+    <color name="primary_teal_dark">#094E48</color>
+    <color name="primary_teal_light">#169389</color>
+    <color name="primary_teal_soft">#E6F4F2</color>
+    
+    <color name="accent_saffron">#D97706</color>
+    <color name="accent_saffron_soft">#FEF3C7</color>
+    
+    <color name="color_danger">#DC2626</color>
+    <color name="color_danger_bg">#FEE2E2</color>
+    <color name="color_safe">#15803D</color>
+    <color name="color_safe_bg">#DCFCE7</color>
+    
+    <color name="bg_screen">#F4F7F6</color>
+    <color name="bg_card">#FFFFFF</color>
+    <color name="text_main">#13221F</color>
+    <color name="text_muted">#5E736F</color>
+    <color name="border_color">#E2E8E5</color>
+</resources>

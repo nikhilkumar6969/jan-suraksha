@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Suraksha SMS Shield</string>
+    <string name="title_dashboard">Offline AI SMS Spam Detection</string>
+    <string name="status_model_active">Offline AI Engine: Active (Suraksha-Scam-LR-v1.0)</string>
+    <string name="status_model_loading">Offline AI Engine: Loading...</string>
+    <string name="stat_total">Total Scanned</string>
+    <string name="stat_spam">Spam Detected</string>
+    <string name="stat_safe">Safe Messages</string>
+    <string name="btn_request_permission">Grant SMS Permission</string>
+    <string name="permission_granted">SMS Monitoring: Active ✓</string>
+    <string name="permission_needed">SMS Permission Required (Tap to Enable)</string>
+    <string name="tab_all">All</string>
+    <string name="tab_spam">Spam</string>
+    <string name="tab_safe">Safe</string>
+    <string name="btn_clear_history">Clear History</string>
+    <string name="action_mark_safe">Mark as Safe</string>
+    <string name="action_mark_spam">Mark as Spam</string>
+    <string name="empty_history">No incoming SMS messages analyzed yet.\nNew incoming SMS will be automatically classified offline.</string>
+</resources>

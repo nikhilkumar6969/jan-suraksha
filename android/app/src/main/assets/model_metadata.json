@@ -1,0 +1,14 @@
+{
+  "model_id": "suraksha_sms_v1",
+  "name": "Suraksha Offline SMS Classifier",
+  "format": "JSON_TFIDF_LOGREG",
+  "classes": [
+    "SAFE",
+    "SPAM"
+  ],
+  "total_word_features": 7752,
+  "total_char_features": 24912,
+  "total_features": 32664,
+  "training_date": "2026-11-22",
+  "offline_capable": true
+}
