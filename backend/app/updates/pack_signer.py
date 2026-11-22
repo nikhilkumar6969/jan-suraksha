@@ -5,7 +5,7 @@ Produces tamper-evident rule pack and confirmed indicator blacklist.
 
 import json
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 import nacl.signing
 import nacl.encoding
 from app.reports.database import get_connection
@@ -45,7 +45,7 @@ def generate_signed_update_pack() -> dict:
 
     payload_data = {
         "pack_version": "2026.11.22-v1",
-        "released_at": datetime.utcnow().strftime("%Y-%m-%d %H:%M:%SZ"),
+        "released_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%SZ"),
         "model_version": "Suraksha-Scam-LR-v1.0",
         "rules_version": "rules-2026-v2",
         "confirmed_blacklist": blacklist

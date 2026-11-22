@@ -7,7 +7,7 @@ Anonymous Report Ingestion and Abuse Prevention Service
 """
 
 import hashlib
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from app.reports.database import get_connection
 
 DEFAULT_CONFIRMATION_THRESHOLD = 3
@@ -30,7 +30,7 @@ def submit_anonymous_report(scam_type: str, district: str, raw_indicator: str, r
     cursor = conn.cursor()
 
     # 1. Rate Limiting Check: max reports per device in past 1 hour
-    one_hour_ago = (datetime.utcnow() - timedelta(hours=1)).strftime("%Y-%m-%d %H:%M:%S")
+    one_hour_ago = (datetime.now(timezone.utc) - timedelta(hours=1)).strftime("%Y-%m-%d %H:%M:%S")
     cursor.execute("""
         SELECT COUNT(*) as cnt FROM reports 
         WHERE device_hash = ? AND created_at >= ?
@@ -45,7 +45,7 @@ def submit_anonymous_report(scam_type: str, district: str, raw_indicator: str, r
         }
 
     # 2. Deduplication Check: Same device reporting same indicator in past 24 hours
-    day_ago = (datetime.utcnow() - timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S")
+    day_ago = (datetime.now(timezone.utc) - timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S")
     cursor.execute("""
         SELECT id FROM reports 
         WHERE device_hash = ? AND indicator_hash = ? AND created_at >= ?
@@ -80,7 +80,7 @@ def submit_anonymous_report(scam_type: str, district: str, raw_indicator: str, r
 
     is_confirmed = distinct_devices >= confirmation_n
     status = "Confirmed" if is_confirmed else "Unconfirmed"
-    confirmed_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S") if is_confirmed else None
+    confirmed_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S") if is_confirmed else None
 
     if existing_indicator:
         cursor.execute("""

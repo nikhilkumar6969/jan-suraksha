@@ -5,7 +5,7 @@ Policy Dashboard Analytics for District Administration & Banks
 - Filters by district and time window
 """
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from app.reports.database import get_connection
 
 PRIVACY_K_MIN = 5
@@ -26,11 +26,11 @@ def get_dashboard_metrics(district: str = "ALL", time_filter: str = "all") -> di
     time_clause = ""
     time_params = []
     if time_filter == "7d":
-        since = (datetime.utcnow() - timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S")
+        since = (datetime.now(timezone.utc) - timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S")
         time_clause = "AND r.created_at >= ?"
         time_params.append(since)
     elif time_filter == "30d":
-        since = (datetime.utcnow() - timedelta(days=30)).strftime("%Y-%m-%d %H:%M:%S")
+        since = (datetime.now(timezone.utc) - timedelta(days=30)).strftime("%Y-%m-%d %H:%M:%S")
         time_clause = "AND r.created_at >= ?"
         time_params.append(since)
 
