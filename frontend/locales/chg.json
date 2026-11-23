@@ -131,5 +131,18 @@
   "chk_stmt_desc": "जेमा बिना बताए पइसा कटे के इंदराज होय",
   "report_type_label": "स्कैम के प्रकार:",
   "report_district_label": "जिला (छत्तीसगढ़):",
-  "report_indicator_label": "संदिग्ध नंबर, लिंक या UPI आईडी (Indicator):"
+  "report_indicator_label": "संदिग्ध नंबर, लिंक या UPI आईडी (Indicator):",
+  "helpline_modal_badge": "आपातकालीन वित्तीय साइबर हेल्पलाइन",
+  "helpline_modal_title": "1930 राष्ट्रीय साइबर हेल्पलाइन",
+  "helpline_modal_subtext": "गृह मंत्रालय (MHA / I4C) • 24x7 Toll-Free",
+  "helpline_modal_copy_btn": "कॉपी करव",
+  "helpline_modal_copied": "✓ कॉपी हो गे!",
+  "helpline_modal_toast_copied": "✓ 1930 नंबर क्लिपबोर्ड म कॉपी हो गे",
+  "helpline_modal_laptop_alert": "लैपटॉप/कंप्यूटर उपयोगकर्ता: कंप्यूटर ले सीधा फोन नइ लागे। अपन मोबाइल या लैंडलाइन ले तुरते 1930 म फोन लगावव।",
+  "helpline_modal_step1": "गोल्डन ऑवर (1-2 घंटा): ठगी होए के तुरते बाद फोन करव ताकि ठग के बैंक खाता म पइसा तुरंत रुकवा (फ्रीज) सके।",
+  "helpline_modal_step2": "SMS UTR नंबर राखव: बैंक ले पइसा कटे के SMS म 12-अंक के UTR / Ref No. अउ अपन खाता नंबर तैयार राखव।",
+  "helpline_modal_step3": "साइबर पोर्टल: 1930 म फोन करे के बाद cybercrime.gov.in म औपचारिक शिकायत जरूर दर्ज करव।",
+  "helpline_modal_btn_checklist": "थाना/बैंक आवेदन प्रारूप खोलव",
+  "helpline_modal_btn_portal": "cybercrime.gov.in खोलव",
+  "helpline_modal_btn_try_pc": "📞 कंप्यूटर ऐप (Phone Link / Skype) ले फोन लगाए के कोसिस करव"
 }

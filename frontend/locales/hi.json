@@ -130,5 +130,18 @@
   "chk_stmt_desc": "जिसमें अवैध निकासी दर्ज हो",
   "report_type_label": "स्कैम का प्रकार (Scam Type):",
   "report_district_label": "जिला (Chhattisgarh District):",
-  "report_indicator_label": "संदिग्ध नंबर, लिंक या UPI आईडी (Indicator):"
+  "report_indicator_label": "संदिग्ध नंबर, लिंक या UPI आईडी (Indicator):",
+  "helpline_modal_badge": "आपातकालीन वित्तीय साइबर हेल्पलाइन",
+  "helpline_modal_title": "1930 राष्ट्रीय साइबर हेल्पलाइन",
+  "helpline_modal_subtext": "गृह मंत्रालय (MHA / I4C) • 24x7 Toll-Free",
+  "helpline_modal_copy_btn": "कॉपी करें",
+  "helpline_modal_copied": "✓ कॉपी हुआ!",
+  "helpline_modal_toast_copied": "✓ 1930 नंबर क्लिपबोर्ड में कॉपी हो गया",
+  "helpline_modal_laptop_alert": "लैपटॉप/डेस्कटॉप उपयोगकर्ता: कंप्यूटर से सीधे कॉल नहीं होती। कृपया तुरंत अपने मोबाइल फोन या लैंडलाइन से 1930 डायल करें।",
+  "helpline_modal_step1": "गोल्डन ऑवर (1-2 घंटे): ठगी होने के तुरंत बाद कॉल करें ताकि ठग के बैंक खाते में पैसा फ्रीज (Lien) कराया जा सके।",
+  "helpline_modal_step2": "SMS UTR नंबर रखें: बैंक से पैसे कटने वाले SMS का 12-अंकों का UTR / Ref No. और अपना खाता नंबर तैयार रखें।",
+  "helpline_modal_step3": "साइबर पोर्टल: 1930 पर कॉल के बाद cybercrime.gov.in पर औपचारिक ऑनलाइन शिकायत अवश्य दर्ज करें।",
+  "helpline_modal_btn_checklist": "थाना/बैंक आवेदन प्रारूप खोलें",
+  "helpline_modal_btn_portal": "cybercrime.gov.in खोलें",
+  "helpline_modal_btn_try_pc": "📞 कंप्यूटर ऐप (Phone Link / Skype) से कॉल करने का प्रयास करें"
 }

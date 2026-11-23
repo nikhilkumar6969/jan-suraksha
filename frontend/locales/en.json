@@ -130,5 +130,18 @@
   "chk_stmt_desc": "Proof of unauthorized deduction from your bank or wallet",
   "report_type_label": "Scam Type:",
   "report_district_label": "District (Chhattisgarh):",
-  "report_indicator_label": "Suspicious Number, Link, or UPI ID (Indicator):"
+  "report_indicator_label": "Suspicious Number, Link, or UPI ID (Indicator):",
+  "helpline_modal_badge": "Emergency Financial Cyber Helpline",
+  "helpline_modal_title": "1930 National Cyber Helpline",
+  "helpline_modal_subtext": "Ministry of Home Affairs (MHA / I4C) • 24x7 Toll-Free",
+  "helpline_modal_copy_btn": "Copy Number",
+  "helpline_modal_copied": "✓ Copied!",
+  "helpline_modal_toast_copied": "✓ 1930 helpline copied to clipboard",
+  "helpline_modal_laptop_alert": "Laptop/Desktop Notice: Direct cellular calling is not supported on PC. Please dial 1930 immediately from your mobile phone or landline.",
+  "helpline_modal_step1": "Golden Hour (1–2 hrs): Call immediately after fraud so cyber police can freeze (lien) the stolen funds in the scammer's bank account.",
+  "helpline_modal_step2": "Keep UTR Number Ready: Have the 12-digit UTR / Ref number from your bank's debit SMS and your account number ready.",
+  "helpline_modal_step3": "Official Cyber Portal: After calling 1930, submit the formal incident details on cybercrime.gov.in.",
+  "helpline_modal_btn_checklist": "Open Police Complaint Format",
+  "helpline_modal_btn_portal": "Open cybercrime.gov.in",
+  "helpline_modal_btn_try_pc": "📞 Try calling via PC App (Phone Link / Skype)"
 }

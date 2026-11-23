@@ -209,10 +209,14 @@ window.App = {
             document.execCommand('copy');
             document.body.removeChild(ta);
           }
-          if (copyText) copyText.textContent = '✓ कॉपी हुआ!';
-          this.showToast('✓ 1930 नंबर क्लिपबोर्ड में कॉपी हो गया');
+          const copiedLabel = window.I18n ? window.I18n.t('helpline_modal_copied', '✓ Copied!') : '✓ Copied!';
+          const defaultLabel = window.I18n ? window.I18n.t('helpline_modal_copy_btn', 'Copy Number') : 'Copy Number';
+          const toastMsg = window.I18n ? window.I18n.t('helpline_modal_toast_copied', '✓ 1930 copied to clipboard') : '✓ 1930 copied to clipboard';
+
+          if (copyText) copyText.textContent = copiedLabel;
+          this.showToast(toastMsg);
           setTimeout(() => {
-            if (copyText) copyText.textContent = 'कॉपी करें';
+            if (copyText) copyText.textContent = defaultLabel;
           }, 2500);
         } catch (err) {
           console.warn('Clipboard write failed:', err);
