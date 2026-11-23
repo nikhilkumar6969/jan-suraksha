@@ -134,7 +134,15 @@ def detect_sms_header_endpoint(req: SmsHeaderCheckRequest):
         "explanation": pipeline_eval.get("explanation", header_eval.get("explanation"))
     }
 
-# 1c. Offline Headers Registry List Endpoint
+# 1c. Official Communication Verification Engine (OCVE) Endpoint
+@app.post("/api/detect/ocve")
+def verify_ocve_endpoint(req: MessageCheckRequest):
+    from app.detect.ocve import verify_communication
+    if not req.text.strip() and not (req.sender and req.sender.strip()):
+        raise HTTPException(status_code=400, detail="Text or sender must be provided")
+    return verify_communication(text=req.text, sender=req.sender, user_lang=req.language or "hi")
+
+# 1d. Offline Headers Registry List Endpoint
 @app.get("/api/detect/sms-headers-db")
 def get_sms_headers_db_endpoint():
     from app.detect.trai_header import load_headers_registry
@@ -146,7 +154,8 @@ async def detect_call_endpoint(
     audio: Optional[UploadFile] = File(None),
     transcript: Optional[str] = Form(None),
     language: Optional[str] = Form("hi"),
-    call_lang: Optional[str] = Form("auto")
+    call_lang: Optional[str] = Form("auto"),
+    mode: Optional[str] = Form("balanced")
 ):
     final_transcript = ""
     notice = ""
@@ -165,19 +174,23 @@ async def detect_call_endpoint(
             target_lang = call_lang or "auto"
             whisper_target_lang = None if target_lang == "auto" else target_lang
 
-            # 1. Primary: Whisper Medium (faster-whisper) offline speech-to-text
+            # 1. Primary: Configurable Offline Speech-to-Text (Balanced / Accuracy / Speed)
             try:
                 whisper_res = transcribe_audio(
                     audio_input=content,
                     filename=audio.filename or "call_recording.wav",
-                    language=whisper_target_lang
+                    language=whisper_target_lang,
+                    mode=mode or "balanced"
                 )
                 if whisper_res.get("success") and whisper_res.get("text"):
                     final_transcript = whisper_res["text"].strip()
                     lang_label = whisper_res.get("language") or target_lang
-                    notice = f"OpenAI Whisper Medium Offline Engine (100% On-Device • {lang_label})"
+                    proc_time = whisper_res.get("processing_time", 0.0)
+                    rtf_val = whisper_res.get("rtf", 0.0)
+                    engine_label = whisper_res.get("engine") or "Whisper Offline"
+                    notice = f"{engine_label} (100% On-Device • {lang_label} • {proc_time}s • RTF {rtf_val}x)"
             except Exception as w_err:
-                logger.warning(f"Whisper Medium call transcribe fallback: {w_err}")
+                logger.warning(f"Whisper call transcribe fallback: {w_err}")
 
             # 2. Secondary: Sherpa-ONNX offline engine (Whisper or Zipformer), with Vosk fallback
             if not final_transcript:
@@ -221,12 +234,13 @@ async def detect_call_endpoint(
         analysis["transcription_notice"] = notice
     return analysis
 
-# Whisper Medium Offline Speech-to-Text Endpoint (100% Local Inference)
+# Multi-Mode Offline Speech-to-Text Endpoint (100% Local Inference)
 @app.post("/api/transcribe")
 async def transcribe_endpoint(
     audio: Optional[UploadFile] = File(None),
     file: Optional[UploadFile] = File(None),
-    language: Optional[str] = Form(None)
+    language: Optional[str] = Form(None),
+    mode: Optional[str] = Form("balanced")
 ):
     upload_file = audio or file
     if not upload_file:
@@ -238,7 +252,12 @@ async def transcribe_endpoint(
                 "text": "",
                 "language": "",
                 "language_probability": 0.0,
-                "duration": 0.0
+                "duration": 0.0,
+                "processing_time": 0.0,
+                "rtf": 0.0,
+                "mode": mode or "balanced",
+                "model": "",
+                "engine": ""
             }
         )
 
@@ -254,7 +273,12 @@ async def transcribe_endpoint(
                 "text": "",
                 "language": "",
                 "language_probability": 0.0,
-                "duration": 0.0
+                "duration": 0.0,
+                "processing_time": 0.0,
+                "rtf": 0.0,
+                "mode": mode or "balanced",
+                "model": "",
+                "engine": ""
             }
         )
 
@@ -267,14 +291,20 @@ async def transcribe_endpoint(
                 "text": "",
                 "language": "",
                 "language_probability": 0.0,
-                "duration": 0.0
+                "duration": 0.0,
+                "processing_time": 0.0,
+                "rtf": 0.0,
+                "mode": mode or "balanced",
+                "model": "",
+                "engine": ""
             }
         )
 
     result = transcribe_audio(
         audio_input=content,
         filename=filename,
-        language=language
+        language=language,
+        mode=mode or "balanced"
     )
 
     status_code = 200 if result.get("success") else 400

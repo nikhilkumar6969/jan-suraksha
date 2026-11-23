@@ -17,6 +17,11 @@ const WhisperSTT = {
     const btnDownload = document.getElementById('btnSttDownload');
     const btnClear = document.getElementById('btnSttClear');
     const btnSendToDetector = document.getElementById('btnSttSendToDetector');
+    const engineModeSelect = document.getElementById('sttEngineModeSelect');
+
+    if (engineModeSelect) {
+      engineModeSelect.addEventListener('change', (e) => this.handleModeChange(e.target.value));
+    }
 
     if (fileInput) {
       fileInput.addEventListener('change', (e) => this.handleFileSelect(e));
@@ -49,6 +54,16 @@ const WhisperSTT = {
     if (btnSendToDetector) {
       btnSendToDetector.addEventListener('click', () => this.sendToFraudDetector());
     }
+  },
+
+  handleModeChange(mode) {
+    const badge = document.getElementById('sttActiveModeBadge');
+    const titles = {
+      'balanced': 'Balanced (Whisper Small)',
+      'accuracy': 'Accuracy (Whisper Medium)',
+      'speed': 'Speed (Sherpa-ONNX Tiny)'
+    };
+    if (badge) badge.textContent = titles[mode] || 'Balanced Mode';
   },
 
   handleFileSelect(event) {
@@ -195,10 +210,23 @@ const WhisperSTT = {
 
     const langSelect = document.getElementById('sttLanguageSelect');
     const langValue = langSelect ? langSelect.value : 'auto';
+    const modeSelect = document.getElementById('sttEngineModeSelect');
+    const modeValue = modeSelect ? modeSelect.value : 'balanced';
 
     const processingBox = document.getElementById('sttProcessingBox');
+    const procTitle = document.getElementById('sttProcessingTitle');
     const resultCard = document.getElementById('sttResultCard');
     const btnStart = document.getElementById('btnStartTranscription');
+
+    if (procTitle) {
+      if (modeValue === 'accuracy') {
+        procTitle.textContent = 'Whisper Medium (Accuracy) मॉडल प्रोसेस कर रहा है...';
+      } else if (modeValue === 'speed') {
+        procTitle.textContent = 'Sherpa-ONNX Tiny (Speed) मॉडल प्रोसेस कर रहा है...';
+      } else {
+        procTitle.textContent = 'Whisper Small (Balanced) मॉडल प्रोसेस कर रहा है...';
+      }
+    }
 
     if (processingBox) processingBox.style.display = 'block';
     if (resultCard) resultCard.style.display = 'none';
@@ -208,6 +236,7 @@ const WhisperSTT = {
       const formData = new FormData();
       const filename = this.currentFile ? this.currentFile.name : 'recording.webm';
       formData.append('audio', audioPayload, filename);
+      formData.append('mode', modeValue);
 
       if (langValue && langValue !== 'auto') {
         formData.append('language', langValue);
@@ -238,8 +267,11 @@ const WhisperSTT = {
   renderResult(data) {
     const resultCard = document.getElementById('sttResultCard');
     const textEl = document.getElementById('sttTranscriptionText');
+    const engineBadge = document.getElementById('sttEngineBadge');
     const langBadge = document.getElementById('sttDetectedLangBadge');
     const durationBadge = document.getElementById('sttDurationBadge');
+    const timeBadge = document.getElementById('sttTimeBadge');
+    const statusBadge = document.getElementById('sttStatusBadge');
 
     if (!resultCard || !textEl) return;
 
@@ -256,12 +288,31 @@ const WhisperSTT = {
     const displayLang = langNames[data.language] || data.language || 'Auto';
     const probPercent = data.language_probability ? Math.round(data.language_probability * 100) : 100;
 
+    if (engineBadge) {
+      const engineLabels = {
+        'accuracy': 'Whisper Medium (769M)',
+        'balanced': 'Whisper Small (244M)',
+        'speed': 'Sherpa-ONNX Tiny (39M)'
+      };
+      engineBadge.textContent = `इंजन: ${data.engine || engineLabels[data.mode] || 'Whisper'}`;
+    }
+
     if (langBadge) {
       langBadge.textContent = `भाषा: ${displayLang} (${probPercent}%)`;
     }
 
     if (durationBadge) {
       durationBadge.textContent = `अवधि: ${data.duration || 0}s`;
+    }
+
+    if (timeBadge) {
+      const procTime = data.processing_time !== undefined ? `${data.processing_time}s` : '-';
+      const rtfText = data.rtf !== undefined ? ` (RTF: ${data.rtf}x)` : '';
+      timeBadge.textContent = `समय: ${procTime}${rtfText}`;
+    }
+
+    if (statusBadge) {
+      statusBadge.textContent = '✅ पूर्ण (Completed)';
     }
 
     resultCard.style.display = 'block';

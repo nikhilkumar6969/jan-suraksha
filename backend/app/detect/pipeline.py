@@ -12,6 +12,10 @@ from app.detect.classifier import classify_text
 from app.detect.lookalike import detect_lookalikes_in_text
 from app.detect.reputation import check_reputation
 from app.detect.trai_header import check_sender, combine_header_and_content_verdict
+try:
+    from app.detect.ocve import verify_communication
+except ImportError:
+    from backend.app.detect.ocve import verify_communication
 
 EXPLANATIONS = {
     "en": {
@@ -143,6 +147,7 @@ def run_detection_pipeline(text: str, user_lang: str = "hi", sender: str = None)
     clean_text = norm_res["clean"]
 
     if not clean_text.strip():
+        ocve_res = verify_communication(text=text, sender=sender, user_lang=user_lang)
         return {
             "verdict": "genuine",
             "confidence_percent": 100,
@@ -157,6 +162,7 @@ def run_detection_pipeline(text: str, user_lang: str = "hi", sender: str = None)
             "top_ngrams": [],
             "stages": {"stages": [], "current_stage": 0, "stage_count": 0, "progression_percent": 0, "is_advanced_scam": False},
             "rule_flags": {},
+            "ocve": ocve_res,
             "input_language": norm_res["language"]
         }
 
@@ -290,6 +296,9 @@ def run_detection_pipeline(text: str, user_lang: str = "hi", sender: str = None)
 
     explanation = custom_explanation or EXPLANATIONS[user_lang].get(explanation_key, EXPLANATIONS[user_lang]["likely_scam_generic"])
 
+    # Check 7: Official Communication Verification Engine (OCVE)
+    ocve_res = verify_communication(text=text, sender=sender, user_lang=user_lang)
+
     return {
         "verdict": verdict,  # "likely_scam" | "unsure" | "genuine"
         "confidence_percent": int(round(confidence * 100)),
@@ -310,5 +319,6 @@ def run_detection_pipeline(text: str, user_lang: str = "hi", sender: str = None)
         "lookalike_findings": lookalike_findings,
         "reputation_match": reputation_match,
         "trai_header": trai_res,
+        "ocve": ocve_res,
         "input_language": norm_res["language"]
     }
