@@ -1,5 +1,5 @@
 // Suraksha Service Worker - Offline Caching Strategy
-const CACHE_NAME = 'suraksha-v2.2';
+const CACHE_NAME = 'suraksha-v2.3';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -30,6 +30,11 @@ const ASSETS_TO_CACHE = [
   '/manifest.json',
   '/assets/bg.jpg',
   '/assets/banner.jpg',
+  '/assets/samples/cspdcl_electricity_call.wav',
+  '/assets/samples/digital_arrest_call.wav',
+  '/assets/samples/bank_kyc_call.wav',
+  '/assets/samples/fedex_customs_call.wav',
+  '/assets/samples/genuine_agriculture_call.wav',
   '/assets/backgrounds/media_1795408750990_34d08dd7.jpg',
   '/assets/backgrounds/media_1795408780895_a44d0d97.jpg',
   '/assets/backgrounds/media_1795408792868_3844933b.jpg',

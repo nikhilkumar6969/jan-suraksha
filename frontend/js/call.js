@@ -63,9 +63,11 @@ const CallDetector = {
   },
 
   audioSamples: {
+    cspdcl_electricity: "/assets/samples/cspdcl_electricity_call.wav",
     digital_arrest: "/assets/samples/digital_arrest_call.wav",
     bank_kyc: "/assets/samples/bank_kyc_call.wav",
-    fedex_customs: "/assets/samples/fedex_customs_call.wav"
+    fedex_customs: "/assets/samples/fedex_customs_call.wav",
+    genuine_agriculture: "/assets/samples/genuine_agriculture_call.wav"
   },
 
   // State management
@@ -832,6 +834,16 @@ const CallDetector = {
       this.currentAudioPlayer = null;
       this.speakWarning(fallbackText, targetLang === 'en' ? 'en' : 'hi');
     });
+  },
+
+  playAlertPreview(catKey, lang) {
+    const targetLang = lang || window.I18n?.currentLang || 'hi';
+    const alertFile = `/assets/alerts/alert_${catKey}_${targetLang}.wav`;
+    const audio = new Audio(alertFile);
+    audio.play().catch(e => console.warn('Could not preview alert audio:', e));
+    if (window.App) {
+      window.App.showToast(`🔊 ${catKey} (${targetLang.toUpperCase()}) आवाज़ अलर्ट बज रहा है`);
+    }
   },
 
   speakWarning(text, lang = "hi") {

@@ -727,9 +727,24 @@
                   ऑडियो सैंपल से तुरंत टेस्ट करें (Real Offline Audio to Text):
                 </div>
                 <div class="sample-chips" style="margin-bottom: var(--space-2);">
+                  <span class="sample-chip" data-audio-sample="cspdcl_electricity">⚡ CSPDCL Bijli Cut Call (.wav)</span>
                   <span class="sample-chip" data-audio-sample="digital_arrest">Digital Arrest Call (.wav)</span>
                   <span class="sample-chip" data-audio-sample="bank_kyc">Bank KYC Block Call (.wav)</span>
                   <span class="sample-chip" data-audio-sample="fedex_customs">FedEx Customs Call (.wav)</span>
+                  <span class="sample-chip" data-audio-sample="genuine_agriculture" style="border-color: var(--status-safe); color: var(--status-safe);">🌾 Kisan Mandi Dhan Call (.wav) [Safe]</span>
+                </div>
+
+                <div style="margin: var(--space-2) 0 var(--space-3) 0; padding: var(--space-2) var(--space-3); background: var(--bg-card-subtle); border: 1px solid var(--border-color); border-radius: 6px;">
+                  <div style="font-size: var(--text-xs); font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">
+                    🔊 ऑफ़लाइन क्षेत्रीय आवाज़ चेतावनी टेस्ट (Offline Audio Warning Test):
+                  </div>
+                  <div class="sample-chips" style="margin-top: 4px;">
+                    <button type="button" class="sample-chip" onclick="CallDetector.playAlertPreview('upi_pin')">⚠️ UPI PIN चेतावनी</button>
+                    <button type="button" class="sample-chip" onclick="CallDetector.playAlertPreview('otp')">⚠️ OTP चेतावनी</button>
+                    <button type="button" class="sample-chip" onclick="CallDetector.playAlertPreview('police')">🚨 डिजिटल अरेस्ट चेतावनी</button>
+                    <button type="button" class="sample-chip" onclick="CallDetector.playAlertPreview('remote_access')">🛡️ AnyDesk / रिमोट ऐप</button>
+                    <button type="button" class="sample-chip" onclick="CallDetector.playAlertPreview('bank_kyc')">🏦 बैंक KYC चेतावनी</button>
+                  </div>
                 </div>
 
                 <div style="font-size: var(--text-xs); font-weight: 700; color: var(--text-secondary); margin-bottom: var(--space-1);" data-i18n="call_scenarios_label">
