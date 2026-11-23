@@ -34,11 +34,17 @@ def compute_metrics(y_true, y_pred):
     }
 
 def evaluate_model(pipeline, test_dataset: list, output_path: Path = None):
+    from app.detect.pipeline import run_detection_pipeline
+
     y_true = [item["label"] for item in test_dataset]
     texts = [item["text"] for item in test_dataset]
     languages = [item["language"] for item in test_dataset]
 
-    y_pred = pipeline.predict(texts)
+    # Evaluate the full hybrid detection pipeline (ML + Rules + Stages) as deployed
+    y_pred = []
+    for item in test_dataset:
+        res = run_detection_pipeline(item["text"], user_lang=item.get("language", "hi"))
+        y_pred.append(1 if res["verdict"] == "likely_scam" else 0)
 
     overall_metrics = compute_metrics(y_true, y_pred)
     print(f"\n=================== HELD-OUT TEST EVALUATION ===================")
@@ -52,8 +58,10 @@ def evaluate_model(pipeline, test_dataset: list, output_path: Path = None):
 
     # Language-wise breakdown
     per_language = {}
-    for lang in sorted(list(set(languages))):
+    for lang in ["en", "hi", "hinglish", "chg"]:
         idx_lang = [i for i, l in enumerate(languages) if l == lang]
+        if not idx_lang:
+            continue
         y_true_lang = [y_true[i] for i in idx_lang]
         y_pred_lang = [y_pred[i] for i in idx_lang]
         per_language[lang] = compute_metrics(y_true_lang, y_pred_lang)
@@ -62,9 +70,9 @@ def evaluate_model(pipeline, test_dataset: list, output_path: Path = None):
     results = {
         "status": "success",
         "dataset_info": {
-            "total_synthetic_samples": 3300,
+            "total_synthetic_samples": 3600,
             "held_out_test_samples": len(test_dataset),
-            "split_ratio": "80/20 stratified",
+            "split_ratio": "80/20 held-out test split",
             "seed": 42
         },
         "overall": overall_metrics,

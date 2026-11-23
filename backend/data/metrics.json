@@ -1,67 +1,81 @@
 {
   "status": "success",
   "dataset_info": {
-    "total_synthetic_samples": 3300,
-    "held_out_test_samples": 660,
-    "split_ratio": "80/20 stratified",
+    "total_synthetic_samples": 3600,
+    "held_out_test_samples": 720,
+    "split_ratio": "80/20 held-out test split",
     "seed": 42
   },
   "overall": {
-    "accuracy": 1.0,
-    "precision": 1.0,
-    "recall": 1.0,
-    "f1": 1.0,
-    "false_positive_rate": 0.0,
+    "accuracy": 0.9375,
+    "precision": 0.9646,
+    "recall": 0.9083,
+    "f1": 0.9356,
+    "false_positive_rate": 0.0333,
     "confusion_matrix": {
-      "tn": 330,
-      "fp": 0,
-      "fn": 0,
-      "tp": 330
+      "tn": 348,
+      "fp": 12,
+      "fn": 33,
+      "tp": 327
     },
-    "sample_count": 660
+    "sample_count": 720
   },
   "per_language": {
     "en": {
-      "accuracy": 1.0,
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
-      "false_positive_rate": 0.0,
+      "accuracy": 0.8389,
+      "precision": 0.9067,
+      "recall": 0.7556,
+      "f1": 0.8242,
+      "false_positive_rate": 0.0778,
       "confusion_matrix": {
-        "tn": 110,
-        "fp": 0,
-        "fn": 0,
-        "tp": 110
+        "tn": 83,
+        "fp": 7,
+        "fn": 22,
+        "tp": 68
       },
-      "sample_count": 220
+      "sample_count": 180
     },
     "hi": {
-      "accuracy": 1.0,
+      "accuracy": 0.9389,
       "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
+      "recall": 0.8778,
+      "f1": 0.9349,
       "false_positive_rate": 0.0,
       "confusion_matrix": {
-        "tn": 110,
+        "tn": 90,
         "fp": 0,
-        "fn": 0,
-        "tp": 110
+        "fn": 11,
+        "tp": 79
       },
-      "sample_count": 220
+      "sample_count": 180
     },
     "hinglish": {
+      "accuracy": 0.9722,
+      "precision": 0.9474,
+      "recall": 1.0,
+      "f1": 0.973,
+      "false_positive_rate": 0.0556,
+      "confusion_matrix": {
+        "tn": 85,
+        "fp": 5,
+        "fn": 0,
+        "tp": 90
+      },
+      "sample_count": 180
+    },
+    "chg": {
       "accuracy": 1.0,
       "precision": 1.0,
       "recall": 1.0,
       "f1": 1.0,
       "false_positive_rate": 0.0,
       "confusion_matrix": {
-        "tn": 110,
+        "tn": 90,
         "fp": 0,
         "fn": 0,
-        "tp": 110
+        "tp": 90
       },
-      "sample_count": 220
+      "sample_count": 180
     }
   }
 }

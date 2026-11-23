@@ -13,15 +13,29 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 
 def train_scam_model(dataset: list, models_dir: Path = None, random_state: int = 42):
-    texts = [item["text"] for item in dataset]
-    labels = [item["label"] for item in dataset]
-    languages = [item["language"] for item in dataset]
+    has_explicit_split = any("split" in item for item in dataset)
+    if has_explicit_split:
+        train_items = [item for item in dataset if item.get("split") == "train"]
+        test_items = [item for item in dataset if item.get("split") == "test"]
+        train_texts = [item["text"] for item in train_items]
+        train_labels = [item["label"] for item in train_items]
+        test_data = test_items
+        test_texts = [item["text"] for item in test_items]
+    else:
+        texts = [item["text"] for item in dataset]
+        labels = [item["label"] for item in dataset]
+        languages = [item["language"] for item in dataset]
 
-    # Stratified 80/20 split based on label and language combined
-    stratify_col = [f"{lbl}_{lng}" for lbl, lng in zip(labels, languages)]
-    train_texts, test_texts, train_labels, test_labels, train_idx, test_idx = train_test_split(
-        texts, labels, list(range(len(texts))), test_size=0.20, random_state=random_state, stratify=stratify_col
-    )
+        # Stratified 80/20 split based on label and language combined
+        stratify_col = [f"{lbl}_{lng}" for lbl, lng in zip(labels, languages)]
+        train_texts, test_texts, train_labels, test_labels, train_idx, test_idx = train_test_split(
+            texts, labels, list(range(len(texts))), test_size=0.20, random_state=random_state, stratify=stratify_col
+        )
+        test_data = [{
+            "text": texts[i],
+            "label": labels[i],
+            "language": languages[i]
+        } for i in test_idx]
 
     # Combined word (1-2) and character (2-5) n-grams feature extractor
     feature_union = FeatureUnion([
@@ -62,10 +76,11 @@ def train_scam_model(dataset: list, models_dir: Path = None, random_state: int =
     print(f"[Trainer] Model successfully saved to {model_path}")
 
     # Return test set for rigorous evaluation
-    test_data = [{
-        "text": texts[i],
-        "label": labels[i],
-        "language": languages[i]
-    } for i in test_idx]
+    if not has_explicit_split:
+        test_data = [{
+            "text": texts[i],
+            "label": labels[i],
+            "language": languages[i]
+        } for i in test_idx]
 
     return pipeline, test_data

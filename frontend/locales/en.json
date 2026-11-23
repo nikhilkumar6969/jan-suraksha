@@ -108,7 +108,7 @@
   "chart_scam_categories": "Scams by Category",
   "chart_district_distribution": "District Distribution (k ≥ 5 rule)",
   "eval_title": "Model Training & Evaluation Metrics",
-  "eval_desc": "Held-out test set performance (80/20 stratified split, 3,000+ synthetic messages across English, Hindi & Hinglish).",
+  "eval_desc": "Held-out test split performance (80/20 split, 3,600 samples across English, Hindi, Hinglish & Chhattisgarhi evaluated against real-world hard negatives & subtle scams).",
   "eval_acc": "Overall Accuracy",
   "eval_prec": "Precision",
   "eval_rec": "Recall",

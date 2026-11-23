@@ -109,7 +109,7 @@
   "chart_scam_categories": "ठगी के मुख्य प्रकार (Scams by Category)",
   "chart_district_distribution": "जिलेवार वितरण (Chhattisgarh Districts)",
   "eval_title": "मॉडल प्रशिक्षण व मूल्यांकन मेट्रिक्स",
-  "eval_desc": "परीक्षण डेटा म मॉडल के प्रदर्शन (3,000+ संदेश)।",
+  "eval_desc": "परीक्षण डेटा म मॉडल के वास्तविक प्रदर्शन (3,600 संदेश: अंग्रेजी, हिंदी, हिंग्लिश अउ छत्तीसगढ़ी)।",
   "eval_acc": "समग्र सटीकता (Accuracy)",
   "eval_prec": "परिशुद्धता (Precision)",
   "eval_rec": "रिकॉल (Recall)",
