@@ -25,14 +25,15 @@ STAGES_CONFIG = {
         "patterns": [
             r"\b(?:sbi|hdfc|icici|pnb|bank\s+manager|customer\s+care|fedex|courier|customs|police|cbi|crime\s+branch|inspector|electricity\s+officer|cspdcl|pm\s+awas|mahtari\s+vandan)\b",
             r"बैंक\s*अधिकारी|कस्टमर\s*केयर|फेडेक्स|कस्टम|पुलिस|थाना|सीबीआई|क्राइम\s*ब्रांच|बिजली\s*अधिकारी|महतारी\s*वंदन|आवास\s*योजना",
-            r"थाना\s+ले\s+बोलत\s+हंव|बैंक\s+ले\s+बोलत\s+हंव"
+            r"थाना\s+(?:कोतवाली|क्राइम\s*ब्रांच|सीबीआई|सिविल\s+लाइन)\s+ले\s+बोलत\s+हंव",
+            r"बैंक\s+ले\s+बोलत\s+हंव|बिजली\s+अधिकारी\s+बोलत\s+हंव"
         ],
         "claim_tags": {
             "bank": ["sbi", "hdfc", "icici", "pnb", "bank", "बैंक"],
             "courier_customs": ["fedex", "courier", "customs", "parcel", "कस्टम", "पार्सल"],
             "police_cbi": ["police", "cbi", "crime branch", "inspector", "थाना", "पुलिस", "सीबीआई"],
             "utility": ["electricity", "bijli", "cspdcl", "बिजली"],
-            "govt_scheme": ["pm awas", "mahtari vandan", "subsidy", "महतारी"]
+            "govt_scheme": ["pm awas", "mahtari vandan", "subsidy", "महतारी", "आवास"]
         }
     },
     2: {
@@ -42,9 +43,13 @@ STAGES_CONFIG = {
         "name_chg": "डरवाना अउ जल्दीबाजी",
         "description": "Caller induces panic with impending arrest, account freeze, power disconnection, or strict deadlines.",
         "patterns": [
-            r"\b(?:digital\s+arrest|arrest\s+warrant|fir|narcotics|drugs|account\s+blocked|suspended|power\s+cut|jail|legal\s+action|within\s+10\s+minutes|immediately|aaj\s+raat|turant)\b",
+            r"\b(?:digital\s+arrest|arrest\s+warrant|fir|narcotics|drugs|account\s+blocked|suspended|power\s+cut|jail|legal\s+action|within\s+10\s+minutes|immediately|aaj\s+raat|turant|sanjha\s+tak)\b",
             r"डिजिटल\s*अरेस्ट|वारंट|गिरफ्तार|जेल|खाता\s*बंद|बिजली\s*काट|तुरंत|अभी|आज\s*रात|लाइन\s*कट\s*जाही|झन\s*देरी",
-            r"phone\s+mat\s+katna|do\s+not\s+disconnect|stay\s+on\s+call|वीडियो\s*कॉल\s*पर\s*बने\s*रहें"
+            r"तोर\s+नाम\s+म\s+(?:गैर\s*जमानती\s+)?वारंट",
+            r"संझा\s+9:30\s+बजे\s+(?:बिजली\s+)?लाइन\s+कट\s*जाही",
+            r"तोर\s+पार्सल\s+म\s+(?:चरस|गांजा|ड्रग्स)",
+            r"कॉल\s+ल\s+झन\s+काटव|झन\s+देरी\s+करव",
+            r"phone\s+mat\s+katna|do\s+not\s+disconnect|stay\s+on\s+call|वीडियो\s*कॉल\s*पर\s*बने\s*रहें|वीडियो\s*कॉल\s*म\s*बने\s*रहव"
         ]
     },
     3: {
@@ -55,7 +60,9 @@ STAGES_CONFIG = {
         "description": "Solicitation of OTPs, UPI PINs, passwords, ATM CVV, or Aadhaar details.",
         "patterns": [
             r"\b(?:otp|pin|upi\s+pin|cvv|password|verification\s+code|aadhaar\s+card|tell\s+otp|share\s+pin)\b",
-            r"ओटीपी|पिन|सीवीवी|पासवर्ड|आधार|ओटीपी\s*बताएं|पिन\s*डालें|डारव|बताव"
+            r"ओटीपी|पिन|सीवीवी|पासवर्ड|आधार|ओटीपी\s*बताएं|पिन\s*डालें|डारव|बताव|डारहू|बताहू",
+            r"मोबाइल\s+म\s+आए\s+(?:otp|कोड)\s+ल\s+बताव",
+            r"प[ईइ]सा\s+पाए\s+बर\s+upi\s+पिन\s+डारव"
         ]
     },
     4: {
@@ -65,8 +72,10 @@ STAGES_CONFIG = {
         "name_chg": "पईसा ऐंठना",
         "description": "Demanding monetary transfers, bail bonds, clearance charges, penalty fines, or scanning QR codes.",
         "patterns": [
-            r"\b(?:transfer|deposit|send\s+money|bail\s+bond|clearance\s+fee|penalty|fine|scan\s+qr|rs\.?\s*\d+|\d+\s*rupees|paisa\s+bhejo)\b",
-            r"रुपये|पैसे|पईसा|जमानत\s*राशि|टैक्स|ट्रांसफर|क्यूआर\s*स्कैन|पईसा\s*पटाव"
+            r"\b(?:transfer|deposit|send\s+money|bail\s+bond|clearance\s+fee|penalty|fine|scan\s+qr|rs\.?\s*\d+|\d+\s*rupees|paisa\s+bhejo|paisa\s+pataw)\b",
+            r"रुपये|पैसे|पईसा|पइसा|जमानत\s*राशि|टैक्स|ट्रांसफर|क्यूआर\s*स्कैन|प[ईइ]सा\s*पटाव|प[ईइ]सा\s*जमा\s*करव",
+            r"न[इी]\s+ते\s+जेल\s+भेज\s+देबो",
+            r"सत्यापन\s+शुल्क|स्वीकृति\s+शुल्क"
         ]
     },
     5: {
@@ -77,7 +86,9 @@ STAGES_CONFIG = {
         "description": "Instructing victim to install unknown APKs, AnyDesk, TeamViewer, QuickSupport, or grant accessibility access.",
         "patterns": [
             r"\b(?:anydesk|quicksupport|teamviewer|rustdesk|install\s+apk|download\s+apk|screen\s+share|accessibility\s+permission)\b",
-            r"एनीडेस्क|क्विक\s*सपोर्ट|टीमव्यूअर|ऐप\s*डाउनलोड|स्क्रीन\s*शेयर|एक्सेसिबिलिटी"
+            r"एनीडेस्क|क्विक\s*सपोर्ट|टीमव्यूअर|ऐप\s*डाउनलोड|स्क्रीन\s*शेयर|एक्सेसिबिलिटी",
+            r"व्हाट्सएप\s+म\s+(?:फाइल|ऐप)\s+भेजे\s+हंव",
+            r"स्क्रीन\s+शेयर\s+(?:करव|चालू\s+करव)"
         ]
     }
 }

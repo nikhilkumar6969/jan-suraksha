@@ -164,5 +164,7 @@
   "crit_step_4": "If money was deducted, call 1930 immediately.",
   "crit_btn_call": "Call 1930 Helpline",
   "crit_btn_notify": "Alert Family Members",
-  "crit_btn_close": "Dismiss Warning (I have disconnected the call)"
+  "crit_btn_close": "Dismiss Warning (I have disconnected the call)",
+  "call_speakerphone_title": "Turn on Speakerphone:",
+  "call_speakerphone_desc": "Due to Android security restrictions, put incoming calls on loudspeaker so on-device AI can listen and warn in real time."
 }

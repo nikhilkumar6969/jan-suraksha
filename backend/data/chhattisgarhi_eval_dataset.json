@@ -1,0 +1,213 @@
+{
+  "metadata": {
+    "title": "Jan Suraksha Rural Chhattisgarhi Scam Call Evaluation Dataset",
+    "description": "Documented linguistic and dialect test set curated for evaluating rural Chhattisgarhi speech recognition, code-switching, and real-time fraud intent detection. Constructed from reported cybercrime patterns in Chhattisgarh (Raipur, Bilaspur, Durg, Bastar, Surguja).",
+    "type": "Manually constructed and validated linguistic benchmark dataset (synthetic/curated dialect scripts)",
+    "version": "2.0.0",
+    "total_samples": 20,
+    "scam_samples": 14,
+    "benign_control_samples": 6
+  },
+  "samples": [
+    {
+      "id": "cg_01",
+      "category": "upi_pin_fraud",
+      "is_scam": true,
+      "expected_risk": "CRITICAL",
+      "dialect_region": "Central (Raipur)",
+      "persona": "Male scammer, aggressive speed",
+      "text": "बधाई हो! तोर खाता म 5000 रुपया कैशबैक आए हे। पईसा पाए बर तुरंत अपन UPI पिन डारव।",
+      "description": "Critical UPI PIN cashback trap in Central Chhattisgarhi"
+    },
+    {
+      "id": "cg_02",
+      "category": "upi_pin_fraud",
+      "is_scam": true,
+      "expected_risk": "CRITICAL",
+      "dialect_region": "Southern (Dhamtari/Bastar)",
+      "persona": "Male scammer, urgent tone",
+      "text": "खाता म पइसा आही, मोबाइल निकालव अउ तुरते upi पिन डारहू तभे बैलेंस बढ़ही।",
+      "description": "UPI PIN solicitation with southern dialect future tense verb inflection"
+    },
+    {
+      "id": "cg_03",
+      "category": "otp_fraud",
+      "is_scam": true,
+      "expected_risk": "CRITICAL",
+      "dialect_region": "Central (Durg)",
+      "persona": "Fake caller center agent",
+      "text": "मोबाइल म 6 अंक के ओटीपी आइस हे, ओला जल्दी बतावव नइ ते सिम कार्ड ब्लॉक हो जाही।",
+      "description": "OTP solicitation with SIM suspension threat"
+    },
+    {
+      "id": "cg_04",
+      "category": "otp_fraud",
+      "is_scam": true,
+      "expected_risk": "CRITICAL",
+      "dialect_region": "Northern (Bilaspur)",
+      "persona": "Authoritative scammer",
+      "text": "तोर आधार कार्ड से जुड़े मोबाइल म गुप्त कोड आइस हे, सत्यापन बर otp ला बताव।",
+      "description": "Aadhaar verification OTP solicitation"
+    },
+    {
+      "id": "cg_05",
+      "category": "electricity_scam",
+      "is_scam": true,
+      "expected_risk": "HIGH",
+      "dialect_region": "Central (Raipur)",
+      "persona": "Fake CSPDCL electricity officer",
+      "text": "नमस्कार, तोर बिजली बिल नइ भरे हस। आज संझा 9:30 बजे तोर घर के बिजली लाइन कट जाही। लाइन कटने ले बचाए बर फोन लगाके पईसा पटाव।",
+      "description": "CSPDCL electricity power cutoff threat"
+    },
+    {
+      "id": "cg_06",
+      "category": "electricity_scam",
+      "is_scam": true,
+      "expected_risk": "HIGH",
+      "dialect_region": "Central (Rajnandgaon)",
+      "persona": "Urgent lineman impersonation",
+      "text": "CSPDCL ऑफिस ले बोलत हंव, मीटर सील हो जाही, तुरंत 1200 पइसा पटाव नइ ते अंधेरा म रहहू।",
+      "description": "Power meter seal and fee demand"
+    },
+    {
+      "id": "cg_07",
+      "category": "police_digital_arrest",
+      "is_scam": true,
+      "expected_risk": "HIGH",
+      "dialect_region": "Central (Raipur)",
+      "persona": "Fake police inspector, intimidating",
+      "text": "थाना कोतवाली रायपुर ले बोलत हंव। तोर नाम म गैर जमानती वारंट निकल गे हे। कॉल ल झन काटव, वीडियो कॉल म बने रहव अउ तुरते 40000 पईसा जमा करव नइ ते जेल भेज देबो।",
+      "description": "Police impersonation, digital arrest, and extortion in Chhattisgarhi"
+    },
+    {
+      "id": "cg_08",
+      "category": "police_digital_arrest",
+      "is_scam": true,
+      "expected_risk": "HIGH",
+      "dialect_region": "Southern (Bastar)",
+      "persona": "Fake Crime Branch officer",
+      "text": "क्राइम ब्रांच ले बोलत हंव। तोर पार्सल म चरस अउ नशीली दवा मिले हे। तोर ऊपर एफआईआर दर्ज हो गे हे, जमानत बर पईसा पटाव।",
+      "description": "Contraband courier extortion and fake FIR"
+    },
+    {
+      "id": "cg_09",
+      "category": "bank_kyc",
+      "is_scam": true,
+      "expected_risk": "HIGH",
+      "dialect_region": "Central (Durg)",
+      "persona": "Fake bank manager",
+      "text": "स्टेट बैंक ले बोलत हंव। तोर खाता बंद हो गे हे। पासबुक अउ एटीएम चालू रखे बर घर बैठे ई-केवाईसी करवाव, बैंक जाए के जरूरत नइ हे।",
+      "description": "Bank KYC suspension and unauthorized remote update"
+    },
+    {
+      "id": "cg_10",
+      "category": "govt_subsidy",
+      "is_scam": true,
+      "expected_risk": "HIGH",
+      "dialect_region": "Rural Chhattisgarh",
+      "persona": "Scheme clerk impersonator",
+      "text": "महतारी वंदन योजना के 1000 रुपया तोर खाता म आए बर अटके हे। योजना के राशि पाए बर तुरते 200 रुपया सत्यापन शुल्क जमा करव अउ अपन गुप्त ओटीपी बताव।",
+      "description": "Mahtari Vandan government scheme subsidy fraud"
+    },
+    {
+      "id": "cg_11",
+      "category": "govt_subsidy",
+      "is_scam": true,
+      "expected_risk": "HIGH",
+      "dialect_region": "Northern (Surguja)",
+      "persona": "Awas Yojana agent",
+      "text": "प्रधानमंत्री आवास योजना के पईसा पास हो गे हे। पहली किस्त पाए बर 500 रुपया स्वीकृति शुल्क जमा करव।",
+      "description": "PM Awas Yojana approval fee demand"
+    },
+    {
+      "id": "cg_12",
+      "category": "financial_extortion",
+      "is_scam": true,
+      "expected_risk": "HIGH",
+      "dialect_region": "Central",
+      "persona": "Threatening caller",
+      "text": "तोर नाम म भारी बड़ा केस बने हे। मामला रफा दफा करे बर 25000 पईसा तुरते ट्रांसफर करव नइ ते पुलिस आके उठा ले जाही।",
+      "description": "Direct financial extortion under arrest threat"
+    },
+    {
+      "id": "cg_13",
+      "category": "remote_access",
+      "is_scam": true,
+      "expected_risk": "HIGH",
+      "dialect_region": "Young tech scammer",
+      "persona": "Support technician",
+      "text": "व्हाट्सएप म एक ठन ऐप भेजे हंव, एनीडेस्क डाउनलोड करव अउ स्क्रीन शेयर चालू करव ताकि हमर इहाँ ले तोर फोन ठीक हो जाए।",
+      "description": "AnyDesk and remote access screen sharing in Chhattisgarhi"
+    },
+    {
+      "id": "cg_14",
+      "category": "psychological_urgency",
+      "is_scam": true,
+      "expected_risk": "HIGH",
+      "dialect_region": "Coercive scammer",
+      "persona": "Pressure tactics",
+      "text": "घर के कोनो मनखे ल झन बतावव, बात ल गुप्त राखव। झन देरी करव, 10 मिनट के अंदर पईसा पटाव नइ ते बहुत बुरा हो जाही।",
+      "description": "Secrecy and urgent pressure manipulation"
+    },
+    {
+      "id": "cg_benign_01",
+      "category": "benign_banking",
+      "is_scam": false,
+      "expected_risk": "LOW",
+      "dialect_region": "Central",
+      "persona": "Rural elder, conversational",
+      "text": "मंय खुद बिहान बैंक जाके पासबुक चढ़ा लेहूँ अउ मैनेजर बाबू ले मिलके पईसा निकालहूँ।",
+      "description": "Normal conversation about visiting bank branch in person"
+    },
+    {
+      "id": "cg_benign_02",
+      "category": "benign_electricity",
+      "is_scam": false,
+      "expected_risk": "LOW",
+      "dialect_region": "Central",
+      "persona": "Farmer talking to neighbor",
+      "text": "बिजली ऑफिस जाके मंय अपन बिजली बिल पूरा पटा दे हंव, रसीद मिल गे हे।",
+      "description": "Normal narration of paying electricity bill at official counter"
+    },
+    {
+      "id": "cg_benign_03",
+      "category": "benign_delivery",
+      "is_scam": false,
+      "expected_risk": "LOW",
+      "dialect_region": "Urban/Rural youth",
+      "persona": "Online order buyer",
+      "text": "डिलीवरी वाला सामान लेके आइस त मंय ओला ओटीपी बताके पार्सल ले लेहेव।",
+      "description": "Legitimate narration of e-commerce delivery OTP"
+    },
+    {
+      "id": "cg_benign_04",
+      "category": "benign_safety_advice",
+      "is_scam": false,
+      "expected_risk": "LOW",
+      "dialect_region": "Aware citizen",
+      "persona": "Family elder warning children",
+      "text": "होसियार रहव! ककरो ले अपन गुप्त ओटीपी या बैंक पिन झन बतावव, बैंक कभू फोन म पिन नइ मांगय।",
+      "description": "Genuine cyber safety awareness spoken in Chhattisgarhi"
+    },
+    {
+      "id": "cg_benign_05",
+      "category": "benign_scheme",
+      "is_scam": false,
+      "expected_risk": "LOW",
+      "dialect_region": "Rural homemaker",
+      "persona": "Talking to friend",
+      "text": "महतारी वंदन योजना के पईसा आज हमर खाता म सीधा सरकार ले जमा हो गे हे।",
+      "description": "Normal conversation regarding direct benefit transfer"
+    },
+    {
+      "id": "cg_benign_06",
+      "category": "benign_ration",
+      "is_scam": false,
+      "expected_risk": "LOW",
+      "dialect_region": "Village resident",
+      "persona": "Household talk",
+      "text": "राशन दूकान जाके चावल अउ शक्कर ले आना हे, फिंगरप्रिंट लगाके राशन मिल जही।",
+      "description": "Normal village PDS ration shop conversation"
+    }
+  ]
+}

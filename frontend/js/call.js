@@ -73,14 +73,20 @@ const CallDetector = {
   streamSessionId: null,
   mediaStream: null,
   mediaRecorder: null,
+  audioContext: null,
+  audioWorkletNode: null,
+  mediaStreamSource: null,
+  webSocket: null,
+  webSocketConnected: false,
   chunkIntervalTimer: null,
   durationTimer: null,
   secondsElapsed: 0,
-  webSocket: null,
   speechRecognizer: null,
   activeAudioFile: null,
   lastSpokenWarning: "",
   audioWarningEnabled: true,
+  currentAudioPlayer: null,
+  isPlayingAlert: false,
   lastAnalysisData: null,
   lastStageData: null,
 
@@ -118,12 +124,12 @@ const CallDetector = {
     if (btnTestTTS) {
       btnTestTTS.addEventListener('click', () => {
         const curLang = (window.I18n && window.I18n.currentLang) || 'hi';
-        const msg = (curLang === 'en')
-          ? "Caution! Never disclose your OTP or UPI PIN. Receiving money never requires a PIN."
-          : ((curLang === 'chg')
-            ? "सचेत रहव! ककरो ले अपन OTP या UPI पिन झन बतावव। पईसा पाए बर कभू पिन नइ डारे लगत।"
-            : "सावधान! किसी को भी अपना OTP या UPI PIN न बताएं। पैसे पाने के लिए कभी PIN की आवश्यकता नहीं होती।");
-        this.speakWarning(msg, curLang === 'en' ? 'en' : 'hi');
+        this.playAudioAlert({
+          matched_categories: ['upi_pin_fraud'],
+          audio_warning_hi: "सावधान! किसी को भी अपना OTP या UPI PIN न बताएं। पैसे पाने के लिए कभी PIN की आवश्यकता नहीं होती।",
+          audio_warning_chg: "सचेत रहव! ककरो ले अपन OTP या UPI पिन झन बतावव। पईसा पाए बर कभू पिन नइ डारे लगत।",
+          audio_warning_en: "Caution! Never disclose your OTP or UPI PIN. Receiving money never requires a PIN."
+        }, curLang);
       });
     }
 
@@ -296,14 +302,115 @@ const CallDetector = {
       if (timerLabel) timerLabel.textContent = `${m}:${s}`;
     }, 1000);
 
-    // Setup Audio Chunk Streaming (500ms chunks)
-    this.setupAudioChunkStreaming();
+    // Primary: Zero-Copy Raw PCM 16kHz AudioWorklet + WebSocket Pipeline
+    try {
+      await this.setupWebSocketAudioWorkletStreaming();
+    } catch (workletErr) {
+      console.warn('AudioWorklet/WebSocket streaming fallback notice:', workletErr);
+      this.setupAudioChunkStreamingFallback();
+    }
 
     // Setup optional browser SpeechRecognition interim preview if available
     this.setupInterimSpeechPreview();
   },
 
-  setupAudioChunkStreaming() {
+  async setupWebSocketAudioWorkletStreaming() {
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsUrl = `${protocol}//${window.location.host}/api/calls/stream`;
+    
+    // 1. Establish WebSocket
+    this.webSocket = new WebSocket(wsUrl);
+    this.webSocket.binaryType = 'arraybuffer';
+
+    const langSelect = document.getElementById('callAudioLang');
+    const selectedLang = (langSelect && langSelect.value) || 'auto';
+
+    this.webSocket.onopen = () => {
+      this.webSocketConnected = true;
+      if (this.webSocket.readyState === WebSocket.OPEN) {
+        this.webSocket.send(JSON.stringify({
+          type: 'config',
+          session_id: this.streamSessionId,
+          language: selectedLang,
+          sample_rate: 16000
+        }));
+      }
+    };
+
+    this.webSocket.onmessage = (event) => {
+      if (!this.isListening) return;
+      try {
+        const data = JSON.parse(event.data);
+        if (data.status === 'stopped') return;
+        this.handleStreamingResponse(data);
+      } catch (err) {
+        console.debug('WS parse notice:', err);
+      }
+    };
+
+    this.webSocket.onerror = (err) => {
+      console.warn('WebSocket streaming notice:', err);
+      this.webSocketConnected = false;
+    };
+
+    this.webSocket.onclose = () => {
+      this.webSocketConnected = false;
+    };
+
+    // 2. Setup AudioContext and AudioWorklet Processor (16kHz PCM)
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx || !AudioCtx.prototype.audioWorklet) {
+      throw new Error('AudioWorklet not supported in this browser');
+    }
+
+    this.audioContext = new AudioCtx({ sampleRate: 16000 });
+    await this.audioContext.audioWorklet.addModule('/js/pcm-recorder-processor.js');
+
+    this.mediaStreamSource = this.audioContext.createMediaStreamSource(this.mediaStream);
+    this.audioWorkletNode = new AudioWorkletNode(this.audioContext, 'pcm-recorder-processor');
+
+    this.audioWorkletNode.port.onmessage = (event) => {
+      if (!this.isListening) return;
+      const pcmBuffer = event.data; // ArrayBuffer of Int16 16kHz mono PCM
+
+      if (this.webSocket && this.webSocket.readyState === WebSocket.OPEN) {
+        this.webSocket.send(pcmBuffer);
+      } else if (!this.webSocketConnected) {
+        this.sendPcmChunkFallback(pcmBuffer);
+      }
+    };
+
+    this.mediaStreamSource.connect(this.audioWorkletNode);
+    // Connect to destination through a silent gain node to ensure processor keeps ticking
+    const silentGain = this.audioContext.createGain();
+    silentGain.gain.value = 0.0;
+    this.audioWorkletNode.connect(silentGain);
+    silentGain.connect(this.audioContext.destination);
+  },
+
+  async sendPcmChunkFallback(pcmBuffer) {
+    if (!this.isListening) return;
+    const langSelect = document.getElementById('callAudioLang');
+    const selectedLang = (langSelect && langSelect.value) || 'auto';
+
+    const blob = new Blob([pcmBuffer], { type: 'application/octet-stream' });
+    const formData = new FormData();
+    formData.append('audio_chunk', blob, 'chunk.raw');
+    formData.append('session_id', this.streamSessionId || 'default');
+    formData.append('language', selectedLang);
+    formData.append('sample_rate', '16000');
+
+    try {
+      const resp = await fetch('/api/calls/stream-chunk', { method: 'POST', body: formData });
+      if (!resp.ok) return;
+      const data = await resp.json();
+      this.handleStreamingResponse(data);
+    } catch (err) {
+      console.debug('PCM fallback chunk error:', err);
+    }
+  },
+
+  setupAudioChunkStreamingFallback() {
     if (!this.mediaStream) return;
 
     let mimeType = 'audio/webm;codecs=opus';
@@ -323,7 +430,6 @@ const CallDetector = {
       }
     };
 
-    // Slice audio every 600ms for continuous streaming recognition
     this.mediaRecorder.start(600);
   },
 
@@ -613,20 +719,14 @@ const CallDetector = {
       if (navigator.vibrate) navigator.vibrate([150, 100, 150]);
     }
 
-    // 2. Audio Spoken Warning (Offline TTS)
+    // 2. Audio Spoken Warning (Offline Pre-synthesised Audio with TTS Fallback)
     if (this.audioWarningEnabled && (level === 'CRITICAL' || level === 'HIGH')) {
       const currentLang = (window.I18n && window.I18n.currentLang) || 'hi';
-      let promptText = "";
-      if (currentLang === 'en') {
-        promptText = data.audio_warning_en || "Caution! Never disclose your OTP or UPI PIN to anyone.";
-      } else if (currentLang === 'chg') {
-        promptText = data.audio_warning_chg || data.audio_warning_hi || "सचेत रहव! ककरो ले अपन OTP या UPI पिन झन बतावव।";
-      } else {
-        promptText = data.audio_warning_hi || "सावधान! किसी को भी अपना OTP या UPI PIN न बताएं। पैसे पाने के लिए कभी PIN की आवश्यकता नहीं होती।";
-      }
-      if (promptText !== this.lastSpokenWarning) {
-        this.lastSpokenWarning = promptText;
-        this.speakWarning(promptText, currentLang === 'en' ? 'en' : 'hi');
+      const catList = (data.matched_categories || []).join(',');
+      const dedupeKey = `${level}:${catList}:${currentLang}`;
+      if (dedupeKey !== this.lastSpokenWarning) {
+        this.lastSpokenWarning = dedupeKey;
+        this.playAudioAlert(data, currentLang);
       }
     }
 
@@ -662,6 +762,64 @@ const CallDetector = {
     }
   },
 
+  playAudioAlert(data, lang) {
+    if (!this.audioWarningEnabled) return;
+
+    const currentLang = lang || (window.I18n && window.I18n.currentLang) || 'hi';
+    const targetLang = (currentLang === 'en') ? 'en' : ((currentLang === 'chg') ? 'chg' : 'hi');
+
+    // Resolve primary category
+    const categories = (data && data.matched_categories) || [];
+    let catKey = 'upi_pin';
+    if (categories.includes('upi_pin_fraud')) catKey = 'upi_pin';
+    else if (categories.includes('otp_fraud')) catKey = 'otp';
+    else if (categories.includes('digital_arrest') || categories.includes('police_govt_impersonation')) catKey = 'police';
+    else if (categories.includes('remote_access')) catKey = 'remote_access';
+    else if (categories.includes('financial_extortion')) catKey = 'extortion';
+    else if (categories.includes('bank_impersonation')) catKey = 'bank_kyc';
+
+    const alertFile = `/assets/alerts/alert_${catKey}_${targetLang}.wav`;
+
+    let fallbackText = "";
+    if (targetLang === 'en') {
+      fallbackText = (data && data.audio_warning_en) || "Warning! Never share your confidential OTP or UPI PIN.";
+    } else if (targetLang === 'chg') {
+      fallbackText = (data && (data.audio_warning_chg || data.audio_warning_hi)) || "सचेत रहव! ककरो ले अपन OTP या UPI PIN झन बतावव।";
+    } else {
+      fallbackText = (data && data.audio_warning_hi) || "सावधान! किसी को भी अपना OTP या UPI PIN न बताएं।";
+    }
+
+    if (this.currentAudioPlayer) {
+      try {
+        this.currentAudioPlayer.pause();
+        this.currentAudioPlayer = null;
+      } catch (e) {}
+    }
+
+    this.isPlayingAlert = true;
+    const alertAudio = new Audio(alertFile);
+    this.currentAudioPlayer = alertAudio;
+
+    alertAudio.onended = () => {
+      this.isPlayingAlert = false;
+      this.currentAudioPlayer = null;
+    };
+
+    alertAudio.onerror = (e) => {
+      console.warn("Offline alert audio file failed or missing, falling back to Web Speech API:", alertFile, e);
+      this.isPlayingAlert = false;
+      this.currentAudioPlayer = null;
+      this.speakWarning(fallbackText, targetLang === 'en' ? 'en' : 'hi');
+    };
+
+    alertAudio.play().catch((err) => {
+      console.warn("Audio autoplay blocked or failed, falling back to Web Speech:", err);
+      this.isPlayingAlert = false;
+      this.currentAudioPlayer = null;
+      this.speakWarning(fallbackText, targetLang === 'en' ? 'en' : 'hi');
+    });
+  },
+
   speakWarning(text, lang = "hi") {
     if (!('speechSynthesis' in window)) return;
 
@@ -691,6 +849,44 @@ const CallDetector = {
   stopLiveListening() {
     this.isListening = false;
 
+    // Stop any playing alert audio
+    if (this.currentAudioPlayer) {
+      try {
+        this.currentAudioPlayer.pause();
+        this.currentAudioPlayer = null;
+      } catch (e) {}
+    }
+    this.isPlayingAlert = false;
+
+    // Disconnect and clean up AudioWorklet and AudioContext
+    if (this.audioWorkletNode) {
+      try { this.audioWorkletNode.disconnect(); } catch (e) {}
+      this.audioWorkletNode = null;
+    }
+    if (this.mediaStreamSource) {
+      try { this.mediaStreamSource.disconnect(); } catch (e) {}
+      this.mediaStreamSource = null;
+    }
+    if (this.audioContext && this.audioContext.state !== 'closed') {
+      try { this.audioContext.close(); } catch (e) {}
+      this.audioContext = null;
+    }
+
+    // Close WebSocket and notify backend
+    if (this.webSocket) {
+      if (this.webSocket.readyState === WebSocket.OPEN) {
+        try {
+          this.webSocket.send(JSON.stringify({
+            type: 'stop',
+            session_id: this.streamSessionId
+          }));
+        } catch (e) {}
+      }
+      try { this.webSocket.close(); } catch (e) {}
+      this.webSocket = null;
+    }
+    this.webSocketConnected = false;
+
     if (this.mediaStream) {
       this.mediaStream.getTracks().forEach(t => t.stop());
       this.mediaStream = null;
@@ -698,6 +894,7 @@ const CallDetector = {
 
     if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
       try { this.mediaRecorder.stop(); } catch (e) {}
+      this.mediaRecorder = null;
     }
 
     if (this.speechRecognizer) {
@@ -723,7 +920,7 @@ const CallDetector = {
       vadPill.classList.remove('active');
     }
 
-    // Call backend session stop
+    // Call backend session stop HTTP as final sync
     if (this.streamSessionId) {
       fetch('/api/calls/session-stop', {
         method: 'POST',
@@ -1063,4 +1260,13 @@ window.CallDetector = CallDetector;
 // Auto-initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
   CallDetector.init();
+});
+
+// Resume AudioContext if browser tab is foregrounded after suspension
+document.addEventListener('visibilitychange', () => {
+  if (window.CallDetector && window.CallDetector.isListening && window.CallDetector.audioContext) {
+    if (document.visibilityState === 'visible' && window.CallDetector.audioContext.state === 'suspended') {
+      window.CallDetector.audioContext.resume().catch(() => {});
+    }
+  }
 });

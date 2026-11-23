@@ -24,9 +24,12 @@ GENUINE_SAFETY_GUARDS = [
     r"साझा\s+न\s+करें",
     r"किसी\s+को\s+(?:भी\s+)?न\s+बताएं",
     r"बैंक\s+कभी\s+भी\s+(?:otp|पिन)\s+नहीं\s+मांगता",
-    r"ककरो\s+ले\s+साझा\s+झन\s+करव",
+    r"ककरो\s+ले\s+(?:अपन\s+)?(?:गुप्त\s+)?(?:otp|ओटीपी|पिन)\s+झन\s+(?:बताव|बतावव|शेयर\s+करव)",
     r"ककरो\s+ले\s+झन\s+बताव",
-    r"बैंक\s+कभू\s+otp\s+नइ\s+मांगय"
+    r"बैंक\s+कभू\s+(?:फोन\s+म\s+)?(?:otp|पिन)\s+नइ\s+मांगय",
+    r"पुलिस\s+कभू\s+(?:फोन\s+म\s+)?जमानत\s+नइ\s+मांगय",
+    r"कोनो\s+अनजान\s+ऐप\s+डाउनलोड\s+झन\s+करव",
+    r"अपन\s+पिन\s+ल\s+छुपा\s+के\s+राखव"
 ]
 
 USER_NARRATION_PATTERNS = [
@@ -36,68 +39,99 @@ USER_NARRATION_PATTERNS = [
     r"\b(?:entered\s+the\s+otp\s+myself|i\s+put\s+the\s+otp)\b",
     r"मैंने\s+(?:अपना\s+)?(?:otp|पिन|बिल)\s+(?:डाल\s+दिया|भर\s+दिया|दे\s+दिया)",
     r"कल\s+बैंक\s+जाऊंगा",
-    r"बिजली\s+का\s+बिल\s+भर\s+दिया"
+    r"बिजली\s+का\s+बिल\s+भर\s+दिया",
+    r"मंय\s+खुद\s+बैंक\s+जाके",
+    r"मंय\s+(?:अपन\s+)?(?:बिल|प[ईइ]सा|रुपिया)\s+पटा\s+दे\s+हंव",
+    r"पासबुक\s+(?:चढ़ाए|एंट्री|अपडेट)\s+बर\s+जाबो",
+    r"डिलीवरी\s+आइस\s+त\s+ओटीपी\s+दे\s+रहेव",
+    r"मंय\s+खुद\s+डारे\s+हंव"
 ]
 
 # 2. OTP and PIN Fraud Patterns
 CRITICAL_UPI_PIN_PATTERNS = [
-    r"\b(?:enter|put|type|share|give|batao|dalo|daraw)\s+(?:your\s+)?(?:upi\s+)?pin\b",
-    r"\bupi\s+pin\s+(?:enter\s+karo|dalo|batao|share\s+kare|daraw|bataw)\b",
+    r"\b(?:enter|put|type|share|give|batao|dalo|daraw|bataw|darahu|batahu)\s+(?:your\s+|tor\s+|apna\s+)?(?:upi\s+)?pin\b",
+    r"\bupi\s+pin\s+(?:enter\s+karo|dalo|batao|share\s+kare|daraw|bataw|darahu|batahu)\b",
     r"\benter\s+pin\s+to\s+(?:receive|accept|get)\s+(?:money|cashback|payment|rupees)\b",
+    r"\b(?:paisa|rupaye)\s+(?:paye\s+bar|milahi)\s+(?:upi\s+)?pin\s+(?:daraw|bataw|dalo)\b",
     r"पैसे\s+पाने\s+के\s+लिए\s+upi\s+पिन\s+डालें",
     r"(?:अपना\s+)?upi\s+पिन\s*(?:डालें|बताएं|दर्ज\s+करें|लगाएं)",
-    r"पईसा\s+पाए\s+बर\s+upi\s+पिन\s+डारव",
-    r"upi\s+पिन\s*(?:डारव|बताव)"
+    r"प[ईइ]सा\s+पाए\s+बर\s+upi\s+पिन\s*(?:डारव|बताव|डारहु|बताहू|डालव)",
+    r"खाता\s+म\s+प[ईइ]सा\s+आही\s+upi\s+पिन\s+डारव",
+    r"प[ईइ]सा\s+मिले\s+बर\s+पिन\s+डारव",
+    r"upi\s+पिन\s*(?:डारव|बताव|डारहू|बताहू|डार|डालव)"
 ]
 
 EXPLICIT_OTP_PATTERNS = [
-    r"\b(?:share|tell|send|forward|give|enter|batao|dalo)\s+(?:me\s+|us\s+)?(?:the\s+|your\s+|apna\s+)?(?:6\s*[-]?\s*digit\s+)?(?:otp|code|pin|verification\s+code)\b",
-    r"\botp\s+(?:batao|bataiye|send\s+kar[eo]i?n?|share\s+kar[eo]i?n?|dijiye|forward\s+kar[eo]i?n?|bhejo|bhejei?n?|do|mang\s+raha)\b",
-    r"\b(?:apna|your)\s+(?:6\s*[-]?\s*digit\s+)?(?:otp|code|pin)\s+(?:share\s+kar[eo]i?n?|batao|bataiye|bhejo|bhejei?n?|dijiye|batayei?n?)\b",
-    r"ओटीपी\s*(?:बताएं|दीजिए|भेजें|शेयर\s+करें|बताओ|डालें)",
-    r"मोबाइल\s+म\s+आए\s+(?:otp|कोड)\s+ल\s+(?:बताव|भेजव|डारव)",
-    r"ओटीपी\s*(?:बताव|डारव|भेजव)",
+    r"\b(?:share|tell|send|forward|give|enter|batao|dalo|bataw|daraw)\s+(?:me\s+|us\s+)?(?:the\s+|your\s+|apna\s+|tor\s+)?(?:6\s*[-]?\s*digit\s+)?(?:otp|code|pin|verification\s+code)\b",
+    r"\botp\s+(?:la\s+)?(?:batao|bataiye|send\s+kar[eo]i?n?|share\s+kar[eo]i?n?|dijiye|forward\s+kar[eo]i?n?|bhejo|bhejei?n?|do|mang\s+raha|bataw|daraw|bhejaw|darahu|batahu)\b",
+    r"\b(?:apna|your|tor)\s+(?:6\s*[-]?\s*digit\s+)?(?:otp|code|pin)\s+(?:share\s+kar[eo]i?n?|batao|bataiye|bhejo|bhejei?n?|dijiye|batayei?n?|bataw|daraw|batahu)\b",
+    r"ओटीपी\s*(?:बताएं|दीजिए|भेजें|शेयर\s+करें|बताओ|डालें|बताव|डारव|भेजव|बताहू|डारहू|बतावव)",
+    r"मोबाइल\s+म\s+आए\s+(?:otp|कोड|ओटीपी|नंबर)\s+ल\s+(?:बताव|भेजव|डारव|बताहू|डारहू|बतावव)",
+    r"6\s*अंक\s+के\s+(?:कोड|ओटीपी|नंबर)\s*(?:आइस\s+हे\s*,?\s*)?(?:ओला|एला|ला|ल)?\s*(?:जल्दी\s+)?(?:बताव|डारव|बतावव|बताहू|डारहू)",
+    r"(?:ओटीपी|otp|कोड)\s*(?:आइस\s+हे\s*,?\s*)?(?:ओला|एला|ला|ल)?\s*(?:जल्दी\s+)?(?:बताव|डारव|भेजव|बताहू|डारहू|बतावव)",
+    r"(?:otp|ओटीपी|कोड)\s*(?:ला|ल|ओला)?\s*(?:बताव|बतावव|डारव|डारहू|बताहू)",
+    r"सत्यापन\s+बर\s+(?:otp|ओटीपी|कोड)",
+    r"ओटीपी\s*(?:बताव|डारव|भेजव|बताहू|बतावव)",
     r"otp\s+(?:la\s+bataw|daraw|bhejaw|batao)"
 ]
 
 # 3. Bank Impersonation & Fake KYC
 BANK_IMPERSONATION_PATTERNS = [
-    r"\b(?:sbi|hdfc|icici|pnb|bob|bank)\s+(?:customer\s+care|manager|head\s+office|officer|se\s+bol\s+raha)\b",
-    r"\b(?:account|yono|sim\s+card|debit\s+card)\s+(?:is\s+)?(?:blocked|suspended|deactivated|frozen|band\s+ho\s+gaya)\b",
+    r"\b(?:sbi|hdfc|icici|pnb|bob|bank)\s+(?:customer\s+care|manager|head\s+office|officer|se\s+bol\s+raha|le\s+bolat\s+hanw)\b",
+    r"\b(?:account|yono|sim\s+card|debit\s+card)\s+(?:is\s+)?(?:blocked|suspended|deactivated|frozen|band\s+ho\s+gaya|band\s+ho\s+jahi)\b",
     r"\b(?:update|complete)\s+(?:your\s+)?kyc\s+(?:immediately|or\s+blocked)\b",
-    r"\bkyc\s+update\s+kar(?:e|o|aw)\s+(?:nahi\s+to|turant)\b",
+    r"\bkyc\s+update\s+kar(?:e|o|aw|waw)\s+(?:nahi\s+to|turant|nai\s+te)\b",
     r"बैंक\s+(?:अधिकारी|मैनेजर|कस्टमर\s+केयर)\s+बोल\s+रहा\s+हूँ",
+    r"बैंक\s+ले\s+बोलत\s+हंव",
     r"खाता\s+(?:बंद|ब्लॉक|सील|फ्रीज)\s+हो\s+गया\s+है",
     r"केवाईसी\s+(?:अपडेट|सत्यापन)\s+तुरंत\s+करें",
-    r"तोर\s+खाता\s+बंद\s+हो\s+जाही",
-    r"बिजली\s+(?:बिल\s+न[इी]\s+भरे|लाइन\s+कट\s*जाही)",
-    r"\belectricity\s+line\s+will\s+be\s+disconnected\s+tonight\b"
+    r"तोर\s+खाता\s+बंद\s+हो\s+(?:जाही|गे\s+हे|गिस)",
+    r"तोर\s+(?:पासबुक|एटीएम|yono)\s+ब्लॉक\s+हो\s+जाही",
+    r"शाखा\s+जाए\s+के\s+जरूरत\s+न[इी]\s+हे,\s+घर\s+बैठे\s+kyc\s+करवाव",
+    r"बिजली\s+(?:बिल\s+न[इी]\s+भरे|लाइन\s+कट\s*जाही|मीटर\s+कट\s*जाही)",
+    r"संझा\s+9:30\s+बजे\s+(?:तोर\s+घर\s+के\s+)?बिजली\s+(?:लाइन\s+)?कट\s*जाही",
+    r"लाइन\s+कटने\s+ले\s+बचाए\s+बर.*(?:फोन\s+लगाके\s+)?प[ईइ]सा\s+पटाव",
+    r"(?:cspdcl|बिजली)\s+(?:ऑफिस|दफ्तर|अधिकारी)\s+ले\s+बोलत\s+हंव",
+    r"मीटर\s+सील\s+हो\s+जाही",
+    r"\belectricity\s+line\s+will\s+be\s+disconnected\s+tonight\b",
+    r"\bbijli\s+bill\s+nai\s+bhare\s+has\b"
 ]
 
 # 4. Police & Government Impersonation
 POLICE_GOVT_PATTERNS = [
     r"\b(?:digital\s+arrest|digitally\s+arrested)\b",
     r"डिजिटल\s+अरेस्ट",
+    r"डिजिटल\s+अरेस्ट\s+म\s+हस",
     r"\b(?:mumbai|delhi|cbi|crime\s+branch|customs|cyber\s+cell|ed)\s+(?:police|officer|inspector|headquarters)\b",
     r"\b(?:arrest\s+warrant|fir\s+registered|court\s+order|non-bailable\s+warrant)\b",
     r"\b(?:drugs|narcotics|contraband|illegal\s+passports)\s+in\s+your\s+(?:parcel|aadhaar)\b",
-    r"(?:थाना|कोतवाली|क्राइम\s*ब्रांच|सीबीआई).*(?:बोलत\s+हंव|वारंट|जेल)",
-    r"थाना\s+(?:कोतवाली|क्राइम\s*ब्रांच|सीबीआई)\s+ले\s+बोलत\s+हंव",
-    r"तोर\s+नाम\s+म\s+वारंट",
-    r"तोर\s+पार्सल\s+म\s+(?:चरस|गांजा|ड्रग्स)\s+मिले\s+हे",
-    r"\b(?:pm\s+awas|mahtari\s+vandan|kisan\s+subsidy)\s+(?:verification|registration\s+fee|approval\s+charge)\b",
+    r"(?:थाना|कोतवाली|क्राइम\s*ब्रांच|सीबीआई|सिविल\s+लाइन).*(?:बोलत\s+हंव|वारंट|जेल|गिरफ्तार)",
+    r"थाना\s+(?:कोतवाली|क्राइम\s*ब्रांच|सीबीआई|सिविल\s+लाइन)\s+ले\s+बोलत\s+हंव",
+    r"तोर\s+नाम\s+म\s+(?:गैर\s*जमानती\s+)?वारंट\s+निकल\s+गे\s+हे",
+    r"तोर\s+नाम\s+म\s+(?:भारी\s+)?बड़ा\s+केस\s+बने\s+हे",
+    r"पुलिस\s+आके\s+उठा\s+ले\s+जाही",
+    r"मामला\s+रफा\s*दफा\s+करे\s+बर",
+    r"तोर\s+पार्सल\s+म\s+(?:चरस|गांजा|ड्रग्स|नशीली\s+दवा)\s+मिले\s+हे",
+    r"\b(?:pm\s+awas|mahtari\s+vandan|kisan\s+subsidy)\s+(?:verification|registration\s+fee|approval\s+charge|shulk)\b",
+    r"महतारी\s+वंदन\s+योजना\s+के\s+(?:\d+\s+रुप[ईय]ा\s+)?अटके\s+हे",
     r"महतारी\s+वंदन\s+(?:सत्यापन|पंजीकरण\s+शुल्क)",
-    r"प्रधानमंत्री\s+आवास\s+स्वीकृति\s+शुल्क"
+    r"योजना\s+के\s+राशि\s+पाए\s+बर.*(?:प[ईइ]सा|शुल्क|फीस)\s+(?:पटाव|जमा\s+करव)",
+    r"प्रधानमंत्री\s+आवास\s+(?:योजना\s+)?(?:के\s+प[ईइ]सा|स्वीकृति\s+शुल्क)",
+    r"किसान\s+न्याय\s+योजना\s+बोनस\s+सत्यापन\s+शुल्क"
 ]
 
 # 5. Financial Fraud & Extortion
 FINANCIAL_EXTORTION_PATTERNS = [
     r"\b(?:bail\s+security\s+bond|clearance\s+fee|penalty\s+charge|penalty\s+fine)\b",
-    r"\b(?:transfer|deposit|send|bhejo|jama\s+karo)\s+(?:rs\.?\s*\d+|\d+\s*rupees|\d+\s*hazar|paisa)\b",
+    r"\b(?:transfer|deposit|send|bhejo|jama\s+karo|pataw|patai)\s+(?:rs\.?\s*\d+|\d+\s*rupees|\d+\s*hazar|paisa|paisa\s+pataw)\b",
     r"\bscan\s+(?:the\s+)?qr\s+code\s+to\s+(?:pay|verify|transfer)\b",
     r"जमानत\s+(?:राशि|बांड)\s+तुरंत\s+जमा\s+करें",
-    r"पईसा\s+जमा\s+करव\s+नइ\s+ते\s+जेल\s+भेज\s+देबो",
-    r"तुरंत\s+(?:\d+\s*(?:रुपये|हज़ार))\s+(?:भेजें|ट्रांसफर\s+करें)",
+    r"जमानत\s+(?:राशि|के\s+प[ईइ]सा|बांड)\s+तुरत[े]?\s+पटाव",
+    r"प[ईइ]सा\s+(?:तुरते\s+)?(?:पटाव|जमा\s+करव)\s+न[इी]\s+ते\s+जेल\s+भेज\s+देबो",
+    r"क्लियरेंस\s+फीस\s+पटाव",
+    r"तुरंत\s+(?:\d+\s*(?:रुपये|हज़ार|हजार|प[ईइ]सा))\s+(?:भेजें|ट्रांसफर\s+करें|पटाव)",
+    r"\d+\s*(?:हज़ार|हजार|रुपया|रुपिया|प[ईइ]सा)\s+(?:तुरते\s+)?(?:पटाव|जमा\s+करव|ट्रांसफर\s+करव)",
+    r"प[ईइ]सा\s+पटाव\s+न[इी]\s+ते",
     r"क्यूआर\s+कोड\s+स्कैन\s+करके\s+भुगतान\s+करें"
 ]
 
@@ -105,26 +139,32 @@ FINANCIAL_EXTORTION_PATTERNS = [
 REMOTE_ACCESS_PATTERNS = [
     r"\b(?:anydesk|quicksupport|teamviewer|rustdesk|zoho\s+assist|screenshare)\b",
     r"एनीडेस्क|क्विक\s*सपोर्ट|टीमव्यूअर",
-    r"\b(?:download|install|bheja\s+hai)\s+(?:the\s+)?(?:apk|support\s+app|security\s+app)\b",
+    r"\b(?:download|install|bheja\s+hai|bheje\s+hanw)\s+(?:the\s+)?(?:apk|support\s+app|security\s+app)\b",
     r"\binstall\s+(?:unknown\s+app|customer\s+support\s+apk)\b",
     r"\benable\s+accessibility\s+(?:permission|service)\b",
+    r"व्हाट्सएप\s+म\s+(?:फाइल|ऐप|लिंक)\s+भेजे\s+हंव\s+ओला\s+(?:डाउनलोड|इन्स्टॉल)\s+करव",
+    r"(?:anydesk|quicksupport|teamviewer)\s+(?:डाउनलोड\s+करके|म\s+स्क्रीन\s+शेयर\s+करव)",
+    r"ऐप\s+ल\s+(?:डाउनलोड|इन्स्टॉल)\s+करव",
     r"ऐप\s+(?:डाउनलोड|इन्स्टॉल)\s+करें",
-    r"स्क्रीन\s+शेयर\s+करें",
+    r"स्क्रीन\s+शेयर\s+(?:करें|करव|चालू\s+करव)",
     r"एक्सेसिबिलिटी\s+अनुमति\s+चालू\s+करें"
 ]
 
 # 7. Psychological Manipulation (Fear, Secrecy, Urgency)
 PSYCHOLOGICAL_MANIPULATION_PATTERNS = [
     r"\b(?:do\s+not\s+(?:disconnect|cut)\s+(?:the\s+)?call|phone\s+mat\s+katna|call\s+cut\s+mat\s+karna)\b",
-    r"\b(?:stay\s+on\s+(?:video\s+)?call|video\s+call\s+pe\s+bane\s+raho)\b",
-    r"\b(?:do\s+not\s+tell\s+anyone|kisi\s+ko\s+mat\s+batana|confidential\s+matter)\b",
-    r"\b(?:within\s+10\s+minutes|aaj\s+shaam\s+tak|turant|immediately|aaj\s+raat\s+9:30)\b",
+    r"\b(?:stay\s+on\s+(?:video\s+)?call|video\s+call\s+pe\s+bane\s+raho|video\s+call\s+m\s+bane\s+rahav)\b",
+    r"\b(?:do\s+not\s+tell\s+anyone|kisi\s+ko\s+mat\s+batana|confidential\s+matter|kisi\s+ko\s+jhan\s+batav)\b",
+    r"\b(?:within\s+10\s+minutes|aaj\s+shaam\s+tak|turant|immediately|aaj\s+raat\s+9:30|sanjha\s+tak)\b",
     r"कॉल\s+(?:मत\s+काटना|काटने\s+पर\s+गिरफ्तारी)",
     r"किसी\s+को\s+मत\s+बताना",
     r"वीडियो\s+कॉल\s+पर\s+बने\s+रहें",
     r"कॉल\s+ल\s+झन\s+काटव",
-    r"ककरो\s+ले\s+झन\s+बताव",
-    r"झन\s+देरी\s+करव"
+    r"ककरो\s+ले\s+झन\s+बताव(?:व)?",
+    r"घर\s+के\s+मनखे\s+ल\s+झन\s+बताव",
+    r"झन\s+देरी\s+करव",
+    r"संझा\s+तक\s+काम\s+नइ\s+होही\s+त\s+कार्रवाई\s+होही",
+    r"वीडियो\s+कॉल\s+म\s+बने\s+रहव"
 ]
 
 
@@ -176,6 +216,8 @@ def detect_scam_in_transcript(
                 for f in found:
                     phrase = f if isinstance(f, str) else f[0]
                     if phrase and phrase not in matches[key]:
+                        if any(neg in phrase for neg in ["झन बताव", "मत बता", "न बताएं", "never share", "do not share", "झन डार"]):
+                            continue
                         matches[key].append(phrase)
 
     check_pats(CRITICAL_UPI_PIN_PATTERNS, "upi_pin_fraud")
@@ -238,6 +280,11 @@ def detect_scam_in_transcript(
             "chg": "मोबाइल हैकिंग ऐप धोखा (Remote Access / APK)",
             "en": "Remote Access / APK Fraud"
         },
+        "financial_extortion": {
+            "hi": "जबरन वसूली / पैसे की मांग (Extortion & Demands)",
+            "chg": "जबरन पईसा ऐंठना / वसूली (Extortion)",
+            "en": "Financial Extortion & Demand"
+        },
         "police_govt_impersonation": {
             "hi": "पुलिस / सरकारी अधिकारी का भेष (Law Enforcement Impersonation)",
             "chg": "पुलिस / अधिकारी बनके ठगी (Impersonation)",
@@ -280,6 +327,11 @@ def detect_scam_in_transcript(
             "hi": "कॉलर AnyDesk/QuickSupport ऐप या अज्ञात APK डाउनलोड कराकर आपका फोन हैक करने की कोशिश कर रहा है।",
             "chg": "कॉलर AnyDesk या अनजान APK डाउनलोड करवा के तोर मोबाइल हैक करे के चाल चलत हे।",
             "en": "High risk: Caller is asking to install screen-sharing apps or unknown APK files to compromise your device."
+        },
+        "financial_extortion": {
+            "hi": "कॉलर फर्जी आरोप, बिल या डर दिखाकर तुरंत पैसे ट्रांसफर करने का दबाव बना रहा है।",
+            "chg": "कॉलर झूठा आरोप, बिजली बिल या डर दिखा के पईसा ट्रांसफर करवाए के दबाव बनावत हे।",
+            "en": "Caller is demanding money or transfers under false pretexts, fake bills, or threats."
         },
         "police_govt_impersonation": {
             "hi": "कॉलर खुद को पुलिस, कस्टम्स या सरकारी अधिकारी बताकर डराने या धमकी देने का प्रयास कर रहा है।",
@@ -324,6 +376,11 @@ def detect_scam_in_transcript(
             "chg": "कोनो अनजान ऐप डाउनलोड झन करव अउ स्क्रीन शेयर झन करव। फोन ल तुरते काटव।",
             "en": "Do NOT install any APK or screen-sharing app. Disconnect the call right away."
         },
+        "financial_extortion": {
+            "hi": "पैसे कभी ट्रांसफर न करें। कॉल तुरंत काटें और 1930 पर शिकायत करें।",
+            "chg": "कभू पईसा ट्रांसफर झन करव। फोन ल तुरते काटव अउ 1930 म शिकायत करव।",
+            "en": "Never send money. Disconnect immediately and file a report with 1930."
+        },
         "police_govt_impersonation": {
             "hi": "घबराएं नहीं। फोन काटें और स्थानीय थाने या 1930 हेल्पलाइन पर कॉल कर पुष्टि करें।",
             "chg": "झन डरवाव। फोन काटव अउ अपन नजदीकी थाना या 1930 म पूछ लेवव।",
@@ -364,13 +421,17 @@ def detect_scam_in_transcript(
         risk_level = "HIGH"
         eval_key = "remote_access"
         confidence = 0.95
+    elif len(matches["financial_extortion"]) > 0:
+        risk_level = "HIGH"
+        eval_key = "financial_extortion"
+        confidence = 0.95
     elif len(matches["police_govt_impersonation"]) > 0:
         risk_level = "HIGH"
         eval_key = "police_govt_impersonation"
         confidence = 0.92
     elif len(matches["bank_impersonation"]) > 0 and (
         len(matches["psychological_manipulation"]) > 0 or 
-        any(k in full_context_str for k in ["block", "suspend", "band", "freeze", "kyc", "yono", "बंद", "ब्लॉक", "सील", "कट जाही", "पईसा"])
+        any(k in full_context_str for k in ["block", "suspend", "band", "freeze", "kyc", "yono", "बंद", "ब्लॉक", "सील", "कट जाही", "पईसा", "पइसा", "पटाव"])
     ):
         risk_level = "HIGH"
         eval_key = "bank_impersonation"

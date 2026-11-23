@@ -1,0 +1,29 @@
+{
+  "name": "jan-suraksha",
+  "version": "2.0.0",
+  "description": "Rural Offline AI Cyber Fraud Protection System (Jan Suraksha)",
+  "main": "frontend/index.html",
+  "scripts": {
+    "build": "echo 'Frontend ready for distribution'",
+    "cap:sync": "npx cap sync android",
+    "cap:open": "npx cap open android",
+    "cap:build": "npx cap build android"
+  },
+  "keywords": [
+    "cyber-safety",
+    "offline-ai",
+    "sherpa-onnx",
+    "scam-protection",
+    "chhattisgarhi",
+    "android"
+  ],
+  "author": "Jan Suraksha Engineering Team",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/core": "^6.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.0.0"
+  }
+}

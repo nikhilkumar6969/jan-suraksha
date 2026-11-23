@@ -205,6 +205,10 @@ def close_session(session_id: str) -> Optional[dict]:
         full_transcript = " ".join(sess.accumulated_text).strip()
         if sess.current_interim:
             full_transcript = f"{full_transcript} {sess.current_interim}".strip()
+        # Wipe in-memory PCM audio buffer to prevent memory leakage
+        if hasattr(sess, "pcm_buffer"):
+            sess.pcm_buffer.clear()
+        sess.stream = None
         return {
             "session_id": session_id,
             "duration_seconds": round(sess.total_audio_seconds, 2),
@@ -275,8 +279,11 @@ def process_streaming_chunk(
     else:
         sess.silence_chunks_count += 1
 
-    # Append to session buffer for multi-lingual fallback
+    # Append to rolling session buffer (capped at 30 seconds to prevent memory accumulation)
     sess.pcm_buffer.extend(pcm_bytes)
+    MAX_ROLLING_BUFFER_BYTES = 30 * 16000 * 2  # 30 seconds at 16kHz Int16 (960 KB)
+    if len(sess.pcm_buffer) > MAX_ROLLING_BUFFER_BYTES:
+        sess.pcm_buffer = sess.pcm_buffer[-MAX_ROLLING_BUFFER_BYTES:]
 
     # 2. Continuous Sherpa-ONNX Streaming Recognition
     text_result = ""

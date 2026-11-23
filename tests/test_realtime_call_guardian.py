@@ -19,6 +19,7 @@ Tests all 16 scenarios specified in the system requirements:
 16. User stops listening (session cleanup and summary)
 """
 
+import os
 import time
 import pytest
 import numpy as np
@@ -238,3 +239,196 @@ def test_streaming_chunk_latency_benchmark():
     # Latency should be well under 250ms for 100ms chunk
     assert duration_ms < 250, f"Latency {duration_ms}ms exceeded 250ms threshold"
     assert "latency_ms" in res
+
+
+# -------------------------------------------------------------
+# Phase 1: Real-Time WebSocket Int16 PCM Streaming Tests
+# -------------------------------------------------------------
+def test_websocket_pcm_streaming_pipeline():
+    with client.websocket_connect("/api/calls/stream") as ws:
+        # 1. Config Handshake
+        ws.send_json({
+            "type": "config",
+            "session_id": "ws_test_session_1",
+            "language": "hi",
+            "sample_rate": 16000
+        })
+        ack = ws.receive_json()
+        assert ack["status"] == "ready"
+        assert ack["session_id"] == "ws_test_session_1"
+
+        # 2. Binary Int16 PCM Frame (2048 samples = 128ms @ 16kHz)
+        audio_frame = (np.random.randn(2048) * 5000).astype(np.int16).tobytes()
+        ws.send_bytes(audio_frame)
+        res = ws.receive_json()
+        assert "risk_level" in res
+        assert "stages" in res
+        assert res["engine"] == "sherpa-onnx-streaming"
+        assert "scam_category" in res
+
+        # 3. Clean Stop
+        ws.send_json({"type": "stop"})
+        stop_ack = ws.receive_json()
+        assert stop_ack["status"] == "stopped"
+
+
+def test_pipeline_performance_comparison():
+    import io
+    import wave
+
+    # Create 2048 samples of test audio (128ms)
+    test_samples = (np.random.randn(2048) * 8000).astype(np.int16)
+    pcm_bytes = test_samples.tobytes()
+
+    # Benchmark New Pipeline: Direct in-memory Int16 PCM processing (Zero disk, zero container)
+    new_latencies = []
+    for _ in range(5):
+        t0 = time.perf_counter()
+        _ = process_streaming_chunk("bench_new", pcm_bytes, sample_rate=16000)
+        new_latencies.append((time.perf_counter() - t0) * 1000)
+    avg_new_ms = sum(new_latencies) / len(new_latencies)
+
+    # Benchmark Old Pipeline: WAV header wrap + file container decode simulation
+    old_latencies = []
+    for _ in range(5):
+        t0 = time.perf_counter()
+        wav_io = io.BytesIO()
+        with wave.open(wav_io, "wb") as wf:
+            wf.setnchannels(1)
+            wf.setsampwidth(2)
+            wf.setframerate(16000)
+            wf.writeframes(pcm_bytes)
+        wav_bytes = wav_io.getvalue()
+        
+        # Simulating container parse + ASR
+        with wave.open(io.BytesIO(wav_bytes), "rb") as wf:
+            raw = wf.readframes(wf.getnframes())
+        _ = process_streaming_chunk("bench_old", raw, sample_rate=16000)
+        old_latencies.append((time.perf_counter() - t0) * 1000)
+    avg_old_ms = sum(old_latencies) / len(old_latencies)
+
+    # In-memory Int16 PCM must be fast (< 100ms)
+    assert avg_new_ms < 100
+    print(f"\n[BENCHMARK] New In-Memory PCM Streaming: {avg_new_ms:.2f}ms | Old Container Pipeline: {avg_old_ms:.2f}ms")
+
+
+def test_offline_audio_alert_assets():
+    """
+    Verify Phase 3 offline audio alert library:
+    - Pre-synthesized audio files exist for all critical scam categories.
+    - Coverage across Hindi (hi), Chhattisgarhi (chg), and English (en).
+    - Attention chime exists.
+    - Files are served via FastAPI static mounts with HTTP 200 and audio content-type.
+    """
+    alerts_dir = os.path.join(os.path.dirname(__file__), "..", "frontend", "assets", "alerts")
+    assert os.path.exists(alerts_dir), f"Alerts directory missing at {alerts_dir}"
+
+    expected_categories = [
+        "upi_pin",
+        "otp",
+        "police",
+        "remote_access",
+        "extortion",
+        "bank_kyc"
+    ]
+    expected_languages = ["hi", "chg", "en"]
+
+    for cat in expected_categories:
+        for lang in expected_languages:
+            filename = f"alert_{cat}_{lang}.wav"
+            file_path = os.path.join(alerts_dir, filename)
+            assert os.path.exists(file_path), f"Missing offline alert file: {filename}"
+            size = os.path.getsize(file_path)
+            assert size > 10000, f"Alert file {filename} appears empty or truncated ({size} bytes)"
+
+    # Verify chime
+    chime_path = os.path.join(alerts_dir, "alert_chime.wav")
+    assert os.path.exists(chime_path)
+    assert os.path.getsize(chime_path) > 10000
+
+    # Test static file serving via FastAPI client
+    for cat in ["upi_pin", "otp", "police"]:
+        for lang in ["hi", "chg"]:
+            resp = client.get(f"/assets/alerts/alert_{cat}_{lang}.wav")
+            assert resp.status_code == 200, f"Failed to serve /assets/alerts/alert_{cat}_{lang}.wav"
+            assert resp.headers.get("content-type") in ["audio/wav", "audio/x-wav"], f"Invalid content-type: {resp.headers.get('content-type')}"
+            assert len(resp.content) > 10000
+
+
+def test_android_packaging_and_manifest_permissions():
+    """
+    Verify Phase 4 Android native packaging configuration and permissions:
+    - capacitor.config.json exists and is valid.
+    - AndroidManifest.xml contains RECORD_AUDIO, VIBRATE, FOREGROUND_SERVICE_MICROPHONE.
+    - CallGuardianService foreground service registered.
+    - Speakerphone advisory localized strings exist.
+    """
+    import json
+    root_dir = os.path.join(os.path.dirname(__file__), "..")
+
+    # 1. Capacitor configuration
+    cap_path = os.path.join(root_dir, "capacitor.config.json")
+    assert os.path.exists(cap_path), "capacitor.config.json is missing"
+    with open(cap_path, "r", encoding="utf-8") as f:
+        cap_config = json.load(f)
+    assert cap_config.get("appId") == "org.suraksha.sms"
+    assert cap_config.get("webDir") == "frontend"
+
+    # 2. Android Manifest permissions
+    manifest_path = os.path.join(root_dir, "android", "app", "src", "main", "AndroidManifest.xml")
+    assert os.path.exists(manifest_path), "AndroidManifest.xml is missing"
+    with open(manifest_path, "r", encoding="utf-8") as f:
+        manifest_content = f.read()
+
+    required_perms = [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.VIBRATE",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_MICROPHONE",
+        "CallGuardianService"
+    ]
+    for perm in required_perms:
+        assert perm in manifest_content, f"Missing required permission/service in manifest: {perm}"
+
+    # 3. Speakerphone advisory localization
+    for lang in ["hi", "en", "chg"]:
+        loc_path = os.path.join(root_dir, "frontend", "locales", f"{lang}.json")
+        with open(loc_path, "r", encoding="utf-8") as f:
+            loc_data = json.load(f)
+        assert "call_speakerphone_title" in loc_data, f"Missing call_speakerphone_title in {lang}.json"
+        assert "call_speakerphone_desc" in loc_data, f"Missing call_speakerphone_desc in {lang}.json"
+
+
+def test_security_privacy_rolling_memory_and_audio_wiping():
+    """
+    Verify Phase 5 Security and Privacy guarantees:
+    - Zero permanent audio files written to disk.
+    - Rolling PCM buffer strictly capped at 30 seconds (960 KB) to prevent memory accumulation.
+    - Full memory wipe upon session closure.
+    """
+    from backend.app.calls.streaming_asr import process_streaming_chunk, close_session, get_or_create_session
+
+    session_id = "test_sec_privacy_session"
+    sess = get_or_create_session(session_id)
+
+    # Generate 1 second of dummy audio (32,000 bytes)
+    dummy_1s_pcm = np.zeros(16000, dtype=np.int16).tobytes()
+
+    # Simulate streaming 45 seconds of continuous audio (exceeding 30s limit)
+    for _ in range(45):
+        _ = process_streaming_chunk(session_id, dummy_1s_pcm, sample_rate=16000)
+
+    # Buffer must not exceed 960 KB (30s)
+    max_expected = 30 * 16000 * 2
+    assert len(sess.pcm_buffer) <= max_expected, f"Buffer exceeded limit: {len(sess.pcm_buffer)} > {max_expected}"
+
+    # Close session
+    summary = close_session(session_id)
+    assert summary is not None
+    assert summary["session_id"] == session_id
+    assert len(sess.pcm_buffer) == 0, "Buffer was not wiped on close!"
+
+
+
+

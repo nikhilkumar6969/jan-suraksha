@@ -216,7 +216,7 @@ def stop_session_endpoint(payload: dict):
     reset_tracker(sid)
     return sess_summary or {"status": "stopped", "session_id": sid}
 
-# Full-Duplex Real-Time Streaming WebSocket Endpoint
+# Full-Duplex Real-Time Streaming WebSocket Endpoint (Direct In-Memory Int16 PCM)
 @app.websocket("/api/calls/stream")
 async def websocket_stream_endpoint(websocket: WebSocket):
     from app.calls.streaming_asr import process_streaming_chunk, close_session
@@ -226,39 +226,86 @@ async def websocket_stream_endpoint(websocket: WebSocket):
 
     await websocket.accept()
     session_id = f"ws_{int(time.time()*1000)}"
+    current_lang = "auto"
+    sample_rate = 16000
+
     try:
         while True:
             data = await websocket.receive()
             raw_pcm = b""
-            lang = "auto"
 
             if "bytes" in data and data["bytes"]:
                 raw_pcm = data["bytes"]
             elif "text" in data and data["text"]:
                 try:
                     msg = json.loads(data["text"])
-                    if msg.get("type") == "stop":
-                        close_session(session_id)
+                    msg_type = msg.get("type", "")
+                    if msg_type == "config":
+                        if msg.get("session_id"):
+                            session_id = msg.get("session_id")
+                        if msg.get("language"):
+                            current_lang = msg.get("language")
+                        if msg.get("sample_rate"):
+                            sample_rate = int(msg.get("sample_rate"))
+                        await websocket.send_json({
+                            "status": "ready",
+                            "session_id": session_id,
+                            "language": current_lang,
+                            "sample_rate": sample_rate
+                        })
+                        continue
+                    elif msg_type == "stop":
+                        summary = close_session(session_id)
                         reset_tracker(session_id)
-                        await websocket.send_json({"status": "stopped", "session_id": session_id})
+                        await websocket.send_json({
+                            "status": "stopped",
+                            "session_id": session_id,
+                            "summary": summary
+                        })
                         break
                     if "audio_base64" in msg:
                         raw_pcm = base64.b64decode(msg["audio_base64"])
-                    lang = msg.get("language", "auto")
+                    if msg.get("language"):
+                        current_lang = msg.get("language")
                 except Exception as ex:
-                    logger.debug(f"JSON decode note: {ex}")
+                    logger.debug(f"WebSocket JSON decode error: {ex}")
 
-            if raw_pcm:
-                asr_res = process_streaming_chunk(session_id, raw_pcm, language=lang)
-                text = asr_res["text"]
-                scam_eval = detect_scam_in_transcript(text, user_lang=lang)
-                stages = track_conversation_step(session_id, text)
-                await websocket.send_json({
+            if raw_pcm and len(raw_pcm) > 0:
+                asr_res = process_streaming_chunk(
+                    session_id=session_id,
+                    pcm_bytes=raw_pcm,
+                    sample_rate=sample_rate,
+                    language=current_lang
+                )
+                current_text = asr_res.get("text", "")
+                user_lang_pref = current_lang if current_lang in ("hi", "chg", "en") else "hi"
+                scam_eval = detect_scam_in_transcript(current_text, user_lang=user_lang_pref)
+                timeline_result = track_conversation_step(session_id, current_text)
+
+                payload = {
                     **asr_res,
                     "scam_assessment": scam_eval,
-                    "stages": stages,
-                    "risk_level": scam_eval["risk_level"]
-                })
+                    "timeline": timeline_result,
+                    "stages": timeline_result,
+                    "risk_level": scam_eval["risk_level"],
+                    "scam_category": scam_eval["scam_category"],
+                    "scam_category_hi": scam_eval.get("scam_category_hi", scam_eval["scam_category"]),
+                    "scam_category_en": scam_eval.get("scam_category_en", scam_eval["scam_category"]),
+                    "scam_category_chg": scam_eval.get("scam_category_chg", scam_eval["scam_category"]),
+                    "reason": scam_eval["reason"],
+                    "reason_hi": scam_eval.get("reason_hi", scam_eval["reason"]),
+                    "reason_en": scam_eval.get("reason_en", scam_eval["reason"]),
+                    "reason_chg": scam_eval.get("reason_chg", scam_eval["reason"]),
+                    "recommended_action": scam_eval["recommended_action"],
+                    "recommended_action_hi": scam_eval.get("recommended_action_hi", scam_eval["recommended_action"]),
+                    "recommended_action_en": scam_eval.get("recommended_action_en", scam_eval["recommended_action"]),
+                    "recommended_action_chg": scam_eval.get("recommended_action_chg", scam_eval["recommended_action"]),
+                    "audio_warning_hi": scam_eval.get("audio_warning_hi", ""),
+                    "audio_warning_en": scam_eval.get("audio_warning_en", ""),
+                    "suspicious_phrases": scam_eval.get("suspicious_phrases", []),
+                    "claim_contradictions": timeline_result.get("claim_contradictions", [])
+                }
+                await websocket.send_json(payload)
     except WebSocketDisconnect:
         close_session(session_id)
         reset_tracker(session_id)
