@@ -174,11 +174,28 @@ class StreamingSession:
         self.speech_chunks_count = 0
         self.silence_chunks_count = 0
 
-        # Sherpa-ONNX streaming stream
+        # Sherpa-ONNX streaming Zipformer
         self.zipformer = get_streaming_zipformer()
         self.stream = self.zipformer.create_stream() if self.zipformer else None
-        
-        # Audio buffer for multilingual Whisper / Vosk batching when needed
+
+        # Vosk Streaming Recognizers for Hindi and Indian English
+        self.vosk_rec_hi = None
+        self.vosk_rec_en = None
+        try:
+            import vosk
+            from app.calls.transcribe import find_vosk_model, get_or_load_vosk_model
+            m_hi = get_or_load_vosk_model(find_vosk_model("hi"))
+            if m_hi:
+                self.vosk_rec_hi = vosk.KaldiRecognizer(m_hi, 16000)
+                self.vosk_rec_hi.SetWords(True)
+            m_en = get_or_load_vosk_model(find_vosk_model("en"))
+            if m_en:
+                self.vosk_rec_en = vosk.KaldiRecognizer(m_en, 16000)
+                self.vosk_rec_en.SetWords(True)
+        except Exception as ex:
+            logger.debug(f"Vosk streaming init notice: {ex}")
+
+        # Audio buffer for multilingual Whisper batching
         self.pcm_buffer = bytearray()
 
     def reset_stream(self):
@@ -202,9 +219,42 @@ def get_or_create_session(session_id: str, language: str = "auto") -> StreamingS
 def close_session(session_id: str) -> Optional[dict]:
     if session_id in _ACTIVE_SESSIONS:
         sess = _ACTIVE_SESSIONS.pop(session_id)
+        # Flush final results from Vosk
+        if sess.vosk_rec_hi:
+            try:
+                fin_hi = json.loads(sess.vosk_rec_hi.FinalResult()).get("text", "").strip()
+                if fin_hi and fin_hi not in sess.accumulated_text:
+                    sess.accumulated_text.append(fin_hi)
+            except Exception:
+                pass
+        if sess.vosk_rec_en:
+            try:
+                fin_en = json.loads(sess.vosk_rec_en.FinalResult()).get("text", "").strip()
+                if fin_en and fin_en not in sess.accumulated_text:
+                    sess.accumulated_text.append(fin_en)
+            except Exception:
+                pass
+
         full_transcript = " ".join(sess.accumulated_text).strip()
-        if sess.current_interim:
+        if sess.current_interim and sess.current_interim not in full_transcript:
             full_transcript = f"{full_transcript} {sess.current_interim}".strip()
+
+        # Run multilingual Whisper final pass if audio buffer was captured
+        if len(sess.pcm_buffer) >= 16000 * 2:
+            try:
+                whisper = get_whisper_recognizer(sess.language)
+                if whisper:
+                    samples_int16 = np.frombuffer(bytes(sess.pcm_buffer), dtype=np.int16)
+                    samples_float32 = samples_int16.astype(np.float32) / 32768.0
+                    w_stream = whisper.create_stream()
+                    w_stream.accept_waveform(16000, samples_float32)
+                    whisper.decode_stream(w_stream)
+                    w_text = w_stream.result.text.strip()
+                    if w_text and len(w_text) >= len(full_transcript):
+                        full_transcript = w_text
+            except Exception as ex:
+                logger.debug(f"Session close Whisper note: {ex}")
+
         # Wipe in-memory PCM audio buffer to prevent memory leakage
         if hasattr(sess, "pcm_buffer"):
             sess.pcm_buffer.clear()
@@ -212,7 +262,9 @@ def close_session(session_id: str) -> Optional[dict]:
         return {
             "session_id": session_id,
             "duration_seconds": round(sess.total_audio_seconds, 2),
-            "final_transcript": full_transcript
+            "final_transcript": full_transcript,
+            "text": full_transcript,
+            "transcript": full_transcript
         }
     return None
 
@@ -285,31 +337,47 @@ def process_streaming_chunk(
     if len(sess.pcm_buffer) > MAX_ROLLING_BUFFER_BYTES:
         sess.pcm_buffer = sess.pcm_buffer[-MAX_ROLLING_BUFFER_BYTES:]
 
-    # 2. Continuous Sherpa-ONNX Streaming Recognition
+    # 2. Continuous Real-time Streaming Recognition (Sherpa-ONNX Zipformer / Vosk)
     text_result = ""
     is_final = False
     engine_name = "sherpa-onnx-streaming"
 
-    zipformer = sess.zipformer or get_streaming_zipformer()
-    if zipformer and sess.stream and len(samples_float32) > 0:
-        sess.stream.accept_waveform(sample_rate, samples_float32)
+    if language in ("hi", "chg") and sess.vosk_rec_hi:
+        try:
+            if sess.vosk_rec_hi.AcceptWaveform(pcm_bytes):
+                v_res = json.loads(sess.vosk_rec_hi.Result())
+                if v_res.get("text"):
+                    v_text = v_res["text"].strip()
+                    sess.accumulated_text.append(v_text)
+                    text_result = v_text
+                    is_final = True
+            else:
+                v_part = json.loads(sess.vosk_rec_hi.PartialResult())
+                sess.current_interim = v_part.get("partial", "").strip()
+                text_result = sess.current_interim
+        except Exception as e:
+            logger.debug(f"Vosk streaming error: {e}")
+    else:
+        zipformer = sess.zipformer or get_streaming_zipformer()
+        if zipformer and sess.stream and len(samples_float32) > 0:
+            sess.stream.accept_waveform(sample_rate, samples_float32)
 
-        while zipformer.is_ready(sess.stream):
-            zipformer.decode_stream(sess.stream)
+            while zipformer.is_ready(sess.stream):
+                zipformer.decode_stream(sess.stream)
 
-        # Check if an endpoint (end of phrase/pause) was detected
-        if zipformer.is_endpoint(sess.stream):
-            final_segment = zipformer.get_result(sess.stream).strip()
-            if final_segment:
-                sess.accumulated_text.append(final_segment)
-                text_result = final_segment
-                is_final = True
-            zipformer.reset(sess.stream)
-            sess.current_interim = ""
-        else:
-            interim = zipformer.get_result(sess.stream).strip()
-            sess.current_interim = interim
-            text_result = interim
+            # Check if an endpoint (end of phrase/pause) was detected
+            if zipformer.is_endpoint(sess.stream):
+                final_segment = zipformer.get_result(sess.stream).strip()
+                if final_segment:
+                    sess.accumulated_text.append(final_segment)
+                    text_result = final_segment
+                    is_final = True
+                zipformer.reset(sess.stream)
+                sess.current_interim = ""
+            else:
+                interim = zipformer.get_result(sess.stream).strip()
+                sess.current_interim = interim
+                text_result = interim
 
     latency_ms = int((time.time() - start_time) * 1000)
 

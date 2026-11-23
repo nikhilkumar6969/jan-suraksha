@@ -158,11 +158,14 @@ async def detect_call_endpoint(
                 "stages": {"stages": [], "current_stage": 0, "progression_percent": 0},
                 "rule_flags": {},
                 "highlighted_html": "",
+                "text": "",
                 "transcript": ""
             }
         )
 
     analysis = analyze_call_transcript(final_transcript, user_lang=language or "hi")
+    analysis["text"] = final_transcript
+    analysis["transcript"] = final_transcript
     if notice:
         analysis["transcription_notice"] = notice
     return analysis
@@ -241,7 +244,11 @@ def stop_session_endpoint(payload: dict):
     sid = payload.get("session_id", "default_session")
     sess_summary = close_session(sid)
     reset_tracker(sid)
-    return sess_summary or {"status": "stopped", "session_id": sid}
+    if sess_summary:
+        txt = sess_summary.get("final_transcript", "")
+        sess_summary["text"] = txt
+        sess_summary["transcript"] = txt
+    return sess_summary or {"status": "stopped", "session_id": sid, "text": "", "transcript": ""}
 
 # Full-Duplex Real-Time Streaming WebSocket Endpoint (Direct In-Memory Int16 PCM)
 @app.websocket("/api/calls/stream")

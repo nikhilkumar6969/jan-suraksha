@@ -134,6 +134,7 @@ def analyze_call_transcript(
         **pipeline_res,
         "script_meta": script_meta,
         "script_meta_map": CALL_SCRIPTS.get(script_key) if script_key else None,
+        "text": transcript,
         "transcript": transcript,
         "risk_level": scam_eval["risk_level"],
         "scam_category": scam_eval["scam_category"],

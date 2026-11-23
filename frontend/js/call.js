@@ -174,13 +174,17 @@ const CallDetector = {
     }
 
     if (audioInput) {
-      audioInput.addEventListener('change', (e) => {
+      audioInput.addEventListener('change', async (e) => {
         const file = e.target.files ? e.target.files[0] : null;
         this.activeAudioFile = file;
         const player = document.getElementById('callAudioPlayer');
         if (file && player) {
           player.src = URL.createObjectURL(file);
           player.style.display = 'block';
+        }
+        if (file) {
+          this.showStatus('ऑडियो से बातचीत निकाली जा रही है (Extracting voice to text)...', 'info');
+          await this.analyzeCall();
         }
       });
     }
@@ -504,9 +508,10 @@ const CallDetector = {
   handleStreamingResponse(data) {
     if (!this.isListening && !data.force_update) return;
 
-    // 1. Update Transcription Terminal
-    if (data.text) {
-      this.renderLiveTranscriptCumulative(data.text, data.interim);
+    // 1. Update Transcription Terminal & Input Field
+    const recognizedText = data.text || data.transcript || '';
+    if (recognizedText) {
+      this.renderLiveTranscriptCumulative(recognizedText, data.interim);
     }
 
     // 2. Update Latency and VAD pills
@@ -945,6 +950,18 @@ const CallDetector = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ session_id: this.streamSessionId })
+      }).then(res => res.json()).then(data => {
+        if (data && (data.final_transcript || data.text || data.transcript)) {
+          const finalTxt = data.final_transcript || data.text || data.transcript;
+          const transcriptInput = document.getElementById('callTranscriptInput');
+          if (transcriptInput && (!transcriptInput.value || finalTxt.length > transcriptInput.value.length)) {
+            transcriptInput.value = finalTxt;
+          }
+          const termArea = document.getElementById('liveStreamingTextArea');
+          if (termArea) {
+            termArea.innerHTML = this.escapeHtml(finalTxt);
+          }
+        }
       }).catch(err => console.debug('Stop notice:', err));
     }
   },
@@ -1070,6 +1087,15 @@ const CallDetector = {
       this.lastAnalysisData = data;
       if (data.stages || data.timeline) {
         this.lastStageData = data.stages || data.timeline;
+      }
+
+      const extractedText = data.text || data.transcript || '';
+      data.text = extractedText;
+      data.transcript = extractedText;
+
+      const transcriptInput = document.getElementById('callTranscriptInput');
+      if (transcriptInput && extractedText) {
+        transcriptInput.value = extractedText;
       }
 
       this.hideStatus();
