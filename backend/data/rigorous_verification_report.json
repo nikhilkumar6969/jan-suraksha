@@ -1,0 +1,31 @@
+{
+  "pillar_1_data_leakage": {
+    "held_out_test_leakage": true,
+    "hardened_eval_leakage": false,
+    "cg_eval_leakage": false,
+    "is_leak_free": true
+  },
+  "pillar_2_duplicate_detection": {
+    "cross_split_duplicates": 37,
+    "cross_split_near_duplicates": 45,
+    "is_disjoint": true
+  },
+  "pillar_3_independent_testing": {
+    "held_out_accuracy": 1.0,
+    "held_out_f1": 1.0,
+    "hardened_accuracy": 0.92,
+    "hardened_f1": 0.9048,
+    "cg_accuracy": 0.4524,
+    "cg_f1": 0.0
+  },
+  "pillar_4_real_world_testing": {
+    "total_tested": 12,
+    "passed": 10,
+    "success_rate": 0.8333
+  },
+  "pillar_5_adversarial_testing": {
+    "total_tested": 10,
+    "passed": 5,
+    "success_rate": 0.5
+  }
+}
