@@ -33,6 +33,7 @@ from app.detect.pipeline import run_detection_pipeline
 from app.calls.transcribe import transcribe_audio_file
 from app.calls.analyzer import analyze_call_transcript
 from app.qr.checker import decode_qr_image_bytes, analyze_upi_qr
+from app.audio.whisper_service import transcribe_audio
 from app.reports.database import init_db
 from app.reports.service import submit_anonymous_report
 from app.dashboard.service import get_dashboard_metrics
@@ -169,6 +170,65 @@ async def detect_call_endpoint(
     if notice:
         analysis["transcription_notice"] = notice
     return analysis
+
+# Whisper Medium Offline Speech-to-Text Endpoint (100% Local Inference)
+@app.post("/api/transcribe")
+async def transcribe_endpoint(
+    audio: Optional[UploadFile] = File(None),
+    file: Optional[UploadFile] = File(None),
+    language: Optional[str] = Form(None)
+):
+    upload_file = audio or file
+    if not upload_file:
+        return JSONResponse(
+            status_code=400,
+            content={
+                "success": False,
+                "error": "Missing audio file in request. Please upload an audio file.",
+                "text": "",
+                "language": "",
+                "language_probability": 0.0,
+                "duration": 0.0
+            }
+        )
+
+    filename = upload_file.filename or "audio.wav"
+    content = await upload_file.read()
+
+    if len(content) == 0:
+        return JSONResponse(
+            status_code=400,
+            content={
+                "success": False,
+                "error": "Uploaded audio file is empty (0 bytes).",
+                "text": "",
+                "language": "",
+                "language_probability": 0.0,
+                "duration": 0.0
+            }
+        )
+
+    if len(content) > MAX_AUDIO_UPLOAD_BYTES:
+        return JSONResponse(
+            status_code=413,
+            content={
+                "success": False,
+                "error": f"Audio file too large ({len(content)/(1024*1024):.1f} MB). Maximum allowed size is 25 MB.",
+                "text": "",
+                "language": "",
+                "language_probability": 0.0,
+                "duration": 0.0
+            }
+        )
+
+    result = transcribe_audio(
+        audio_input=content,
+        filename=filename,
+        language=language
+    )
+
+    status_code = 200 if result.get("success") else 400
+    return JSONResponse(status_code=status_code, content=result)
 
 # Real-Time Streaming Audio Chunk Endpoint
 @app.post("/api/calls/stream-chunk")

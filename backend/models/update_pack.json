@@ -1,6 +1,6 @@
 {
   "pack_version": "2026.11.22-v1",
-  "released_at": "2026-11-23 12:16:51Z",
+  "released_at": "2026-11-23 12:52:38Z",
   "model_version": "Suraksha-Scam-LR-v1.0",
   "rules_version": "rules-2026-v2",
   "confirmed_blacklist": [
@@ -243,8 +243,13 @@
       "indicator": "test_fraudster_99f3f7f9@okaxis",
       "type": "Fake QR",
       "reports": 3
+    },
+    {
+      "indicator": "test_fraudster_95322305@okaxis",
+      "type": "Fake QR",
+      "reports": 3
     }
   ],
-  "signature": "c67a838ab12332b07bb88bce63474d4771521d7110f18b4e5b6aa6555a5a09c4810079972457104b13a3bf9d31edd761fea3d2a6d5d0bf4d71df74e6a4dc6600",
+  "signature": "2df94f471e0e4df546870593b373d74ce776aa800ffea67d6064272c23634c86c1968ad44f9a5f386e67e40fd5ad97e7edc6eff55ac06caa5db8d6b2311b2901",
   "public_key": "56c1c7088a16b76b1683c020376ab5e0a5b97b7d0d8763736f238cf2d0225ec9"
 }

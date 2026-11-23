@@ -8,6 +8,7 @@ from urllib.parse import urlparse, parse_qs, unquote
 import re
 import numpy as np
 import cv2
+from app.detect.reputation import check_reputation
 
 GOV_OR_BANK_KEYWORDS = [
     "sbi", "state bank", "hdfc", "icici", "cspdcl", "electricity", "bijli",
@@ -82,6 +83,16 @@ def analyze_upi_qr(raw_qr_str: str, user_lang: str = "hi") -> dict:
     am = parsed["am"]
     warnings = []
     risk_score = 0.0
+
+    # Risk Check 0: Check against Ed25519-signed offline reputation blacklist
+    rep_match = check_reputation(pa)
+    if not rep_match and parsed.get("raw"):
+        rep_match = check_reputation(parsed["raw"])
+    if rep_match and rep_match.get("is_known_scam"):
+        risk_score += 1.0
+        warnings.append(
+            f"OFFLINE BLACKLIST MATCH: Recipient '{pa}' is listed in the verified cyber defense blacklist ({rep_match.get('scam_type')})."
+        )
 
     # Risk Check 1: Name claims Bank/Gov/Utility but Handle is a personal third-party PSP
     claims_authority = any(kw in pn for kw in GOV_OR_BANK_KEYWORDS)

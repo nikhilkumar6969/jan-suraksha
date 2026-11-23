@@ -325,6 +325,17 @@
             </div>
           </div>
 
+          <div class="action-tile" data-nav="check" data-subtab="stt">
+            <div class="tile-badge tone-badge-blue">Whisper</div>
+            <div class="tile-icon-box tone-blue">
+              <svg viewBox="0 0 24 24"><use href="#icon-mic"/></svg>
+            </div>
+            <div class="tile-content">
+              <h3 data-i18n="action_stt_title">AI स्पीच-टू-टेक्स्ट</h3>
+              <p data-i18n="action_stt_sub">Whisper Medium द्वारा 100% ऑफलाइन आवाज से टेक्स्ट बनाएं</p>
+            </div>
+          </div>
+
           <div class="action-tile" data-nav="learn">
             <div class="tile-badge tone-badge-green">ज्ञान</div>
             <div class="tile-icon-box tone-green">
@@ -435,6 +446,10 @@
           <button class="subtab-btn" data-target="subtab-qr" role="tab" aria-selected="false">
             <svg viewBox="0 0 24 24"><use href="#icon-qr-code"/></svg>
             <span data-i18n="tab_qr">UPI क्यूआर कोड</span>
+          </button>
+          <button class="subtab-btn" data-target="subtab-stt" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24"><use href="#icon-mic"/></svg>
+            <span data-i18n="tab_stt">स्पीच-टू-टेक्स्ट (Whisper)</span>
           </button>
         </div>
 
@@ -859,6 +874,122 @@
           </div>
 
           <div class="verdict-box" id="qrVerdictBox"></div>
+        </div>
+
+        <!-- Subtab 4: Offline AI Speech-to-Text (Whisper Medium) -->
+        <div class="subtab-content" id="subtab-stt" style="display: none;">
+          <div class="input-card">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-3); flex-wrap: wrap; gap: 8px;">
+              <div>
+                <h3 style="margin: 0; font-size: var(--text-lg); font-weight: 700; color: var(--text-primary);" data-i18n="stt_section_title">Offline AI Speech-to-Text</h3>
+                <p style="margin: 4px 0 0; font-size: var(--text-xs); color: var(--text-secondary);" data-i18n="stt_section_subtitle">OpenAI Whisper Medium (faster-whisper) — 100% On-Device, Private & Free</p>
+              </div>
+              <span class="badge" style="background: rgba(30, 58, 138, 0.1); color: var(--gov-navy); font-size: var(--text-xs); font-weight: 700; border: 1px solid rgba(30, 58, 138, 0.2); padding: 4px 10px; border-radius: 9999px;">
+                Whisper Medium (769M)
+              </span>
+            </div>
+
+            <!-- Audio Input Controls (File Upload & Microphone Recording) -->
+            <div style="margin-bottom: var(--space-4);">
+              <label style="font-weight: 700; display: block; margin-bottom: var(--space-2); font-size: var(--text-sm);" data-i18n="stt_input_label">
+                ऑडियो फ़ाइल अपलोड करें या माइक्रोफ़ोन से रिकॉर्ड करें:
+              </label>
+
+              <div class="btn-row" style="flex-wrap: wrap; gap: var(--space-2);">
+                <label class="btn btn-secondary" style="margin: 0; cursor: pointer;">
+                  <svg viewBox="0 0 24 24"><use href="#icon-upload"/></svg>
+                  <span data-i18n="stt_upload_btn">ऑडियो फ़ाइल चुनें (Upload Audio)</span>
+                  <input type="file" id="sttAudioFileInput" accept="audio/*,.mp3,.wav,.m4a,.flac,.webm,.ogg" style="display: none;" />
+                </label>
+
+                <button class="btn btn-secondary" id="btnSttRecord">
+                  <svg viewBox="0 0 24 24"><use href="#icon-mic"/></svg>
+                  <span id="sttRecordBtnText" data-i18n="stt_mic_record">माइक से रिकॉर्ड करें (Record)</span>
+                </button>
+
+                <button class="btn btn-secondary" id="btnSttClearAudio" style="display: none;">
+                  <svg viewBox="0 0 24 24"><use href="#icon-x"/></svg>
+                  <span data-i18n="stt_clear_audio">हटाएं (Remove)</span>
+                </button>
+              </div>
+
+              <!-- Selected Audio / Recording Status Banner -->
+              <div id="sttAudioStatusBox" style="display: none; margin-top: var(--space-3); padding: var(--space-2) var(--space-3); border-radius: var(--radius-sm); background: var(--bg-card-subtle); border: 1px solid var(--border-color); font-size: var(--text-xs);">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span id="sttAudioStatusIcon">🎵</span>
+                    <span id="sttAudioStatusText" style="font-weight: 600;">कोई ऑडियो चयनित नहीं</span>
+                  </div>
+                  <span id="sttAudioSizeBadge" style="color: var(--text-tertiary);"></span>
+                </div>
+                <audio id="sttAudioPreview" controls style="display: none; width: 100%; margin-top: 8px; height: 36px;"></audio>
+              </div>
+            </div>
+
+            <!-- Language Selection & Options -->
+            <div style="margin-bottom: var(--space-4); display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: center;">
+              <div>
+                <label for="sttLanguageSelect" style="font-weight: 700; font-size: var(--text-xs); color: var(--text-secondary); display: block; margin-bottom: 4px;" data-i18n="stt_lang_label">
+                  भाषा चुनें (Language):
+                </label>
+                <select id="sttLanguageSelect" class="scam-textarea" style="min-height: 40px; height: 40px; padding: 6px 12px; font-size: var(--text-sm); max-width: 260px;">
+                  <option value="auto" selected data-i18n="stt_lang_auto">🌐 ऑटो डिटेक्ट (Auto Detect)</option>
+                  <option value="hi" data-i18n="stt_lang_hi">🇮🇳 हिंदी (Hindi)</option>
+                  <option value="en" data-i18n="stt_lang_en">🇬🇧 English</option>
+                </select>
+              </div>
+
+              <div style="align-self: flex-end;">
+                <button class="btn btn-primary" id="btnStartTranscription" style="min-height: 40px;">
+                  <svg viewBox="0 0 24 24"><use href="#icon-cpu"/></svg>
+                  <span data-i18n="stt_start_btn">ट्रांसक्राइब करें (Start Transcription)</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Processing Spinner / Indicator -->
+            <div id="sttProcessingBox" style="display: none; padding: var(--space-4); text-align: center; background: rgba(30, 58, 138, 0.04); border: 1px dashed var(--gov-navy); border-radius: var(--radius-md); margin-bottom: var(--space-4);">
+              <div class="spinner" style="margin: 0 auto 12px; width: 36px; height: 36px; border: 3px solid rgba(30, 58, 138, 0.2); border-top-color: var(--gov-navy); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+              <div style="font-weight: 700; color: var(--gov-navy); font-size: var(--text-sm);" data-i18n="stt_processing_title">Whisper Medium मॉडल स्थानीय रूप से प्रोसेस कर रहा है...</div>
+              <div style="font-size: var(--text-xs); color: var(--text-tertiary); margin-top: 4px;" data-i18n="stt_processing_sub">100% ऑफलाइन AI ट्रांसक्रिप्शन • कोई डेटा क्लाउड पर नहीं भेजा जा रहा है</div>
+            </div>
+
+            <!-- Transcription Result Card -->
+            <div id="sttResultCard" style="display: none; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--bg-surface); padding: var(--space-4);">
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: var(--space-2); margin-bottom: var(--space-3); flex-wrap: wrap; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-size: 1.2rem;">📝</span>
+                  <span style="font-weight: 700; font-size: var(--text-sm);" data-i18n="stt_result_title">ट्रांसक्रिप्शन परिणाम (Transcription Text)</span>
+                </div>
+                <div id="sttMetaBadges" style="display: flex; gap: 6px; font-size: var(--text-xs);">
+                  <span class="badge" id="sttDetectedLangBadge" style="background: var(--bg-card-subtle); border: 1px solid var(--border-color); padding: 2px 8px; border-radius: 4px;">भाषा: -</span>
+                  <span class="badge" id="sttDurationBadge" style="background: var(--bg-card-subtle); border: 1px solid var(--border-color); padding: 2px 8px; border-radius: 4px;">अवधि: -</span>
+                </div>
+              </div>
+
+              <div id="sttTranscriptionText" style="min-height: 100px; max-height: 350px; overflow-y: auto; font-size: var(--text-base); line-height: 1.6; white-space: pre-wrap; padding: var(--space-3); background: var(--bg-card-subtle); border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); margin-bottom: var(--space-3);"></div>
+
+              <div class="btn-row" style="flex-wrap: wrap; gap: var(--space-2);">
+                <button class="btn btn-secondary" id="btnSttCopy">
+                  <svg viewBox="0 0 24 24"><use href="#icon-copy"/></svg>
+                  <span data-i18n="stt_copy_btn">टेक्स्ट कॉपी करें (Copy)</span>
+                </button>
+                <button class="btn btn-secondary" id="btnSttDownload">
+                  <svg viewBox="0 0 24 24"><use href="#icon-download"/></svg>
+                  <span data-i18n="stt_download_btn">TXT फ़ाइल डाउनलोड करें (Download TXT)</span>
+                </button>
+                <button class="btn btn-secondary" id="btnSttSendToDetector">
+                  <svg viewBox="0 0 24 24"><use href="#icon-shield"/></svg>
+                  <span data-i18n="stt_check_fraud_btn">स्कैम डिटेक्टर में जांचें (Check Fraud)</span>
+                </button>
+                <button class="btn btn-secondary" id="btnSttClear">
+                  <svg viewBox="0 0 24 24"><use href="#icon-trash"/></svg>
+                  <span data-i18n="stt_clear_btn">साफ़ करें (Clear)</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
         </div>
       </section>
 
@@ -1577,6 +1708,7 @@
   <script src="/js/i18n.js"></script>
   <script src="/js/detector.js"></script>
   <script src="/js/qr.js"></script>
+  <script src="/js/whisper_stt.js"></script>
   <script src="/js/call.js?v=2.6"></script>
   <script src="/js/learn.js?v=2.6"></script>
   <script src="/js/help.js"></script>

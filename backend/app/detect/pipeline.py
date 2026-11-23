@@ -9,6 +9,8 @@ from app.detect.normalizer import normalize_text
 from app.detect.rules import check_rules
 from app.detect.stage_tracker import track_stages
 from app.detect.classifier import classify_text
+from app.detect.lookalike import detect_lookalikes_in_text
+from app.detect.reputation import check_reputation
 
 EXPLANATIONS = {
     "en": {
@@ -16,6 +18,8 @@ EXPLANATIONS = {
         "likely_scam_arrest": "Warning: 'Digital Arrest' is a total extortion scam. Genuine police or CBI never conduct trials or bail demands over phone/video calls.",
         "likely_scam_remote": "Critical Alert: Technical support / Remote access manipulation detected (computer/AnyDesk/screen sharing). Genuine banks or companies NEVER ask to access your computer or install screen control apps.",
         "likely_scam_kyc": "Urgent threats to disconnect power or block bank accounts are fraudulent panic tactics. Never call unknown phone numbers or install APK apps.",
+        "likely_scam_lookalike": "Critical Alert: Deceptive lookalike website or typosquatting domain detected. Scammers create fake bank/utility websites to steal login credentials.",
+        "likely_scam_reputation": "Confirmed Scam Alert: This indicator (domain, phone number, or UPI ID) matches a verified fraudulent entity in the offline cyber defense blacklist.",
         "likely_scam_generic": "High scam indicators detected. The sender is using artificial urgency or pressure to extract payments or sensitive data.",
         "unsure": "The message contains suspicious keywords or links, but lacks explicit fraud demands. Please cross-verify directly with your bank or official provider.",
         "genuine_bank_otp": "This appears to be a legitimate bank security alert. Notice the explicit safety warning 'DO NOT SHARE WITH ANYONE'. Keep this code secret.",
@@ -26,6 +30,8 @@ EXPLANATIONS = {
         "likely_scam_arrest": "खतरा! 'डिजिटल अरेस्ट' नाम की कोई कानूनी व्यवस्था नहीं है। असली पुलिस या CBI वीडियो कॉल पर पैसे या जमानत की मांग कभी नहीं करती।",
         "likely_scam_remote": "खतरा! यह रिमोट एक्सेस और कंप्यूटर नियंत्रण का प्रयास है। कोई भी बैंक या कंपनी आपके कंप्यूटर का रिमोट कंट्रोल नहीं मांगती। किसी अनजान व्यक्ति के कहने पर कंप्यूटर या AnyDesk न खोलें।",
         "likely_scam_kyc": "बिजली काटने या बैंक खाता सील करने की धमकी सरासर फर्जी है। किसी अनजान नंबर पर कॉल न करें और न ही कोई ऐप डाउनलोड करें।",
+        "likely_scam_lookalike": "खतरा! फर्जी वेबसाइट (लुकअलाइक/टायपोस्कॉटिंग) की पहचान हुई है। जालसाज असली बैंक या बिजली विभाग जैसी नकली वेबसाइट बनाकर गुप्त जानकारी चुराते हैं।",
+        "likely_scam_reputation": "प्रमाणित फ्रॉड अलर्ट! संदेश में दिया गया लिंक, नंबर या यूपीआई आईडी सत्यापित साइबर सुरक्षा ब्लैकलिस्ट में दर्ज ठग का है।",
         "likely_scam_generic": "भारी ठगी का खतरा! प्रेषक आपको डराकर या लालच देकर पैसे या गुप्त जानकारी हथियाने का प्रयास कर रहा है।",
         "unsure": "संदेश संदेहास्पद लग रहा है। किसी भी लिंक पर क्लिक करने से पहले सीधे अपनी बैंक शाखा से पुष्टि कर लें।",
         "genuine_bank_otp": "यह बैंक का वास्तविक सुरक्षा संदेश प्रतीत होता है। इसमें साफ चेतावनी दी गई है कि 'OTP किसी के साथ साझा न करें'। इसे गुप्त रखें।",
@@ -36,6 +42,8 @@ EXPLANATIONS = {
         "likely_scam_arrest": "भारी खतरा! कानून म 'डिजिटल अरेस्ट' नइ होवय। असली पुलिस कभू फोन म पइसा या जमानत नइ मांगय।",
         "likely_scam_remote": "भारी खतरा! ये कंप्यूटर या मोबाइल हैक करे के चाल हे। बैंक कभू तोर कंप्यूटर चालू करे या रिमोट ऐप डाउनलोड करे बर नइ कहय।",
         "likely_scam_kyc": "बिजली काटे या खाता बंद करे के धमकी ठगी आय। कोनो अनजान नंबर म फोन झन लगावव।",
+        "likely_scam_lookalike": "भारी खतरा! फर्जी वेबसाइट के चाल हे। ठग मन असली बैंक या बिजली दफ्तर जइसन नकली वेबसाइट बना के पासवर्ड चुराथें।",
+        "likely_scam_reputation": "प्रमाणित ठगी अलर्ट! एमा देहे लिंक, नंबर या यूपीआई पहिले ले फ्रॉड ब्लैकलिस्ट म दर्ज हे।",
         "likely_scam_generic": "ठगी के भारी खतरा हे! तोर से पइसा ऐंठने बर डरवाए जात हे।",
         "unsure": "संदेश कुछ संदेहास्पद दिखत हे। बैंक जाके एक बेर पूछ लेवव।",
         "genuine_bank_otp": "ए बैंक के सही सुरक्षा संदेश आय। एमा खुद लिखे हे कि 'ककरो ले शेयर झन करव'। अपन OTP संभाल के राखव।",
@@ -82,8 +90,12 @@ def calculate_calibrated_confidence(
     """
     if verdict == "likely_scam":
         # 1. Deterministic critical security rule violations
+        if rule_flags.get("reputation_blacklist"):
+            return 0.99
         if rule_flags.get("digital_arrest") or rule_flags.get("explicit_otp_demand"):
             return 0.98
+        if rule_flags.get("lookalike_domain"):
+            return 0.97
         if rule_flags.get("fake_kyc") and (rule_flags.get("remote_access_apk") or rule_flags.get("suspicious_link")):
             return 0.96
         
@@ -162,17 +174,39 @@ def run_detection_pipeline(text: str, user_lang: str = "hi") -> dict:
     # Check 3: Stage Tracker
     stage_res = track_stages(clean_text)
 
+    # Check 4: Lookalike & Homoglyph Domain Detection
+    lookalike_findings = detect_lookalikes_in_text(clean_text)
+    if not lookalike_findings and clean_text != text:
+        lookalike_findings = detect_lookalikes_in_text(text)
+
+    # Check 5: Offline Reputation Blacklist (Ed25519-signed update pack)
+    reputation_match = check_reputation(clean_text)
+    if not reputation_match and clean_text != text:
+        reputation_match = check_reputation(text)
+
     # Step 3: Combine into Final Verdict
     # Weighting: 0.50 ML Classifier + 0.50 Rule Score
     combined_score = 0.50 * p_scam + 0.50 * rule_risk
 
     # Rule Overrides:
     # 1. Genuine Alert Override: Bank explicitly warns "do not share OTP" and NO explicit demand
-    if rule_flags["is_genuine_alert"] and not rule_flags["explicit_otp_demand"] and not rule_flags["digital_arrest"]:
+    if rule_flags["is_genuine_alert"] and not rule_flags["explicit_otp_demand"] and not rule_flags["digital_arrest"] and not reputation_match and not lookalike_findings:
         verdict = "genuine"
         score = 0.05
         explanation_key = "genuine_bank_otp"
-    # 2. Strong Fraud Overrides
+    # 2. Confirmed Offline Reputation Blacklist Match
+    elif reputation_match and reputation_match.get("is_known_scam"):
+        rule_flags["reputation_blacklist"] = True
+        verdict = "likely_scam"
+        score = 0.99
+        explanation_key = "likely_scam_reputation"
+    # 3. Lookalike / Typosquatting / Homoglyph Domain Violation
+    elif lookalike_findings:
+        rule_flags["lookalike_domain"] = True
+        verdict = "likely_scam"
+        score = 0.97
+        explanation_key = "likely_scam_lookalike"
+    # 4. Strong Fraud Overrides
     elif rule_flags["explicit_otp_demand"]:
         verdict = "likely_scam"
         score = 0.98
@@ -222,6 +256,11 @@ def run_detection_pipeline(text: str, user_lang: str = "hi") -> dict:
         safe_phrases = [m["phrase"] for m in rule_res["matches"] if not m.get("risk")]
         for s in stage_res["stages"]:
             risky_phrases.extend(s["matched_words"])
+        if reputation_match and reputation_match.get("matched_indicator"):
+            risky_phrases.append(reputation_match["matched_indicator"])
+        for lf in lookalike_findings:
+            if lf.get("detected_domain"):
+                risky_phrases.append(lf["detected_domain"])
 
     risky_phrases = list(set(risky_phrases))
     safe_phrases = list(set(safe_phrases))
@@ -247,5 +286,7 @@ def run_detection_pipeline(text: str, user_lang: str = "hi") -> dict:
         "top_ngrams": top_ngrams,
         "stages": stage_res,
         "rule_flags": rule_flags,
+        "lookalike_findings": lookalike_findings,
+        "reputation_match": reputation_match,
         "input_language": norm_res["language"]
     }
