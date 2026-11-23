@@ -1,68 +1,90 @@
 """
-ML Classifier Inference and Top N-Gram Explainer
-Loads the joblib pipeline and computes calibrated probabilities and top contributing n-grams.
+XLM-RoBERTa message classifier used by the detection pipeline.
+Provides local transformer inference with thread-safe singleton caching.
 """
+from __future__ import annotations
 
 from pathlib import Path
-import joblib
-import numpy as np
+import threading
+import torch
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
-_MODEL_CACHE = None
-_FEATURE_NAMES_CACHE = None
-_COEFS_CACHE = None
+_MODEL = None
+_TOKENIZER = None
+_LOCK = threading.Lock()
+_MAX_LENGTH = 256
 
-def get_model(model_path: Path = None):
-    global _MODEL_CACHE, _FEATURE_NAMES_CACHE, _COEFS_CACHE
-    if _MODEL_CACHE is not None:
-        return _MODEL_CACHE
 
-    if model_path is None:
-        model_path = Path(__file__).resolve().parent.parent.parent / "models" / "scam_model.joblib"
+def _model_dir() -> Path:
+    return Path(__file__).resolve().parents[2] / "models" / "xlm_roberta_spam"
 
-    if not model_path.exists():
-        # Fallback if model not trained yet
-        from app.evaluation.run import run_pipeline
-        run_pipeline()
 
-    _MODEL_CACHE = joblib.load(model_path)
-    try:
-        features_union = _MODEL_CACHE.named_steps["features"]
-        clf = _MODEL_CACHE.named_steps["clf"]
-        _FEATURE_NAMES_CACHE = [fn.split("__")[-1] for fn in features_union.get_feature_names_out()]
-        _COEFS_CACHE = clf.coef_[0]
-    except Exception:
-        _FEATURE_NAMES_CACHE = None
-        _COEFS_CACHE = None
+def is_model_available() -> bool:
+    mdir = _model_dir()
+    return (mdir / "config.json").exists() and (
+        (mdir / "model.safetensors").exists() or (mdir / "pytorch_model.bin").exists()
+    )
 
-    return _MODEL_CACHE
+
+def get_model():
+    global _MODEL, _TOKENIZER
+    if _MODEL is not None and _TOKENIZER is not None:
+        return _MODEL, _TOKENIZER
+
+    with _LOCK:
+        if _MODEL is not None and _TOKENIZER is not None:
+            return _MODEL, _TOKENIZER
+
+        model_dir = _model_dir()
+        if not (model_dir / "config.json").exists():
+            raise RuntimeError(
+                f"XLM-RoBERTa model not found at {model_dir}. "
+                "Train it first: python scripts/train_xlm_roberta.py"
+            )
+
+        try:
+            _TOKENIZER = AutoTokenizer.from_pretrained(
+                str(model_dir), local_files_only=True, fix_mistral_regex=True
+            )
+        except TypeError:
+            _TOKENIZER = AutoTokenizer.from_pretrained(str(model_dir), local_files_only=True)
+        _MODEL = AutoModelForSequenceClassification.from_pretrained(
+            str(model_dir), local_files_only=True
+        )
+        _MODEL.eval()
+        _MODEL.to(torch.device("cpu"))
+        return _MODEL, _TOKENIZER
+
 
 def classify_text(text: str) -> dict:
-    pipeline = get_model()
-    # Predict probabilities: [P(genuine), P(scam)]
-    probs = pipeline.predict_proba([text])[0]
-    p_genuine = float(probs[0])
-    p_scam = float(probs[1])
+    if not text or not text.strip():
+        return {
+            "p_scam": 0.0,
+            "p_genuine": 1.0,
+            "top_contributing_ngrams": [],
+            "model_name": "XLM-RoBERTa",
+        }
 
-    # Top contributing features
-    top_ngrams = []
-    try:
-        if _FEATURE_NAMES_CACHE is not None and _COEFS_CACHE is not None:
-            features_union = pipeline.named_steps["features"]
-            X_feat = features_union.transform([text])
-            contributions = X_feat.toarray()[0] * _COEFS_CACHE
-            pos_indices = np.argsort(contributions)[::-1]
+    model, tokenizer = get_model()
+    encoded = tokenizer(
+        text,
+        return_tensors="pt",
+        truncation=True,
+        max_length=_MAX_LENGTH,
+        padding=True,
+    )
 
-            for idx in pos_indices:
-                if contributions[idx] > 0.05 and len(top_ngrams) < 6:
-                    top_ngrams.append({
-                        "ngram": _FEATURE_NAMES_CACHE[idx],
-                        "weight": round(float(contributions[idx]), 3)
-                    })
-    except Exception as e:
-        top_ngrams = []
+    with torch.inference_mode():
+        logits = model(**encoded).logits
+        probabilities = torch.softmax(logits, dim=-1)[0]
+
+    # Class mapping: 0 = GENUINE, 1 = SPAM
+    p_genuine = float(probabilities[0].item())
+    p_scam = float(probabilities[1].item())
 
     return {
-        "p_scam": round(p_scam, 4),
-        "p_genuine": round(p_genuine, 4),
-        "top_contributing_ngrams": top_ngrams
+        "p_scam": round(p_scam, 6),
+        "p_genuine": round(p_genuine, 6),
+        "top_contributing_ngrams": [],
+        "model_name": "XLM-RoBERTa",
     }
