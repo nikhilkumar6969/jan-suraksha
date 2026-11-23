@@ -6,9 +6,9 @@
     "SAFE",
     "SPAM"
   ],
-  "total_word_features": 14996,
-  "total_char_features": 29993,
-  "total_features": 44989,
+  "total_word_features": 8000,
+  "total_char_features": 14995,
+  "total_features": 22995,
   "training_date": "2026-11-22",
   "offline_capable": true
 }

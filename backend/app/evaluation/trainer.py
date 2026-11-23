@@ -19,9 +19,14 @@ def train_scam_model(dataset: list, models_dir: Path = None, random_state: int =
         train_items = [item for item in dataset if item.get("split") == "train"]
         test_items = [item for item in dataset if item.get("split") == "test"]
         
-        # Apply adversarial & Chhattisgarhi dialect augmentation strictly to training split
+        # Apply adversarial & Chhattisgarhi dialect augmentation strictly to dialect/targeted training split
         from app.detect.augmentation import augment_training_dataset
-        augmented_train = augment_training_dataset(train_items, seed=random_state)
+        if len(train_items) > 10000:
+            to_augment = [item for item in train_items if item.get("language") in ("hi", "chg", "hinglish")]
+            plain_items = [item for item in train_items if item.get("language") not in ("hi", "chg", "hinglish")]
+            augmented_train = plain_items + augment_training_dataset(to_augment, seed=random_state)
+        else:
+            augmented_train = augment_training_dataset(train_items, seed=random_state)
         
         train_texts = [normalize_text(item["text"])["clean"] for item in augmented_train]
         train_labels = [item["label"] for item in augmented_train]

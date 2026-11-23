@@ -123,6 +123,8 @@ FAKE_KYC_PATTERNS = [
     r"cspdcl\s+electricity\s+officer\b",
     r"electricity\s+meter|मीटर\s+म\s+रीडिंग|मीटर\s+में\s+तकनीकी\s+गड़बड़ी",
     r"kbc|lottery|लॉटरी|इनाम\s+मिला|mega\s+draw|cash\s+reward|lucky\s+draw",
+    r"\b(?:claim|receive|collect|redeem|win)\s+(?:the\s+|your\s+)?(?:amount|prize|reward|cashback|bonus|lottery|money|funds?)\b",
+    r"\b(?:claim|receive)\s+(?:the\s+|your\s+)?amount\b",
     r"रजिस्ट्रेशन\s+फीस|registration\s+fees?|लाइक\s+करके\s+.*?कमा|like\s+videos?\s+.*?earn",
     r"document\s+verification\s+for\s+your\s+recent\s+subsidy|subsidy\s+.*?call\s+back",
     r"data\s+entry\s+operator|part-time\s+work",
@@ -156,8 +158,9 @@ REMOTE_ACCESS_PATTERNS = [
 
 # Suspicious Link Patterns
 SUSPICIOUS_LINK_PATTERNS = [
-    r"\b(?:click\s+(?:this\s+)?link\s+to\s+(?:verify|update|complete)|verify\s+your\s+account\s+at|update\s+kyc\s+at)\b",
-    r"सत्यापन\s+हेतु\s+लिंक|लिंक\s+पर\s+क्लिक\s+करें|लिंक\s+खोल",
+    r"\b(?:(?:click|clicking|tap)\s+(?:on\s+)?(?:this\s+|the\s+)?link\s+(?:below\s+|here\s+)?(?:to\s+(?:claim|receive|get|collect|verify|update|complete|win|redeem))?)\b",
+    r"\b(?:verify\s+your\s+account\s+at|update\s+kyc\s+at|claim\s+(?:your\s+|the\s+)?(?:amount|cashback|reward|prize)\s+(?:by|at|via))\b",
+    r"सत्यापन\s+हेतु\s+लिंक|लिंक\s+पर\s+क्लिक\s+करें|लिंक\s+खोल|लिंक\s+से\s+पैसे\s+पाएं",
     r"\b(?:bit\.ly|tinyurl\.com|is\.gd|cutt\.ly|t\.co)/\S+",
     r"\b[a-zA-Z0-9.-]+\.(?:top|vip|xyz|cc|site|live)\b",
     r"\b\w+[-_](?:kyc|sbi|yono|cspdcl|police|customs)\.(?:top|vip|xyz|cc|site|live|online|in)\b",

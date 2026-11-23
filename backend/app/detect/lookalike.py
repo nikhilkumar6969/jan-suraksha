@@ -50,10 +50,30 @@ OFFICIAL_DOMAINS = {
         "name": "Punjab National Bank",
         "domains": ["pnbindia.in"],
         "keywords": ["pnb", "pnbindia"]
+    },
+    "jio": {
+        "name": "Reliance Jio",
+        "domains": ["jio.com", "myjio.com"],
+        "keywords": ["jio", "myjio", "reljio"]
+    },
+    "airtel": {
+        "name": "Bharti Airtel",
+        "domains": ["airtel.in", "airtel.com", "airtel.tv"],
+        "keywords": ["airtel", "bhartiairtel"]
+    },
+    "vi": {
+        "name": "Vi (Vodafone Idea)",
+        "domains": ["myvi.in", "vodafoneidea.com"],
+        "keywords": ["vodafone", "myvi"]
+    },
+    "bsnl": {
+        "name": "BSNL",
+        "domains": ["bsnl.co.in", "bsnl.in"],
+        "keywords": ["bsnl"]
     }
 }
 
-# Cyrillic and Greek lookalike character map
+# Cyrillic and Greek lookalike character map (true cross-alphabet homoglyphs)
 HOMOGLYPH_REPLACEMENTS = {
     '\u0430': 'a', '\u0410': 'A',  # Cyrillic a
     '\u0441': 'c', '\u0421': 'C',  # Cyrillic es / c
@@ -65,6 +85,10 @@ HOMOGLYPH_REPLACEMENTS = {
     '\u0455': 's', '\u0405': 'S',  # Cyrillic dze / s
     '\u0443': 'y', '\u0423': 'Y',  # Cyrillic u / y
     '\u0445': 'x', '\u0425': 'X',  # Cyrillic ha / x
+}
+
+# Leetspeak number substitutions for brand matching
+LEET_REPLACEMENTS = {
     '0': 'o', '1': 'l', '3': 'e', '5': 's', '@': 'a'
 }
 
@@ -76,6 +100,8 @@ def normalize_domain_homoglyphs(domain: str) -> Tuple[str, bool]:
         if ch in HOMOGLYPH_REPLACEMENTS:
             chars.append(HOMOGLYPH_REPLACEMENTS[ch])
             has_homoglyph = True
+        elif ch in LEET_REPLACEMENTS:
+            chars.append(LEET_REPLACEMENTS[ch])
         else:
             chars.append(ch)
     return "".join(chars), has_homoglyph

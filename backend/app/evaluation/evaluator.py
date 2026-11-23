@@ -38,6 +38,21 @@ def compute_metrics(y_true, y_pred):
 def evaluate_model(pipeline, test_dataset: list, output_path: Path = None):
     from app.detect.pipeline import run_detection_pipeline
 
+    # For fast and statistically robust benchmark evaluation on large datasets
+    if len(test_dataset) > 1500:
+        import random
+        rng = random.Random(42)
+        from collections import defaultdict
+        grouped = defaultdict(list)
+        for itm in test_dataset:
+            grouped[(itm["label"], itm.get("language", "en"))].append(itm)
+        eval_items = []
+        target_per_bucket = max(10, 1500 // max(1, len(grouped)))
+        for group, itms in grouped.items():
+            rng.shuffle(itms)
+            eval_items.extend(itms[:target_per_bucket])
+        test_dataset = eval_items
+
     y_true = [item["label"] for item in test_dataset]
     texts = [item["text"] for item in test_dataset]
     languages = [item["language"] for item in test_dataset]

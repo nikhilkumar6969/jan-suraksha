@@ -113,3 +113,38 @@ def test_qr_checker_with_blacklist():
     res = analyze_upi_qr("upi://pay?pa=cspdcl-bill@okaxis&pn=Electricity%20Bill&am=1500", user_lang="en")
     assert res["verdict"] == "likely_scam"
     assert any("OFFLINE BLACKLIST MATCH" in w or "CRITICAL MISMATCH" in w or "LOOKALIKE" in w for w in res["warnings"])
+
+def test_telecom_official_domains_and_jio_quota_alert():
+    # Official Jio subdomains with numeric digits must be recognized as official and safe
+    res_jio1 = analyze_domain_lookalike("http://tiny.jio.com/dbuydatapack")
+    assert res_jio1 is not None
+    assert res_jio1.get("is_official") is True
+    assert res_jio1.get("risk") is False
+
+    res_jio2 = analyze_domain_lookalike("http://tiny1.jio.com/HelpfulTips")
+    assert res_jio2 is not None
+    assert res_jio2.get("is_official") is True
+    assert res_jio2.get("risk") is False
+
+    jio_msg = (
+        "ALERT!\n"
+        "You have exhausted 100% of daily data quota as of 23-Nov-26 18:20.\n"
+        "Jio Number: 9329022146\n"
+        "Daily Data Quota: 2 GB\n"
+        "Daily Quota Restores On: 24-Nov-26 00:09\n"
+        "Your internet speed will be reduced to 64 Kbps, If you do not you have an active additional data pack.\n"
+        "To explore data packs and recharge using MyJio, click: http://tiny.jio.com/dbuydatapack\n"
+        "Know more about your data usage, click:\n"
+        "http://tiny1.jio.com/HelpfulTips"
+    )
+
+    # Without sender: should be genuine
+    res_no_sender = run_detection_pipeline(jio_msg, user_lang="en")
+    assert res_no_sender["verdict"] == "genuine"
+    assert res_no_sender["rule_flags"].get("lookalike_domain", False) is False
+
+    # With official Jio DLT sender: should be genuine
+    res_with_sender = run_detection_pipeline(jio_msg, user_lang="en", sender="JM-JIOINF")
+    assert res_with_sender["verdict"] == "genuine"
+    assert "Jio" in res_with_sender["explanation"]
+

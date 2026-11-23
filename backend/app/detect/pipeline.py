@@ -22,6 +22,7 @@ EXPLANATIONS = {
         "likely_scam_otp": "This message is attempting to steal your OTP or bank security codes. Banks and officers NEVER ask for OTPs.",
         "likely_scam_arrest": "Warning: 'Digital Arrest' is a total extortion scam. Genuine police or CBI never conduct trials or bail demands over phone/video calls.",
         "likely_scam_remote": "Critical Alert: Technical support / Remote access manipulation detected (computer/AnyDesk/screen sharing). Genuine banks or companies NEVER ask to access your computer or install screen control apps.",
+        "likely_scam_reward": "Warning: Free money / cashback / lottery prize claims via links are fraudulent phishing scams. In UPI and digital banking, you NEVER need to click a link or enter your UPI PIN to receive money.",
         "likely_scam_kyc": "Urgent threats to disconnect power or block bank accounts are fraudulent panic tactics. Never call unknown phone numbers or install APK apps.",
         "likely_scam_lookalike": "Critical Alert: Deceptive lookalike website or typosquatting domain detected. Scammers create fake bank/utility websites to steal login credentials.",
         "likely_scam_reputation": "Confirmed Scam Alert: This indicator (domain, phone number, or UPI ID) matches a verified fraudulent entity in the offline cyber defense blacklist.",
@@ -34,6 +35,7 @@ EXPLANATIONS = {
         "likely_scam_otp": "सावधान! यह संदेश आपका गुप्त OTP या बैंक कोड चुराने की साजिश है। बैंक अधिकारी कभी फोन या मैसेज पर OTP नहीं मांगते।",
         "likely_scam_arrest": "खतरा! 'डिजिटल अरेस्ट' नाम की कोई कानूनी व्यवस्था नहीं है। असली पुलिस या CBI वीडियो कॉल पर पैसे या जमानत की मांग कभी नहीं करती।",
         "likely_scam_remote": "खतरा! यह रिमोट एक्सेस और कंप्यूटर नियंत्रण का प्रयास है। कोई भी बैंक या कंपनी आपके कंप्यूटर का रिमोट कंट्रोल नहीं मांगती। किसी अनजान व्यक्ति के कहने पर कंप्यूटर या AnyDesk न खोलें।",
+        "likely_scam_reward": "चेतावनी! लिंक पर क्लिक करके पैसे, कैशबैक या लॉटरी इनाम देने का दावा 100% फर्जी है। याद रखें: पैसे प्राप्त करने के लिए कभी भी किसी लिंक पर क्लिक करने या UPI पिन डालने की आवश्यकता नहीं होती।",
         "likely_scam_kyc": "बिजली काटने या बैंक खाता सील करने की धमकी सरासर फर्जी है। किसी अनजान नंबर पर कॉल न करें और न ही कोई ऐप डाउनलोड करें।",
         "likely_scam_lookalike": "खतरा! फर्जी वेबसाइट (लुकअलाइक/टायपोस्कॉटिंग) की पहचान हुई है। जालसाज असली बैंक या बिजली विभाग जैसी नकली वेबसाइट बनाकर गुप्त जानकारी चुराते हैं।",
         "likely_scam_reputation": "प्रमाणित फ्रॉड अलर्ट! संदेश में दिया गया लिंक, नंबर या यूपीआई आईडी सत्यापित साइबर सुरक्षा ब्लैकलिस्ट में दर्ज ठग का है।",
@@ -46,6 +48,7 @@ EXPLANATIONS = {
         "likely_scam_otp": "सचेत रहव! ये मैसेज तोर गुप्त OTP चुराए के चक्कर हे। बैंक वाले कभू फोन म OTP नइ मांगंय।",
         "likely_scam_arrest": "भारी खतरा! कानून म 'डिजिटल अरेस्ट' नइ होवय। असली पुलिस कभू फोन म पइसा या जमानत नइ मांगय।",
         "likely_scam_remote": "भारी खतरा! ये कंप्यूटर या मोबाइल हैक करे के चाल हे। बैंक कभू तोर कंप्यूटर चालू करे या रिमोट ऐप डाउनलोड करे बर नइ कहय।",
+        "likely_scam_reward": "चेतावनी! लिंक म क्लिक करके पइसा या इनाम पाए के संदेश सरासर ठगी आय। पइसा पाए बर कभू कोनो लिंक म क्लिक झन करव अउ न ही UPI पिन डारव।",
         "likely_scam_kyc": "बिजली काटे या खाता बंद करे के धमकी ठगी आय। कोनो अनजान नंबर म फोन झन लगावव।",
         "likely_scam_lookalike": "भारी खतरा! फर्जी वेबसाइट के चाल हे। ठग मन असली बैंक या बिजली दफ्तर जइसन नकली वेबसाइट बना के पासवर्ड चुराथें।",
         "likely_scam_reputation": "प्रमाणित ठगी अलर्ट! एमा देहे लिंक, नंबर या यूपीआई पहिले ले फ्रॉड ब्लैकलिस्ट म दर्ज हे।",
@@ -235,7 +238,10 @@ def run_detection_pipeline(text: str, user_lang: str = "hi", sender: str = None)
     elif rule_flags["fake_kyc"] and (rule_flags["remote_access_apk"] or rule_flags["suspicious_link"] or rule_flags["urgency_pressure"]):
         verdict = "likely_scam"
         score = 0.95
-        explanation_key = "likely_scam_kyc"
+        if re.search(r'\b(?:claim|amount|reward|prize|cashback|lottery|bonus|इनाम|लॉटरी|कैशबैक)\b', clean_text, re.IGNORECASE):
+            explanation_key = "likely_scam_reward"
+        else:
+            explanation_key = "likely_scam_kyc"
     elif combined_score >= 0.55 or rule_risk >= 0.60 or (p_scam >= 0.75 and (rule_risk >= 0.25 or stage_res["stage_count"] >= 2)):
         verdict = "likely_scam"
         score = combined_score

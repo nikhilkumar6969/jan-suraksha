@@ -101,8 +101,8 @@
     {
       "brand": "Reliance Jio",
       "type": "telecom",
-      "headers": ["JIONET", "JIOFIB", "JIOMOB", "JIOPAY"],
-      "domains": ["jio.com"]
+      "headers": ["JIONET", "JIOFIB", "JIOMOB", "JIOPAY", "JIOINF", "JIOMSG", "JIOSMS", "JIOCARE"],
+      "domains": ["jio.com", "myjio.com"]
     },
     {
       "brand": "Vi (Vodafone Idea)",
