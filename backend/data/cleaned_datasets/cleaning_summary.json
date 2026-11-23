@@ -1,0 +1,59 @@
+{
+  "indian_sms": {
+    "dataset": "Indian SMS",
+    "initial_rows": 3822,
+    "valid_rows": 3807,
+    "dedup_rows": 3805,
+    "spam_count": 963,
+    "ham_count": 2842,
+    "train_rows": 3044,
+    "test_rows": 761,
+    "languages": {
+      "en": 3479,
+      "te": 274,
+      "hi": 52
+    }
+  },
+  "uci_sms": {
+    "dataset": "UCI SMS",
+    "initial_rows": 5171,
+    "valid_rows": 5169,
+    "dedup_rows": 5158,
+    "spam_count": 642,
+    "ham_count": 4516,
+    "train_rows": 4126,
+    "test_rows": 1032,
+    "languages": {
+      "en": 5158
+    }
+  },
+  "multilingual_hi": {
+    "dataset": "Multilingual Reference (Hindi)",
+    "initial_rows": 5572,
+    "valid_rows": 5570,
+    "dedup_rows": 5130,
+    "spam_count": 630,
+    "ham_count": 4500,
+    "train_rows": 4104,
+    "test_rows": 1026
+  },
+  "master_corpus": {
+    "dataset": "Master Combined Corpus",
+    "total_rows": 14091,
+    "spam_count": 2235,
+    "ham_count": 11856,
+    "train_rows": 11272,
+    "test_rows": 2819,
+    "corpus_breakdown": {
+      "UCI_English": 5158,
+      "Multilingual_Hindi": 5128,
+      "Indian_SMS": 3805
+    },
+    "language_breakdown": {
+      "en": 8637,
+      "hi_translated": 5128,
+      "te": 274,
+      "hi": 52
+    }
+  }
+}

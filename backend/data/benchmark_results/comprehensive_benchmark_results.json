@@ -1,0 +1,164 @@
+{
+  "exp1_indian_sms": {
+    "in_domain": {
+      "accuracy": 0.9527,
+      "precision_spam": 0.8786,
+      "recall_spam": 0.9427,
+      "f1_spam": 0.9095,
+      "precision_ham": 0.9802,
+      "recall_ham": 0.9561,
+      "f1_ham": 0.968,
+      "false_positive_rate": 0.0439,
+      "roc_auc": 0.9913,
+      "confusion_matrix": {
+        "tn": 544,
+        "fp": 25,
+        "fn": 11,
+        "tp": 181
+      },
+      "latency_ms_per_sample": 0.235,
+      "total_test_samples": 761
+    },
+    "cross_domain_uci": {
+      "accuracy": 0.7791,
+      "precision_spam": 0.2748,
+      "recall_spam": 0.4766,
+      "f1_spam": 0.3486,
+      "precision_ham": 0.9173,
+      "recall_ham": 0.8219,
+      "f1_ham": 0.867,
+      "false_positive_rate": 0.1781,
+      "roc_auc": 0.6975,
+      "confusion_matrix": {
+        "tn": 743,
+        "fp": 161,
+        "fn": 67,
+        "tp": 61
+      },
+      "latency_ms_per_sample": 0.122,
+      "total_test_samples": 1032
+    }
+  },
+  "exp2_uci_english": {
+    "in_domain": {
+      "accuracy": 0.9932,
+      "precision_spam": 1.0,
+      "recall_spam": 0.9453,
+      "f1_spam": 0.9719,
+      "precision_ham": 0.9923,
+      "recall_ham": 1.0,
+      "f1_ham": 0.9961,
+      "false_positive_rate": 0.0,
+      "roc_auc": 0.999,
+      "confusion_matrix": {
+        "tn": 904,
+        "fp": 0,
+        "fn": 7,
+        "tp": 121
+      },
+      "latency_ms_per_sample": 0.142,
+      "total_test_samples": 1032
+    },
+    "cross_domain_indian": {
+      "accuracy": 0.431,
+      "precision_spam": 0.2526,
+      "recall_spam": 0.6406,
+      "f1_spam": 0.3623,
+      "precision_ham": 0.7482,
+      "recall_ham": 0.3603,
+      "f1_ham": 0.4864,
+      "false_positive_rate": 0.6397,
+      "roc_auc": 0.4806,
+      "confusion_matrix": {
+        "tn": 205,
+        "fp": 364,
+        "fn": 69,
+        "tp": 123
+      },
+      "latency_ms_per_sample": 0.211,
+      "total_test_samples": 761
+    }
+  },
+  "exp3_multilingual_hindi": {
+    "accuracy": 0.9669,
+    "precision_spam": 0.8898,
+    "recall_spam": 0.8333,
+    "f1_spam": 0.8607,
+    "precision_ham": 0.9769,
+    "recall_ham": 0.9856,
+    "f1_ham": 0.9812,
+    "false_positive_rate": 0.0144,
+    "roc_auc": 0.9674,
+    "confusion_matrix": {
+      "tn": 887,
+      "fp": 13,
+      "fn": 21,
+      "tp": 105
+    },
+    "latency_ms_per_sample": 0.132,
+    "total_test_samples": 1026
+  },
+  "exp4_master_comparison": {
+    "LogisticRegression_Balanced": {
+      "accuracy": 0.9695,
+      "precision_spam": 0.9018,
+      "recall_spam": 0.9058,
+      "f1_spam": 0.9038,
+      "precision_ham": 0.9823,
+      "recall_ham": 0.9815,
+      "f1_ham": 0.9819,
+      "false_positive_rate": 0.0185,
+      "roc_auc": 0.9857,
+      "confusion_matrix": {
+        "tn": 2329,
+        "fp": 44,
+        "fn": 42,
+        "tp": 404
+      },
+      "latency_ms_per_sample": 0.159,
+      "total_test_samples": 2819,
+      "training_time_sec": 3.52
+    },
+    "Calibrated_LinearSVC": {
+      "accuracy": 0.9706,
+      "precision_spam": 0.9192,
+      "recall_spam": 0.8924,
+      "f1_spam": 0.9056,
+      "precision_ham": 0.9799,
+      "recall_ham": 0.9853,
+      "f1_ham": 0.9826,
+      "false_positive_rate": 0.0147,
+      "roc_auc": 0.9817,
+      "confusion_matrix": {
+        "tn": 2338,
+        "fp": 35,
+        "fn": 48,
+        "tp": 398
+      },
+      "latency_ms_per_sample": 0.173,
+      "total_test_samples": 2819,
+      "training_time_sec": 4.25
+    },
+    "Complement_Naive_Bayes": {
+      "accuracy": 0.9252,
+      "precision_spam": 0.7164,
+      "recall_spam": 0.8722,
+      "f1_spam": 0.7867,
+      "precision_ham": 0.975,
+      "recall_ham": 0.9351,
+      "f1_ham": 0.9546,
+      "false_positive_rate": 0.0649,
+      "roc_auc": 0.9607,
+      "confusion_matrix": {
+        "tn": 2219,
+        "fp": 154,
+        "fn": 57,
+        "tp": 389
+      },
+      "latency_ms_per_sample": 0.163,
+      "total_test_samples": 2819,
+      "training_time_sec": 2.96
+    }
+  },
+  "selected_production_model": "LogisticRegression_Balanced"
+}
