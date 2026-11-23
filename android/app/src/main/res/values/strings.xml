@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">Suraksha SMS Shield</string>
-    <string name="title_dashboard">Offline AI SMS Spam Detection</string>
+    <string name="app_name">Jan Suraksha</string>
+    <string name="title_dashboard">Jan Suraksha — Offline Scam Defense</string>
     <string name="status_model_active">Offline AI Engine: Active (Suraksha-Scam-LR-v1.0)</string>
     <string name="status_model_loading">Offline AI Engine: Loading...</string>
     <string name="stat_total">Total Scanned</string>

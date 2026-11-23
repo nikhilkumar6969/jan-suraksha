@@ -10,6 +10,11 @@
   <meta name="theme-color" content="#1e40af">
   <meta name="description" content="Offline-first Cyber Fraud & Scam Detection Platform for Chhattisgarh">
   <link rel="preload" as="image" href="/assets/bg.jpg">
+  <link rel="preload" as="image" href="/assets/backgrounds/media_1795408750990_34d08dd7.jpg">
+  <link rel="preload" as="image" href="/assets/backgrounds/media_1795408780895_a44d0d97.jpg">
+  <link rel="preload" as="image" href="/assets/backgrounds/media_1795408792868_3844933b.jpg">
+  <link rel="preload" as="image" href="/assets/backgrounds/media_1795408807123_f835ec6f.jpg">
+  <link rel="preload" as="image" href="/assets/backgrounds/media_1795408866473_e3ecd55a.jpg">
   <link rel="stylesheet" href="/css/tokens.css">
   <link rel="stylesheet" href="/css/app.css">
 </head>
@@ -20,6 +25,13 @@
     <defs>
       <g id="icon-shield">
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+      <g id="icon-share">
+        <circle cx="18" cy="5" r="3" fill="none" stroke="currentColor" stroke-width="2"/>
+        <circle cx="6" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/>
+        <circle cx="18" cy="19" r="3" fill="none" stroke="currentColor" stroke-width="2"/>
+        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" stroke="currentColor" stroke-width="2"/>
+        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" stroke="currentColor" stroke-width="2"/>
       </g>
       <g id="icon-phone">
         <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -209,11 +221,24 @@
       <!-- ============================================== -->
       <section class="view-panel active" id="view-home">
 
-        <!-- MyGov Style Hero Campaign Card -->
-        <div class="mygov-hero-banner">
+        <!-- MyGov Style Hero Campaign Card with Cinematic Background Slider -->
+        <div class="mygov-hero-banner" id="heroBanner">
+          <!-- Layer 1: Background Image Slideshow (Rural Chhattisgarh Photography) -->
+          <div class="hero-slider" id="heroSlider" aria-hidden="true">
+            <div class="hero-slide active" style="background-image: url('/assets/backgrounds/media_1795408750990_34d08dd7.jpg');" data-index="0" title="Rural Chhattisgarh Village"></div>
+            <div class="hero-slide" style="background-image: url('/assets/backgrounds/media_1795408780895_a44d0d97.jpg');" data-index="1" title="Indian Farmers"></div>
+            <div class="hero-slide" style="background-image: url('/assets/backgrounds/media_1795408792868_3844933b.jpg');" data-index="2" title="Rural Women and Digital Awareness"></div>
+            <div class="hero-slide" style="background-image: url('/assets/backgrounds/media_1795408807123_f835ec6f.jpg');" data-index="3" title="Rural Community and Cyber Safety"></div>
+            <div class="hero-slide" style="background-image: url('/assets/backgrounds/media_1795408866473_e3ecd55a.jpg');" data-index="4" title="Elderly Villagers and Technology"></div>
+          </div>
+
+          <!-- Layer 2: Dark Navy/Black Gradient Overlay (Maintains Text Contrast & Character Visibility) -->
+          <div class="hero-gradient-overlay" aria-hidden="true"></div>
+
+          <!-- Layer 3: Hero Content (Heading, Description, CTA Buttons & Emblem) -->
           <div class="hero-banner-content">
             <span class="hero-badge" data-i18n="hero_mission_badge">राष्ट्रीय साइबर सुरक्षा मिशन • छत्तीसगढ़</span>
-            <h2 class="hero-title" data-i18n="home_greeting">सतर्क नागरिक, सुरक्षित छत्तीसगढ़</h2>
+            <h2 class="hero-title" data-i18n="home_greeting">Namaste! Keep Your Hard-Earned Money Safe.</h2>
             <p class="hero-desc" data-i18n="home_sub">गाढ़ी कमाई की सुरक्षा, हर नागरिक का अधिकार — बिना इंटरनेट के पूर्णतः गोपनीय और ऑन-डिवाइस सुरक्षित।</p>
             <div class="hero-cta-group">
               <button class="btn btn-hero-primary action-tile" data-nav="check" data-subtab="sms">
@@ -492,6 +517,10 @@
                 <button class="btn btn-accent" id="btnReportFromVerdict">
                   <svg viewBox="0 0 24 24"><use href="#icon-alert-triangle"/></svg>
                   <span data-i18n="btn_report_scam">गुमनाम रिपोर्ट भेजें</span>
+                </button>
+                <button class="btn btn-secondary" id="btnShareFromVerdict">
+                  <svg viewBox="0 0 24 24"><use href="#icon-share"/></svg>
+                  <span data-i18n="action_share_alert">चेतावनी साझा करें</span>
                 </button>
                 <button class="btn btn-danger" id="btnHelpFromVerdict">
                   <svg viewBox="0 0 24 24"><use href="#icon-phone"/></svg>
@@ -1278,6 +1307,7 @@
   <script src="/js/reports.js"></script>
   <script src="/js/dashboard.js"></script>
   <script src="/js/crypto_verify.js"></script>
+  <script src="/js/hero-slider.js"></script>
   <script src="/js/app.js"></script>
 
 </body>

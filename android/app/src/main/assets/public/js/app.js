@@ -15,6 +15,9 @@ window.App = {
     ReportsManager.init();
     DashboardManager.init();
     CryptoVerifyManager.init();
+    if (window.HeroSlider) {
+      window.HeroSlider.init();
+    }
 
     // 3. Setup Navigation
     this.setupNavigation();

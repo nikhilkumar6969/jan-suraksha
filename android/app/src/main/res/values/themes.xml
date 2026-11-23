@@ -1,9 +1,10 @@
 <resources>
     <style name="Theme.Suraksha" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/primary_teal</item>
-        <item name="colorPrimaryDark">@color/primary_teal_dark</item>
+        <item name="colorPrimary">@color/gov_navy</item>
+        <item name="colorPrimaryDark">@color/gov_navy_dark</item>
         <item name="colorSecondary">@color/accent_saffron</item>
-        <item name="android:statusBarColor">@color/primary_teal_dark</item>
-        <item name="android:windowBackground">@color/bg_screen</item>
+        <item name="android:statusBarColor">@color/gov_navy_dark</item>
+        <item name="android:navigationBarColor">@color/gov_navy_dark</item>
+        <item name="android:windowBackground">@color/gov_navy_dark</item>
     </style>
 </resources>

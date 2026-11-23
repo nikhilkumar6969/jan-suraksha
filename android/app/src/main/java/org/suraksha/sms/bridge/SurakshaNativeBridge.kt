@@ -11,6 +11,9 @@ import android.os.VibratorManager
 import android.util.Log
 import android.webkit.JavascriptInterface
 import org.json.JSONArray
+import org.json.JSONObject
+import org.suraksha.sms.data.model.ClassificationType
+import org.suraksha.sms.data.repository.SmsRepository
 import org.suraksha.sms.service.CallGuardianService
 
 /**
@@ -118,6 +121,57 @@ class SurakshaNativeBridge(
                 context.startActivity(dialIntent)
             } catch (e: Exception) {
                 Log.e(TAG, "Could not open dialer: ${e.message}")
+            }
+        }
+    }
+
+    /**
+     * Executes 100% offline text scam classification using the embedded Android Scikit-Learn model weights.
+     * Operates completely locally on device with zero internet or server connection.
+     */
+    @JavascriptInterface
+    fun classifyTextOffline(text: String): String {
+        return try {
+            val repository = SmsRepository.getInstance(context)
+            val result = repository.classifier.classify(text)
+            val json = JSONObject().apply {
+                put("verdict", if (result.classification == ClassificationType.SPAM) "likely_scam" else "genuine")
+                put("confidence", result.confidencePercent)
+                put("probability_scam", result.probabilityScore)
+                put("explanation", result.explanation)
+                put("matched_rules", JSONArray(result.matchedRules))
+                put("is_offline_native", true)
+            }
+            json.toString()
+        } catch (e: Exception) {
+            Log.e(TAG, "Offline classification error: ${e.message}")
+            JSONObject().apply {
+                put("verdict", "unsure")
+                put("confidence", 50)
+                put("explanation", "Offline analysis encountered an issue: ${e.message}")
+                put("is_offline_native", true)
+            }.toString()
+        }
+    }
+
+    /**
+     * Shares a fraud alert or text using Android's native system Share Sheet.
+     */
+    @JavascriptInterface
+    fun shareText(title: String, text: String) {
+        activity.runOnUiThread {
+            try {
+                val sendIntent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_TITLE, title)
+                    putExtra(Intent.EXTRA_TEXT, text)
+                    type = "text/plain"
+                }
+                val shareIntent = Intent.createChooser(sendIntent, title)
+                shareIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                context.startActivity(shareIntent)
+            } catch (e: Exception) {
+                Log.e(TAG, "Could not launch share sheet: ${e.message}")
             }
         }
     }

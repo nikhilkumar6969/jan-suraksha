@@ -16,3 +16,5 @@ backend/models/*.onnx
 backend/models/*.tar.bz2
 backend/data/*.db*
 backend/models/ed25519_signing_key.bin
+output/
+*.zip

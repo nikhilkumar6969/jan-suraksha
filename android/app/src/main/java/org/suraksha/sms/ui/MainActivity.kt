@@ -67,7 +67,8 @@ class MainActivity : AppCompatActivity() {
         checkPermissions()
         handleIncomingIntent(intent)
 
-        // Handle back button navigation inside WebView
+        // Handle back button navigation inside WebView with double-tap exit prevention
+        var backPressedOnce = false
         onBackPressedDispatcher.addCallback(this) {
             if (isDashboardViewActive && binding.webViewDashboard.canGoBack()) {
                 binding.webViewDashboard.goBack()
@@ -75,7 +76,13 @@ class MainActivity : AppCompatActivity() {
                 // Switch back to dashboard view
                 toggleMainView()
             } else {
-                finish()
+                if (backPressedOnce) {
+                    finish()
+                } else {
+                    backPressedOnce = true
+                    Toast.makeText(this@MainActivity, "Press BACK again to exit Jan Suraksha", Toast.LENGTH_SHORT).show()
+                    binding.root.postDelayed({ backPressedOnce = false }, 2000)
+                }
             }
         }
     }
@@ -202,6 +209,30 @@ class MainActivity : AppCompatActivity() {
                     viewModel.updateFeedback(smsId, UserFeedback.MARKED_SPAM)
                     Toast.makeText(this, "Confirmed as Spam", Toast.LENGTH_SHORT).show()
                 }
+            }
+        } else if (intent.action == Intent.ACTION_SEND && intent.type == "text/plain") {
+            // Handle shared suspicious text from WhatsApp / SMS
+            val sharedText = intent.getStringExtra(Intent.EXTRA_TEXT) ?: ""
+            if (sharedText.isNotBlank()) {
+                binding.editTestMessage.setText(sharedText)
+                // Forward directly into WebView Dashboard
+                val escaped = org.json.JSONObject.quote(sharedText)
+                binding.webViewDashboard.post {
+                    binding.webViewDashboard.evaluateJavascript(
+                        """
+                        (function() {
+                            const input = document.getElementById('smsInput');
+                            if (input) {
+                                input.value = $escaped;
+                                if (window.App) window.App.navigate('check');
+                                if (window.MessageDetector) window.MessageDetector.analyzeMessage();
+                            }
+                        })();
+                        """.trimIndent(),
+                        null
+                    )
+                }
+                Toast.makeText(this, "Analyzing shared message for scams...", Toast.LENGTH_SHORT).show()
             }
         }
     }

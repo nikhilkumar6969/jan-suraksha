@@ -49,6 +49,25 @@ const MessageDetector = {
       });
     }
 
+    const btnShare = document.getElementById('btnShareFromVerdict');
+    if (btnShare) {
+      btnShare.addEventListener('click', () => {
+        const text = smsInput ? smsInput.value.trim() : '';
+        const vTitle = document.getElementById('verdictTitle')?.textContent || 'Scam Alert';
+        const vExpl = document.getElementById('verdictExplanation')?.textContent || '';
+        const shareBody = `[Jan Suraksha Alert]\nVerdict: ${vTitle}\nMessage: "${text}"\nDetails: ${vExpl}\nHelpline: 1930 (National Cyber Crime Portal)`;
+        
+        if (window.SurakshaNative && typeof window.SurakshaNative.shareText === 'function') {
+          window.SurakshaNative.shareText('Jan Suraksha Alert', shareBody);
+        } else if (navigator.share) {
+          navigator.share({ title: 'Jan Suraksha Alert', text: shareBody }).catch(() => {});
+        } else if (navigator.clipboard) {
+          navigator.clipboard.writeText(shareBody);
+          if (window.App) window.App.showToast('चेतावनी कॉपी हो गई (Alert copied to clipboard)');
+        }
+      });
+    }
+
     const btnHelp = document.getElementById('btnHelpFromVerdict');
     if (btnHelp) {
       btnHelp.addEventListener('click', () => {
@@ -67,6 +86,20 @@ const MessageDetector = {
     const text = input.value.trim();
     const lang = I18n.currentLang || 'hi';
 
+    // 1. If executing inside native Android APK, use embedded on-device ML model directly
+    if (window.SurakshaNative && typeof window.SurakshaNative.classifyTextOffline === 'function') {
+      try {
+        const rawJson = window.SurakshaNative.classifyTextOffline(text);
+        const data = JSON.parse(rawJson);
+        data.normalized_text = text;
+        this.renderVerdict(data);
+        return;
+      } catch (nativeErr) {
+        console.warn('Native on-device classification error, falling back to network/heuristic:', nativeErr);
+      }
+    }
+
+    // 2. Web / Localhost execution
     try {
       const res = await fetch('/api/detect/message', {
         method: 'POST',
@@ -101,6 +134,9 @@ const MessageDetector = {
       box.classList.add('danger');
       vTitle.textContent = I18n.t('verdict_likely_scam', 'Likely Scam (खतरा / High Risk)');
       vIcon.innerHTML = `<svg viewBox="0 0 24 24"><use href="#icon-alert-triangle"/></svg>`;
+      if (window.SurakshaNative && typeof window.SurakshaNative.vibrate === 'function') {
+        window.SurakshaNative.vibrate(JSON.stringify([250, 100, 250, 100, 400]));
+      }
     } else if (data.verdict === 'unsure') {
       box.classList.add('warning');
       vTitle.textContent = I18n.t('verdict_unsure', 'Unsure (संदेहास्पद / Verify with Bank)');

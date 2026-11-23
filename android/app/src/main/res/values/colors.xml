@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="gov_navy">#081426</color>
+    <color name="gov_navy_dark">#040B16</color>
+    <color name="gov_navy_surface">#0F213A</color>
     <color name="primary_teal">#0E6E66</color>
     <color name="primary_teal_dark">#094E48</color>
     <color name="primary_teal_light">#169389</color>

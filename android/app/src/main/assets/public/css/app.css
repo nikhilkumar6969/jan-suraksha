@@ -870,36 +870,124 @@ a:hover {
 }
 
 /* ==========================================================================
-   2. MyGov Citizen Hero Campaign Banner (Classic Executive Style)
+   2. MyGov Citizen Hero Campaign Banner (Cinematic Background Slider)
    ========================================================================== */
 .mygov-hero-banner {
-  background: linear-gradient(135deg, #0b1e36 0%, #102a45 100%);
+  background-color: #0b1e36;
   color: #ffffff;
   border-radius: var(--radius-lg);
-  padding: 2rem 1.75rem;
+  padding: 2.25rem 1.75rem;
   margin-bottom: var(--space-5);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-5);
-  box-shadow: 0 4px 20px -2px rgba(11, 30, 54, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 30px -4px rgba(11, 30, 54, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   position: relative;
   overflow: hidden;
+  min-height: 270px;
 }
 
 @media (min-width: 768px) {
   .mygov-hero-banner {
-    padding: 2.25rem 2.5rem;
+    padding: 2.75rem 2.5rem;
     margin-bottom: var(--space-6);
+    min-height: 300px;
   }
 }
 
+/* Layer 1: Background Image Slideshow (Rural Chhattisgarh Photography) */
+.hero-slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.hero-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 1.8s ease-in-out, transform 6s cubic-bezier(0.25, 1, 0.5, 1);
+  transform: scale(1.03);
+  will-change: opacity, transform;
+}
+
+.hero-slide.active {
+  opacity: 1;
+  transform: scale(1);
+  z-index: 1;
+}
+
+/* Layer 2: Dark Navy/Black Gradient Overlay (Ensures 100% Text Readability & Character Visibility) */
+.hero-gradient-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    95deg,
+    rgba(7, 16, 32, 0.93) 0%,
+    rgba(10, 24, 46, 0.86) 45%,
+    rgba(14, 27, 48, 0.65) 80%,
+    rgba(10, 20, 36, 0.76) 100%
+  );
+}
+
+@media (max-width: 768px) {
+  .hero-gradient-overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(7, 16, 32, 0.95) 0%,
+      rgba(10, 24, 46, 0.90) 65%,
+      rgba(14, 27, 48, 0.84) 100%
+    );
+  }
+}
+
+/* Layer 3: Hero Content */
 .hero-banner-content {
   flex: 1;
   max-width: 680px;
   position: relative;
-  z-index: 1;
+  z-index: 2;
+}
+
+.hero-banner-art {
+  display: none;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+}
+
+@media (min-width: 860px) {
+  .hero-banner-art {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* Accessibility: Respect Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .hero-slide {
+    transition: none !important;
+    transform: none !important;
+  }
 }
 
 .hero-badge {
@@ -1010,20 +1098,6 @@ a:hover {
   stroke-width: 2.2;
 }
 
-.hero-banner-art {
-  display: none;
-  flex-shrink: 0;
-  position: relative;
-  z-index: 1;
-}
-
-@media (min-width: 860px) {
-  .hero-banner-art {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-}
 
 .shield-badge-decor {
   width: 108px;

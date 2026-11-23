@@ -1,11 +1,12 @@
 // Suraksha Service Worker - Offline Caching Strategy
-const CACHE_NAME = 'suraksha-v2.0';
+const CACHE_NAME = 'suraksha-v2.1';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
   '/css/tokens.css',
   '/css/app.css',
   '/js/app.js',
+  '/js/hero-slider.js',
   '/js/i18n.js',
   '/js/detector.js',
   '/js/qr.js',
@@ -28,6 +29,16 @@ const ASSETS_TO_CACHE = [
   '/manifest.json',
   '/assets/bg.jpg',
   '/assets/banner.jpg',
+  '/assets/backgrounds/media_1795408750990_34d08dd7.jpg',
+  '/assets/backgrounds/media_1795408780895_a44d0d97.jpg',
+  '/assets/backgrounds/media_1795408792868_3844933b.jpg',
+  '/assets/backgrounds/media_1795408807123_f835ec6f.jpg',
+  '/assets/backgrounds/media_1795408866473_e3ecd55a.jpg',
+  '/assets/backgrounds/rural_chhattisgarh_village.jpg',
+  '/assets/backgrounds/indian_farmers.jpg',
+  '/assets/backgrounds/rural_women_digital_awareness.jpg',
+  '/assets/backgrounds/rural_community_cyber_safety.jpg',
+  '/assets/backgrounds/elderly_villagers_technology.jpg',
   '/assets/alerts/alert_chime.wav',
   '/assets/alerts/alert_upi_pin_hi.wav',
   '/assets/alerts/alert_upi_pin_chg.wav',
