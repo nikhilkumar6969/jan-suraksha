@@ -607,11 +607,17 @@ const CallDetector = {
     // 1. Collapse duplicate consecutive sentences: "Sentence. Sentence." -> "Sentence."
     cleaned = cleaned.replace(/([^.?!]+[.?!])(?:\s*\1)+/gi, (match, p1) => p1);
 
-    // 2. Collapse 3 or more repeated single tokens / words: "Good. Good. Good. Good." -> "Good."
-    cleaned = cleaned.replace(/\b([A-Za-z\u0900-\u097F]+)(?:[.,!?])?(?:\s+\1(?:[.,!?])?){2,}/gi, (match, word) => {
+    // 2. Strip trailing repeated filler hallucinations (e.g. 2+ repeats of 'Good.', 'Thank you.', etc.)
+    cleaned = cleaned.replace(/(?:\s*(?:Good|Thank you|Bye|Okay|Yes|No)[.!?]?){2,}\s*$/gi, '');
+
+    // 3. Collapse 2 or more repeated single tokens / words: "Good. Good. Good. Good." -> "Good."
+    cleaned = cleaned.replace(/\b([A-Za-z\u0900-\u097F]+)(?:[.,!?])?(?:\s+\1(?:[.,!?])?)+/gi, (match, word) => {
       const lastChar = match.trim().slice(-1);
       return /[.,!?]/.test(lastChar) ? (word + lastChar) : word;
     });
+
+    // 4. Collapse adjacent identical words: "the the" -> "the"
+    cleaned = cleaned.replace(/\b([A-Za-z\u0900-\u097F]+)\s+\1\b/gi, '$1');
 
     return cleaned.replace(/\s{2,}/g, ' ').trim();
   },
@@ -1036,14 +1042,19 @@ const CallDetector = {
         body: JSON.stringify({ session_id: this.streamSessionId })
       }).then(res => res.json()).then(data => {
         if (data && (data.final_transcript || data.text || data.transcript)) {
-          const finalTxt = data.final_transcript || data.text || data.transcript;
+          const rawTxt = data.final_transcript || data.text || data.transcript;
+          const finalTxt = this.cleanRepeatedTokens(rawTxt);
           const transcriptInput = document.getElementById('callTranscriptInput');
-          if (transcriptInput && (!transcriptInput.value || finalTxt.length > transcriptInput.value.length)) {
+          if (transcriptInput && finalTxt) {
             transcriptInput.value = finalTxt;
           }
           const termArea = document.getElementById('liveStreamingTextArea');
-          if (termArea) {
+          if (termArea && finalTxt) {
+            termArea.setAttribute('data-final-text', finalTxt);
             termArea.innerHTML = this.escapeHtml(finalTxt);
+          }
+          if (finalTxt) {
+            this.evaluateLiveText(finalTxt);
           }
         }
       }).catch(err => console.debug('Stop notice:', err));

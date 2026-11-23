@@ -10,11 +10,73 @@ import time
 import json
 import wave
 import logging
+import re
 from pathlib import Path
 from typing import Dict, Any, Optional, Tuple, List
+from collections import Counter
 import numpy as np
 
 logger = logging.getLogger("suraksha.streaming_asr")
+
+
+def clean_repeated_hallucinations(text: str) -> str:
+    """
+    Cleans repetitive hallucinations and looping tokens common in autoregressive ASR models.
+    Collapses stutter loops ('Good. Good. Good.' -> 'Good.'), deduplicates identical consecutive phrases,
+    and removes trailing silence hallucination artifacts ('... Good. Good.').
+    """
+    if not text or not isinstance(text, str):
+        return ""
+
+    cleaned = text
+
+    # 1. Deduplicate consecutive identical phrases or sentences (case-insensitive)
+    cleaned = re.sub(r'([^.?!]+[.?!])(?:\s*\1)+', r'\1', cleaned, flags=re.IGNORECASE)
+
+    # 2. Strip trailing repeated filler hallucinations (3+ repeats of 'Good.', 'Thank you.', 'Okay.', etc.)
+    cleaned = re.sub(r'(?:\s*(?:Good|Thank you|Bye|Okay|Yes|No)[.!?]?){3,}\s*$', '', cleaned, flags=re.IGNORECASE)
+
+    # 3. Collapse repetitive single-word loops: 'Good. Good. Good. Good.' -> 'Good.'
+    cleaned = re.sub(r'\b([A-Za-z\u0900-\u097F]+)(?:[.,!?])?(?:\s+\1(?:[.,!?])?){2,}', r'\1.', cleaned, flags=re.IGNORECASE)
+
+    # 4. Collapse adjacent identical words: 'the the' -> 'the'
+    cleaned = re.sub(r'\b([A-Za-z\u0900-\u097F]+)\s+\1\b', r'\1', cleaned, flags=re.IGNORECASE)
+
+    # 5. Clean excessive spaces
+    cleaned = re.sub(r'\s{2,}', ' ', cleaned).strip()
+    return cleaned
+
+
+def is_hallucination_loop(text: str) -> bool:
+    """Detects whether recognized text is dominated by an artificial repetition loop."""
+    if not text:
+        return False
+    tokens = re.findall(r'\b[A-Za-z\u0900-\u097F]+\b', text.lower())
+    if len(tokens) >= 5:
+        counts = Counter(tokens)
+        most_common_word, most_common_count = counts.most_common(1)[0]
+        if (most_common_count / float(len(tokens))) > 0.35:
+            return True
+    return False
+
+
+def trim_trailing_silence(pcm_bytes: bytes, sample_rate: int = 16000, silence_threshold_rms: float = 120.0) -> bytes:
+    """Trims trailing silence from 16kHz Int16 PCM buffer to prevent Whisper from looping on empty audio."""
+    if len(pcm_bytes) < sample_rate * 2:
+        return pcm_bytes
+    samples = np.frombuffer(pcm_bytes, dtype=np.int16)
+    frame_size = int(sample_rate * 0.1)  # 100ms frames
+    last_sound_idx = len(samples)
+    for i in range(len(samples) - frame_size, 0, -frame_size):
+        frame = samples[i:i + frame_size]
+        rms = np.sqrt(np.mean(frame.astype(np.float64) ** 2))
+        if rms >= silence_threshold_rms:
+            # Keep up to active sound + 0.5s margin
+            last_sound_idx = min(len(samples), i + frame_size + int(sample_rate * 0.5))
+            break
+    else:
+        return pcm_bytes
+    return samples[:last_sound_idx].tobytes()
 
 SHERPA_AVAILABLE = False
 try:
@@ -238,23 +300,37 @@ def close_session(session_id: str) -> Optional[dict]:
             except Exception:
                 pass
 
-        full_transcript = " ".join(sess.accumulated_text).strip()
+        full_transcript = clean_repeated_hallucinations(" ".join(sess.accumulated_text).strip())
         if sess.current_interim and sess.current_interim not in full_transcript:
-            full_transcript = f"{full_transcript} {sess.current_interim}".strip()
+            full_transcript = clean_repeated_hallucinations(f"{full_transcript} {sess.current_interim}".strip())
 
-        # Run multilingual Whisper final pass if audio buffer was captured
-        if len(sess.pcm_buffer) >= 16000 * 2:
+        # Run multilingual Whisper final pass only if audio buffer was captured and not silent
+        trimmed_buffer = trim_trailing_silence(bytes(sess.pcm_buffer))
+        if len(trimmed_buffer) >= 16000 * 2:
             try:
                 whisper = get_whisper_recognizer(sess.language)
                 if whisper:
-                    samples_int16 = np.frombuffer(bytes(sess.pcm_buffer), dtype=np.int16)
+                    samples_int16 = np.frombuffer(trimmed_buffer, dtype=np.int16)
                     samples_float32 = samples_int16.astype(np.float32) / 32768.0
-                    w_stream = whisper.create_stream()
-                    w_stream.accept_waveform(16000, samples_float32)
-                    whisper.decode_stream(w_stream)
-                    w_text = w_stream.result.text.strip()
-                    if w_text and len(w_text) >= len(full_transcript):
-                        full_transcript = w_text
+
+                    # Chunk into <= 25-second windows to conform with Sherpa-ONNX 30s limit
+                    win_size = int(25.0 * 16000)
+                    w_parts = []
+                    for s_idx in range(0, len(samples_float32), win_size):
+                        w_chunk = samples_float32[s_idx:s_idx + win_size]
+                        if len(w_chunk) < 8000:
+                            continue
+                        w_stream = whisper.create_stream()
+                        w_stream.accept_waveform(16000, w_chunk)
+                        whisper.decode_stream(w_stream)
+                        w_seg = clean_repeated_hallucinations(w_stream.result.text.strip())
+                        if w_seg and not is_hallucination_loop(w_seg):
+                            w_parts.append(w_seg)
+
+                    w_combined = clean_repeated_hallucinations(" ".join(w_parts).strip())
+                    # Only accept Whisper text if it is meaningful, non-hallucinatory, and at least as complete
+                    if w_combined and not is_hallucination_loop(w_combined) and len(w_combined.split()) >= len(full_transcript.split()):
+                        full_transcript = w_combined
             except Exception as ex:
                 logger.debug(f"Session close Whisper note: {ex}")
 
@@ -312,7 +388,6 @@ def process_streaming_chunk(
     is_speech = True
     if vad is not None and len(samples_float32) > 0:
         try:
-            # Silero expects window_size chunks (e.g. 512 samples)
             window = 512
             speech_votes = 0
             total_windows = 0
@@ -350,13 +425,14 @@ def process_streaming_chunk(
             if sess.vosk_rec_hi.AcceptWaveform(pcm_bytes):
                 v_res = json.loads(sess.vosk_rec_hi.Result())
                 if v_res.get("text"):
-                    v_text = v_res["text"].strip()
-                    sess.accumulated_text.append(v_text)
-                    text_result = v_text
-                    is_final = True
+                    v_text = clean_repeated_hallucinations(v_res["text"].strip())
+                    if v_text and (not sess.accumulated_text or sess.accumulated_text[-1].lower() != v_text.lower()):
+                        sess.accumulated_text.append(v_text)
+                        text_result = v_text
+                        is_final = True
             else:
                 v_part = json.loads(sess.vosk_rec_hi.PartialResult())
-                sess.current_interim = v_part.get("partial", "").strip()
+                sess.current_interim = clean_repeated_hallucinations(v_part.get("partial", "").strip())
                 text_result = sess.current_interim
         except Exception as e:
             logger.debug(f"Vosk streaming error: {e}")
@@ -371,22 +447,29 @@ def process_streaming_chunk(
             # Check if an endpoint (end of phrase/pause) was detected
             if zipformer.is_endpoint(sess.stream):
                 final_segment = zipformer.get_result(sess.stream).strip()
-                if final_segment:
-                    sess.accumulated_text.append(final_segment)
-                    text_result = final_segment
-                    is_final = True
+                clean_seg = clean_repeated_hallucinations(final_segment)
+                if clean_seg and not is_hallucination_loop(clean_seg):
+                    if not sess.accumulated_text or sess.accumulated_text[-1].lower() != clean_seg.lower():
+                        sess.accumulated_text.append(clean_seg)
+                        text_result = clean_seg
+                        is_final = True
                 zipformer.reset(sess.stream)
                 sess.current_interim = ""
             else:
                 interim = zipformer.get_result(sess.stream).strip()
-                sess.current_interim = interim
-                text_result = interim
+                clean_interim = clean_repeated_hallucinations(interim)
+                if not is_hallucination_loop(clean_interim):
+                    sess.current_interim = clean_interim
+                    text_result = clean_interim
+                else:
+                    sess.current_interim = ""
+                    text_result = ""
 
     latency_ms = int((time.time() - start_time) * 1000)
 
     # Construct cumulative transcript
-    accumulated = " ".join(sess.accumulated_text).strip()
-    full_text = f"{accumulated} {sess.current_interim}".strip()
+    accumulated = clean_repeated_hallucinations(" ".join(sess.accumulated_text).strip())
+    full_text = clean_repeated_hallucinations(f"{accumulated} {sess.current_interim}".strip())
 
     return {
         "text": full_text,
@@ -407,12 +490,11 @@ def offline_transcribe_audio(
 ) -> Dict[str, Any]:
     """
     Offline transcription of complete audio file using Sherpa-ONNX (Whisper or Zipformer),
-    with automatic fallback to Vosk if needed.
+    with automatic chunking for long audio (> 25s) and fallback to Vosk if needed.
     Works 100% offline with zero cloud dependency.
     """
     from app.calls.transcribe import prepare_16k_mono_wav, transcribe_audio_file
 
-    # Ensure 16k mono wav format
     temp_16k = audio_path.parent / f"conv_{audio_path.name}.wav"
     try:
         prep_ok = prepare_16k_mono_wav(audio_path, temp_16k)
@@ -427,16 +509,28 @@ def offline_transcribe_audio(
                 if samples.ndim > 1:
                     samples = samples.mean(axis=1)
 
-                stream = whisper.create_stream()
-                stream.accept_waveform(sr, samples)
-                whisper.decode_stream(stream)
-                text = stream.result.text.strip()
-                if text:
+                duration_sec = len(samples) / float(sr)
+                window_size = int(25.0 * sr)  # 25-second windows to safely stay under 30s Sherpa limit
+
+                chunk_texts = []
+                for start_idx in range(0, len(samples), window_size):
+                    chunk = samples[start_idx:start_idx + window_size]
+                    if len(chunk) < int(0.5 * sr):
+                        continue
+                    stream = whisper.create_stream()
+                    stream.accept_waveform(sr, chunk)
+                    whisper.decode_stream(stream)
+                    seg_text = clean_repeated_hallucinations(stream.result.text.strip())
+                    if seg_text and not is_hallucination_loop(seg_text):
+                        chunk_texts.append(seg_text)
+
+                combined_whisper_text = clean_repeated_hallucinations(" ".join(chunk_texts).strip())
+                if combined_whisper_text and len(combined_whisper_text.split()) >= 4:
                     return {
-                        "text": text,
+                        "text": combined_whisper_text,
                         "engine": "sherpa-onnx-whisper",
                         "detected_lang": lang if lang != "auto" else "hi/en",
-                        "notice": "Sherpa-ONNX Offline Multilingual Engine (100% On-Device)",
+                        "notice": f"Sherpa-ONNX Offline Multilingual Engine (100% On-Device • {len(chunk_texts)} windows processed)",
                         "success": True
                     }
             except Exception as e:
@@ -456,8 +550,8 @@ def offline_transcribe_audio(
                 stream.input_finished()
                 while zipformer.is_ready(stream):
                     zipformer.decode_stream(stream)
-                text = zipformer.get_result(stream).strip()
-                if text:
+                text = clean_repeated_hallucinations(zipformer.get_result(stream).strip())
+                if text and len(text.split()) >= 4:
                     return {
                         "text": text,
                         "engine": "sherpa-onnx-zipformer",
@@ -469,7 +563,10 @@ def offline_transcribe_audio(
                 logger.warning(f"Sherpa-ONNX Zipformer decoding fallback: {e}")
 
         # 3. Tertiary: Vosk Offline Engine Fallback
-        return transcribe_audio_file(audio_path, lang=lang)
+        vosk_res = transcribe_audio_file(audio_path, lang=lang)
+        if vosk_res and vosk_res.get("text"):
+            vosk_res["text"] = clean_repeated_hallucinations(vosk_res["text"])
+        return vosk_res
 
     finally:
         if temp_16k.exists():
