@@ -247,10 +247,13 @@ window.App = {
   navigate(viewName) {
     this.currentView = viewName;
 
-    // Safety: Stop Call Guardian microphone if leaving check view
+    // Safety: Stop microphones if leaving check view
     if (viewName !== 'check') {
       if (window.CallDetector && window.CallDetector.isListening) {
         window.CallDetector.stopLiveListening();
+      }
+      if (window.WhisperSTT && window.WhisperSTT.isRecording) {
+        window.WhisperSTT.stopRecording();
       }
     }
 
@@ -282,10 +285,15 @@ window.App = {
   },
 
   switchSubtab(subtabId) {
-    // Safety: Stop Call Guardian microphone if leaving call subtab
+    // Safety: Stop microphones if leaving respective subtabs
     if (subtabId !== 'subtab-call') {
       if (window.CallDetector && window.CallDetector.isListening) {
         window.CallDetector.stopLiveListening();
+      }
+    }
+    if (subtabId !== 'subtab-stt') {
+      if (window.WhisperSTT && window.WhisperSTT.isRecording) {
+        window.WhisperSTT.stopRecording();
       }
     }
 

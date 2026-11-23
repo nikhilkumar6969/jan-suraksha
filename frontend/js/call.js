@@ -121,13 +121,13 @@ const CallDetector = {
     if (!this.isListening) return;
     this.silenceTimer = setTimeout(() => {
       if (this.isListening) {
-        console.log('[CallGuardian] 45s silence timeout reached - stopping mic');
+        console.log('[CallGuardian] 30s silence timeout reached - stopping mic');
         this.stopLiveListening();
         if (window.App) {
-          window.App.showToast('माइक स्वतः बंद हुआ (45 सेकंड निष्क्रियता के बाद)', 3000);
+          window.App.showToast('माइक स्वतः बंद हुआ (30 सेकंड निष्क्रियता के बाद)', 3000);
         }
       }
-    }, 45000);
+    }, 30000);
   },
 
   init() {
@@ -136,9 +136,14 @@ const CallDetector = {
     this.bindAudioSamples();
     this.checkMicrophonePermission();
 
-    // Auto-stop mic on page unload / hide
+    // Auto-stop mic on page unload / hide / tab switch
     window.addEventListener('beforeunload', () => this.stopLiveListening());
     window.addEventListener('pagehide', () => this.stopLiveListening());
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden && this.isListening) {
+        this.stopLiveListening();
+      }
+    });
 
     // Critical modal close button
     const btnCloseCrit = document.getElementById('btnCloseCritWarning');
@@ -280,6 +285,9 @@ const CallDetector = {
 
     if (audioInput) {
       audioInput.addEventListener('change', async (e) => {
+        if (this.isListening) {
+          this.stopLiveListening();
+        }
         const file = e.target.files ? e.target.files[0] : null;
         this.activeAudioFile = file;
         const player = document.getElementById('callAudioPlayer');
@@ -644,7 +652,9 @@ const CallDetector = {
 
   handleStreamingResponse(data) {
     if (!this.isListening && !data.force_update) return;
-    this.resetSilenceTimer();
+    if (data.vad_speech_detected || (data.text && data.text.trim().length > 0) || (data.interim && data.interim.trim().length > 0)) {
+      this.resetSilenceTimer();
+    }
 
     // 1. Update Transcription Terminal & Input Field
     const recognizedText = data.text || data.transcript || '';
@@ -973,7 +983,7 @@ const CallDetector = {
       catKey = 'remote_access';
     } else if (categories.includes('bank_impersonation') || ruleFlags.fake_kyc) {
       catKey = 'bank_kyc';
-    } else if (categories.includes('financial_extortion') || categories.includes('utility_electricity') || categories.includes('lottery_subsidy') || categories.includes('courier_customs')) {
+    } else if (categories.includes('financial_extortion') || categories.includes('utility_electricity') || categories.includes('lottery_subsidy') || categories.includes('courier_customs') || categories.includes('telecom_sim_block') || categories.includes('job_task_fraud')) {
       catKey = 'extortion';
     } else {
       catKey = 'extortion';
@@ -1243,6 +1253,9 @@ const CallDetector = {
   },
 
   async loadAudioSample(key) {
+    if (this.isListening) {
+      this.stopLiveListening();
+    }
     const url = this.audioSamples[key];
     if (!url) return;
 

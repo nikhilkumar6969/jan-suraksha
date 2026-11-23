@@ -5,6 +5,7 @@ const WhisperSTT = {
   currentBlob: null,
   currentFile: null,
   mediaRecorder: null,
+  mediaStream: null,
   recordedChunks: [],
   isRecording: false,
 
@@ -18,6 +19,15 @@ const WhisperSTT = {
     const btnClear = document.getElementById('btnSttClear');
     const btnSendToDetector = document.getElementById('btnSttSendToDetector');
     const engineModeSelect = document.getElementById('sttEngineModeSelect');
+
+    // Auto-stop mic on unload, hide, or tab switch
+    window.addEventListener('beforeunload', () => this.stopRecording());
+    window.addEventListener('pagehide', () => this.stopRecording());
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden && this.isRecording) {
+        this.stopRecording();
+      }
+    });
 
     if (engineModeSelect) {
       engineModeSelect.addEventListener('change', (e) => this.handleModeChange(e.target.value));
@@ -93,6 +103,7 @@ const WhisperSTT = {
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      this.mediaStream = stream;
       this.recordedChunks = [];
 
       let mimeType = 'audio/webm';
@@ -117,7 +128,15 @@ const WhisperSTT = {
         this.updateAudioPreview(audioBlob, 'Microphone_Recording.webm', sizeMb);
 
         // Stop all audio tracks
-        stream.getTracks().forEach((track) => track.stop());
+        if (this.mediaStream) {
+          try {
+            this.mediaStream.getTracks().forEach((track) => {
+              track.stop();
+              track.enabled = false;
+            });
+          } catch (e) {}
+          this.mediaStream = null;
+        }
       };
 
       this.mediaRecorder.start(250);
@@ -144,8 +163,21 @@ const WhisperSTT = {
   },
 
   stopRecording() {
+    if (this.mediaStream) {
+      try {
+        this.mediaStream.getTracks().forEach((track) => {
+          track.stop();
+          track.enabled = false;
+        });
+      } catch (e) {}
+      this.mediaStream = null;
+    }
     if (this.mediaRecorder && this.isRecording) {
-      this.mediaRecorder.stop();
+      try {
+        if (this.mediaRecorder.state !== 'inactive') {
+          this.mediaRecorder.stop();
+        }
+      } catch (e) {}
       this.isRecording = false;
 
       const btn = document.getElementById('btnSttRecord');
@@ -180,6 +212,7 @@ const WhisperSTT = {
   },
 
   clearAudio() {
+    this.stopRecording();
     this.currentBlob = null;
     this.currentFile = null;
     this.isRecording = false;

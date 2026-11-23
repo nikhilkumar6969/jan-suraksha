@@ -139,16 +139,18 @@ POLICE_GOVT_PATTERNS = [
 
 # 6. Courier & Customs Extortion
 COURIER_CUSTOMS_PATTERNS = [
-    r"\b(?:fedex|dhl|bluedart|customs|parcel|package|consignment)\s+.*?(?:illegal|drugs|narcotics|contraband|clearance|fee|detained|held)\b",
-    r"\b(?:customs\s+clearance|customs\s+duty|illegal\s+parcel|package\s+detained)\b",
+    r"\b(?:fedex|dhl|bluedart|customs|parcel|package|consignment)\b.*?\b(?:illegal|drugs|narcotics|contraband|clearance|fee|detained|held|seized|penalty|rs\.?\s*\d+|\d+\s*rupees|10000|money|transfer|police)\b",
+    r"\b(?:customs\s+clearance|customs\s+duty|illegal\s+parcel|package\s+detained|clear\s+customs\s+parcel)\b",
+    r"\b(?:asking|demanding|pay|transfer)\s+.*?\b(?:customs|parcel|consignment|clearance)\b",
     r"पार्सल\s+म\s+(?:चरस|गांजा|ड्रग्स|नशीली\s+दवा)|कस्टम्स\s+क्लियरेंस\s+फीस",
-    r"कस्टम्स\s+अधिकारी|अवैध\s+पार्सल"
+    r"कस्टम्स\s+अधिकारी|अवैध\s+पार्सल|पार्सल\s+(?:छुड़ाने|क्लियर\s+कराने)",
+    r"कूरियर\s+(?:कंपनी|डिपार्टमेंट|रोक\s+लिया|सीज)"
 ]
 
 # 7. Lottery & Fake Subsidies (Mahtari Vandan, PM Awas)
 LOTTERY_SUBSIDY_PATTERNS = [
-    r"\b(?:lottery|kbc|cashback|prize|reward|winner|lucky\s+draw)\s+.*?(?:fee|charge|deposit|paisa|claim|amount|jeete)\b",
-    r"\b(?:win\s+(?:a\s+)?lottery|lottery\s+without|prize\s+money|receive\s+prize|claim\s+(?:cashback|reward|lottery))\b",
+    r"\b(?:lottery|kbc|cashback|prize|reward|winner|lucky\s+draw)\s+.*?(?:fee|charge|deposit|paisa|claim|amount|jeete|transfer)\b",
+    r"\b(?:win\s+(?:a\s+)?lottery|won\s+(?:\d+\s+lakh|lottery)|lottery\s+without|prize\s+money|receive\s+prize|claim\s+(?:cashback|reward|lottery))\b",
     r"\b(?:pm\s+awas|mahtari\s+vandan|kisan\s+subsidy)\s+(?:verification|registration\s+fee|approval\s+charge|shulk)\b",
     r"महतारी\s+वंदन\s+योजना\s+के\s+(?:\d+\s+रुप[ईय]ा\s+)?अटके\s+हे",
     r"महतारी\s+वंदन\s+(?:सत्यापन|पंजीकरण\s+शुल्क)",
@@ -165,10 +167,8 @@ LOTTERY_SUBSIDY_PATTERNS = [
 
 # 8. Financial Fraud & Extortion Demands
 FINANCIAL_EXTORTION_PATTERNS = [
-    r"\b(?:part[- ]time\s+job|work\s+from\s+home|youtube\s+(?:like|subscribe)|telegram\s+group)\b.*?\b(?:earn|daily|per\s+day|fees?|registration|deposit|jama)\b",
-    r"(?:घर\s+बैठे|पार्ट\s*टाइम\s*जॉब|यूट्यूब\s+वीडियो\s+लाइक|टेलीग्राम\s+ग्रुप).*(?:कमाएं|कमाने|रजिस्ट्रेशन\s+फीस|पंजीकरण\s+शुल्क|जमा\s+करें|कमाव)",
     r"\b(?:bail\s+security\s+bond|clearance\s+fee|penalty\s+charge|penalty\s+fine|file\s+charge)\b",
-    r"\b(?:transfer|deposit|send|bhejo|jama\s+karo|pataw|patai)\s+(?:rs\.?\s*\d+|\d+\s*rupees|\d+\s*hazar|paisa|paisa\s+pataw)\b",
+    r"\b(?:asking|demanding|pay|transfer|deposit|send|bhejo|jama\s+karo|pataw|patai)\s+(?:rs\.?\s*\d+|\d+\s*rupees|\d+\s*hazar|money|paisa|paisa\s+pataw|\d+\s*रुपये)\b",
     r"\b(?:how\s+much\s+fine|how\s+much\s+penalty|fine\s+do\s+i\s+need\s+to\s+deposit|pay\s+fine|deposit\s+fine)\b",
     r"\bscan\s+(?:the\s+)?qr\s+code\s+to\s+(?:pay|verify|transfer)\b",
     r"जमानत\s+(?:राशि|बांड)\s+तुरंत\s+जमा\s+करें",
@@ -190,37 +190,78 @@ REMOTE_ACCESS_PATTERNS = [
     r"\b(?:computer|laptop|pc)\s+(?:on\s+karo|chalu\s+karo|start\s+karo|open\s+karo|me\s+connect)\b",
     r"\b(?:need\s+a\s+computer|access\s+your\s+computer|connect\s+your\s+computer)\b",
     r"\b(?:should\s+i\s+download|how\s+to\s+download|told\s+me\s+to\s+download|install)\s+(?:anydesk|quicksupport|teamviewer|rustdesk|screen\s+share)\b",
-    r"\b(?:screen\s+share|view\s+my\s+screen|remote\s+access)\b",
+    r"\b(?:screen\s+share|view\s+my\s+screen|remote\s+access|share\s+anydesk)\b",
     r"कंप्यूटर\s*(?:चालू\s+करो|खोलो|ऑन\s+करो|पे\s+बैठो|में\s+देखो|चाहिए)",
     r"लैपटॉप\s*(?:चालू\s+करो|खोलो|ऑन\s+करो)",
-    r"\b(?:download|install|bheja\s+hai|bheje\s+hanw)\s+(?:the\s+)?(?:apk|support\s+app|security\s+app)\b",
-    r"\binstall\s+(?:unknown\s+app|customer\s+support\s+apk)\b",
+    r"\b(?:download|install|bheja\s+hai|bheje\s+hanw|sent)\s+(?:the\s+)?(?:apk|support\s+app|security\s+app|apk\s+file)\b",
+    r"\b(?:install\s+apk|download\s+apk|unknown\s+apk|apk\s+file)\b",
+    r"\binstall\s+(?:it\s+for\s+bank|unknown\s+app|customer\s+support\s+apk)\b",
     r"\benable\s+accessibility\s+(?:permission|service)\b",
     r"व्हाट्सएप\s+म\s+(?:फाइल|ऐप|लिंक)\s+भेजे\s+हंव\s+ओला\s+(?:डाउनलोड|इन्स्टॉल)\s+करव",
     r"(?:anydesk|quicksupport|teamviewer)\s+(?:डाउनलोड\s+करके|म\s+स्क्रीन\s+शेयर\s+करव)",
     r"ऐप\s+ल\s+(?:डाउनलोड|इन्स्टॉल)\s+करव",
-    r"ऐप\s+(?:डाउनलोड|इन्स्टॉल)\s+करें",
+    r"ऐप\s+(?:डाउनलोड|इन्स्टॉल)\s+करें|एपीके|apk\s*फाइल",
     r"स्क्रीन\s+शेयर\s+(?:करें|करव|चालू\s+करव)",
     r"एक्सेसिबिलिटी\s+अनुमति\s+चालू\s+करें"
 ]
 
-# 10. Identity & Official Inquiry (User Question Verification)
+# 10. Telecom & TRAI SIM Disconnection Scams
+TELECOM_SIM_PATTERNS = [
+    r"\b(?:sim|mobile\s+number|phone\s+number|connection|telephone)\b.*?\b(?:block(?:ed)?|disconnect(?:ed)?|deactivat(?:ed)?|band|cut|suspend(?:ed)?)\b",
+    r"\b(?:trai|dot|department\s+of\s+telecom|telecom\s+regulatory)\b",
+    r"\b(?:disconnect(?:ed)?\s+in\s+2\s+hours|block(?:ed)?\s+in\s+2\s+hours|sim\s+band\s+ho\s+jayega)\b",
+    r"\b(?:press\s+9\s+to|press\s+1\s+to\s+speak\s+with\s+telecom|telecom\s+customer\s+care)\b",
+    r"सिम\s*(?:कार्ड\s*)?(?:बंद\s*हो\s*जाएगा|ब्लॉक\s*(?:होगा|हो\s*जाएगा)|काट\s*दी\s*जाएगी|2\s*घंटे\s*में\s*बंद)",
+    r"ट्राई|दूरसंचार\s*विभाग|टेलीकॉम\s*डिपार्टमेंट|सिम\s+ब्लॉक"
+]
+
+# 11. Part-Time Job, YouTube Like & Telegram Task Scams
+JOB_TASK_PATTERNS = [
+    r"\b(?:part[- ]time\s+job|work\s+from\s+home|youtube\s+(?:like|subscribe)|telegram\s+(?:task|group|channel)|daily\s+income|earn\s+daily)\b",
+    r"\b(?:like\s+videos?\s+and\s+earn|earn\s+\d+\s+daily|registration\s+fee\s+for\s+job|subscribe\s+to\s+earn)\b",
+    r"(?:घर\s+बैठे|पार्ट\s*टाइम\s*जॉब|यूट्यूब\s+वीडियो\s+लाइक|टेलीग्राम\s+ग्रुप|टेलीग्राम\s+टास्क).*(?:कमाएं|कमाने|रजिस्ट्रेशन\s+फीस|पंजीकरण\s+शुल्क|जमा\s+करें|कमाव)",
+    r"यूट्यूब\s+लाइक|वीडियो\s+लाइक\s+करके\s+कमाएं|घर\s+बैठे\s+रोजाना"
+]
+
+# 12. Identity & Official Inquiry (User Counter-Question Verification)
 IDENTITY_INQUIRY_PATTERNS = [
-    r"\b(?:who\s+(?:are\s+you|is\s+this|is\s+calling)|where\s+is\s+your\s+(?:office|branch)|what\s+is\s+your\s+(?:name|id|employee\s+id|designation)|can\s+you\s+send\s+official|prove\s+your\s+identity)\b",
+    r"\b(?:who\s+(?:are\s+you|is\s+this|is\s+calling)|where\s+is\s+your\s+(?:office|branch)|what\s+is\s+your\s+(?:name|id|employee\s+id|employee\s+code|designation|post)|can\s+you\s+send\s+(?:official|written|notice)|prove\s+your\s+identity|show\s+your\s+(?:id|badge))\b",
+    r"\b(?:can\s+i\s+(?:talk|speak)\s+to\s+(?:the\s+|your\s+)?manager|branch\s+manager|senior\s+officer)\b",
+    r"\b(?:which\s+(?:police\s+station|thana|court)\s+(?:are\s+you\s+from|issued|case)|what\s+is\s+the\s+fir\s+number)\b",
+    r"\b(?:are\s+you\s+really\s+from|calling\s+from\s+sbi|calling\s+from\s+police)\b",
+    r"\b(?:give\s+me\s+your\s+landline|official\s+number\s+to\s+call\s+back)\b",
+    r"\b(?:what\s+is\s+my\s+(?:consumer|meter|account)\s+number)\b",
+    r"\b(?:aapka\s+naam\s+kya\s+hai|kaha\s+se\s+bol\s+rahe|manager\s+se\s+baat\s+karao|employee\s+id\s+batao|written\s+notice\s+bhejo)\b",
     r"आप\s+कौन\s+हो|कहाँ\s+से\s+बोल\s+रहे|कौन\s+सी\s+शाखा|पहचान\s+पत्र|आईडी\s+कार्ड|तुम्हारा\s+नाम\s+क्या\s+है",
+    r"मैनेजर\s+से\s+बात|कर्मचारी\s+आईडी|लिखित\s+नोटिस|कौन\s+सा\s+थाना|कोर्ट\s+का\s+वारंट|मीटर\s+नंबर\s+क्या\s+है",
     r"तूं\s+कोन\s+बोलत\s+हस|कहाँ\s+ले\s+बोलत\s+हस|ऑफिस\s+कहाँ\s+हे|तोर\s+नाम\s+का\s+हे"
 ]
 
-# 11. Safe Banking & Procedural Inquiry
+# 13. Credential Prompt Protection Inquiry
+CREDENTIAL_PROMPT_INQUIRY_PATTERNS = [
+    r"\b(?:why\s+do\s+you\s+need|why\s+are\s+you\s+asking|why\s+need)\s+(?:my\s+)?(?:bank|account|otp|pin|password|details|cvv|credentials)\b",
+    r"\b(?:does\s+bank\s+(?:ever\s+)?ask|will\s+bank\s+ask|can\s+bank\s+ask)\s+.*(?:otp|pin|password)\b",
+    r"\b(?:bank\s+details\s+kyun|otp\s+kyun|pin\s+kyun|kripya\s+otp\s+na\s+puche)\b",
+    r"बैंक\s+डिटेल\s+क्यों\s+चाहिए|ओटीपी\s+क्यों\s+मांग\s+रहे|पिन\s+क्यों\s+चाहिए|बैंक\s+कभी\s+ओटीपी\s+मांगता\s+है",
+    r"ओटीपी\s+क्यों\s+चाहिए|बैंक\s+कभी\s+पिन\s+मांगता\s+है"
+]
+
+# 14. Telecom Disconnection Inquiry (User Asking About Policy)
+TELECOM_INQUIRY_PATTERNS = [
+    r"\b(?:does\s+trai\s+disconnect|does\s+dot\s+disconnect|does\s+trai\s+call|will\s+trai\s+block|sim\s+block\s+real)\b",
+    r"क्या\s+ट्राई\s+सिम\s+बंद\s+करता\s+है|क्या\s+ट्राई\s+कॉल\s+करता\s+है|ट्राई\s+सिम\s+ब्लॉक\s+सच\s+है"
+]
+
+# 15. Safe Banking & Procedural Inquiry
 BANKING_INQUIRY_PATTERNS = [
-    r"\b(?:check\s+(?:my\s+)?(?:bank\s+|account\s+)?balance|how\s+(?:do\s+i|can\s+i|to)\s+check\s+.*balance|account\s+balance|passbook|cheque\s*book|working\s+hours|atm\s+card\s+apply)\b",
+    r"\b(?:check\s+(?:my\s+)?(?:bank\s+|account\s+)?balance|how\s+(?:do\s+i|can\s+i|to)\s+check\s+.*balance|account\s+balance|what\s+is\s+(?:the\s+|my\s+)?(?:balance|account\s+balance)|passbook|cheque\s*book|working\s+hours|atm\s+card\s+apply|apply\s+for\s+a\s+loan|how\s+do\s+i\s+apply\s+for)\b",
     r"\b(?:how\s+(?:do\s+i|can\s+i|to)\s+update\s+(?:my\s+)?kyc\s+safely|safe\s+kyc|visit\s+(?:my\s+)?(?:bank\s+)?branch)\b",
-    r"बैलेंस\s+(?:कैसे\s+देखें|जांचें)|पासबुक\s+(?:एंट्री|अपडेट)|चेकबुक|शाखा\s+का\s+समय|खाते\s+की\s+जानकारी",
+    r"बैलेंस\s+(?:कैसे\s+देखें|जांचें)|पासबुक\s+(?:एंट्री|अपडेट)|चेकबुक|शाखा\s+का\s+समय|खाते\s+की\s+जानकारी|लोन\s+के\s+लिए\s+आवेदन",
     r"बैलेंस\s+कइसे\s+देखबो|पासबुक\s+चढ़ाए\s+बर|खाता\s+म\s+कतका\s+पईसा\s+हे",
     r"शाखा\s+जाके\s+(?:kyc|केवाईसी)|सुरक्षित\s+तरीके\s+से\s+(?:kyc|केवाईसी)|शाखा\s+जाकर\s+सुरक्षित\s+(?:केवाईसी|kyc)"
 ]
 
-# 12. 1930 Cyber Fraud Reporting Inquiry
+# 16. 1930 Cyber Fraud Reporting Inquiry
 CYBER_REPORTING_INQUIRY_PATTERNS = [
     r"\b(?:how\s+(?:do\s+i|to)\s+report|report\s+(?:cyber\s+fraud|scam|to\s+1930)|what\s+is\s+1930|call\s+1930|file\s+(?:a\s+)?complaint|cybercrime\.gov\.in|where\s+to\s+complain)\b",
     r"1930\s*(?:म|पर|हेल्पलाइन|शिकायत|कॉल)|शिकायत\s+कैसे\s+करें|साइबर\s+क्राइम\s+रिपोर्ट|ठगी\s+की\s+शिकायत"
@@ -275,6 +316,16 @@ CATEGORY_MAP = {
         "chg": "फर्जी योजना / लॉटरी के धोखा (Subsidy Scam)",
         "en": "Fake Lottery / Government Subsidy Scam"
     },
+    "telecom_sim_block": {
+        "hi": "फर्जी सिम ब्लॉक / TRAI दूरसंचार धमकी (Telecom & SIM Fraud)",
+        "chg": "सिम बंद करे के फर्जी धमकी (Telecom SIM Scam)",
+        "en": "Telecom / TRAI SIM Disconnection Threat"
+    },
+    "job_task_fraud": {
+        "hi": "फर्जी पार्ट-टाइम जॉब व टास्क फ्रॉड (Part-Time Job Scam)",
+        "chg": "फर्जी पार्ट-टाइम काम अउ टास्क धोखा (Job Scam)",
+        "en": "Part-Time Job & Telegram Task Fraud"
+    },
     "remote_access": {
         "hi": "रिमोट एक्सेस ऐप धोखा (Remote Access / APK Fraud)",
         "chg": "मोबाइल हैकिंग ऐप धोखा (Remote Access / APK)",
@@ -300,10 +351,20 @@ CATEGORY_MAP = {
         "chg": "संदेहास्पद दबाव व बातचीत (Suspicious)",
         "en": "Suspicious Claim / Urgency"
     },
+    "credential_prompt_inquiry": {
+        "hi": "गोपनीय क्रेडेंशियल सुरक्षा पूछताछ (Credential Safety Inquiry)",
+        "chg": "गोपनीय बैंक जानकारी सुरक्षा पड़ताल (Credential Inquiry)",
+        "en": "Confidential Credential Protection Inquiry"
+    },
     "identity_inquiry": {
         "hi": "पहचान व आधिकारिक विवरण पूछताछ (Identity & Branch Verification)",
         "chg": "पहचान व दफ्तर के पूछताछ (Identity Verification)",
         "en": "Caller Identity & Office Verification Inquiry"
+    },
+    "telecom_inquiry": {
+        "hi": "TRAI व दूरसंचार सिम नियम पूछताछ (Telecom Regulation Inquiry)",
+        "chg": "ट्राई अउ सिम बंद नियम पूछताछ (Telecom Inquiry)",
+        "en": "TRAI / DoT Telecom Disconnection Inquiry"
     },
     "banking_inquiry": {
         "hi": "सुरक्षित बैंकिंग सेवा पूछताछ (Safe Banking Procedure)",
@@ -353,6 +414,16 @@ REASON_MAP = {
         "chg": "कॉलर महतारी वंदन या लॉटरी के पईसा दिलाए बर पहिले सत्यापन शुल्क मांगत हे।",
         "en": "Caller promises lottery prizes, cashback, or government welfare subsidies in exchange for registration/processing fees."
     },
+    "telecom_sim_block": {
+        "hi": "कॉलर TRAI या दूरसंचार विभाग (DoT) बनकर सिम कार्ड 2 घंटे में बंद करने की धमकी दे रहा है। TRAI कभी उपभोक्ताओं को फोन डिस्कनेक्ट करने की धमकी नहीं देता।",
+        "chg": "कॉलर दूरसंचार विभाग बनके सिम बंद करे के डर दिखावत हे। ट्राई कभू फोन म सिम बंद करे ल नइ कहय।",
+        "en": "Caller impersonates TRAI/DoT threatening SIM disconnection within 2 hours. Regulatory authorities never disconnect numbers via phone calls."
+    },
+    "job_task_fraud": {
+        "hi": "घर बैठे वीडियो लाइक करने या टेलीग्राम टास्क पूरा करने के नाम पर रोजाना 3000-5000 रुपये कमाने का लालच देकर रजिस्ट्रेशन शुल्क मांगा जा रहा है।",
+        "chg": "घर बैठे यूट्यूब वीडियो लाइक करके पईसा कमाए के लालच देके ठगे के कोसिस हे।",
+        "en": "Caller promises high daily returns (Rs 3000-5000) for liking YouTube videos or completing Telegram tasks to extort registration fees."
+    },
     "remote_access": {
         "hi": "कॉलर AnyDesk/QuickSupport ऐप या अज्ञात APK डाउनलोड कराकर आपका फोन हैक करने की कोशिश कर रहा है।",
         "chg": "कॉलर AnyDesk या अनजान APK डाउनलोड करवा के तोर मोबाइल हैक करे के चाल चलत हे।",
@@ -378,14 +449,24 @@ REASON_MAP = {
         "chg": "बातचीत म संदेहास्पद जल्दीबाजी अउ दबाव दिखत हे। सचेत रहव।",
         "en": "Suspicious institutional claims or urgency detected. Proceed with caution."
     },
+    "credential_prompt_inquiry": {
+        "hi": "बैंक या क्रेडेंशियल विवरण पूछे जाने पर सुरक्षा पूछताछ। आरबीआई (RBI) के नियमानुसार बैंक या पुलिस कभी भी फोन पर पासवर्ड, कार्ड नंबर, सीवीवी या ओटीपी नहीं मांगते।",
+        "chg": "बैंक डिटेल या गुप्त कोड मांगे बर सुरक्षा सवाल। बैंक कभू फोन म गुप्त जानकारी नइ मांगय।",
+        "en": "User inquiry regarding banking credential safety. Under RBI directives, legitimate banks and police never solicit passwords, PINs, or OTPs over the phone."
+    },
     "identity_inquiry": {
-        "hi": "कॉलर की पहचान, पद या शाखा की पुष्टि की जा रही है। असली अधिकारी अपनी आधिकारिक पहचान और कार्यालय का पता स्पष्ट बताते हैं; जालसाज टालमटोल करते हैं।",
-        "chg": "कॉलर के पहचान अउ शाखा के पड़ताल होवत हे। असली अधिकारी सही पता बताथें, ठग मन बहाना बनाथें।",
-        "en": "The speaker is inquiring about caller identity or branch credentials. Legitimate officials provide verifiable details; scammers evade verification."
+        "hi": "कॉलर की सत्यता जांचने के लिए पद, शाखा या लिखित नोटिस का प्रति-प्रश्न पूछा जा रहा है। असली अधिकारी अपनी आधिकारिक पहचान और कार्यालय का पता स्पष्ट बताते हैं; जालसाज टालमटोल व धमकी देते हैं।",
+        "chg": "कॉलर के पहचान, दफ्तर अउ लिखित नोटिस के पड़ताल होवत हे। असली अधिकारी सही जानकारी देथें, ठग मन बहाना बनाथें।",
+        "en": "Citizen is actively verifying caller identity, branch location, or written documentation. Legitimate officials provide verifiable official landlines; impostors evade and threaten."
+    },
+    "telecom_inquiry": {
+        "hi": "दूरसंचार विभाग (DoT) और TRAI ने स्पष्ट किया है कि वे किसी भी उपभोक्ता को नंबर काटने या सिम ब्लॉक करने के लिए कभी कॉल या आईवीआर नहीं करते।",
+        "chg": "दूरसंचार विभाग अउ ट्राई कभू उपभोक्ता मन ल फोन करके सिम बंद करे के धमकी नइ देवय।",
+        "en": "DoT and TRAI have confirmed they never call citizens or issue IVR notices threatening phone disconnection."
     },
     "banking_inquiry": {
-        "hi": "यह बैंक खाते, बैलेंस या सेवाओं से संबंधित सामान्य पूछताछ है। इसमें किसी गोपनीय जानकारी की मांग नहीं है।",
-        "chg": "ये बैंक खाता या बैलेंस जांचे के सामान्य बातचीत आय। कोनो गुप्त जानकारी नइ मांगे गे हे।",
+        "hi": "यह बैंक खाते, बैलेंस, चेकबुक या सामान्य सेवाओं से संबंधित पूछताछ है। इसमें किसी गोपनीय क्रेडेंशियल की मांग नहीं है।",
+        "chg": "ये बैंक खाता, बैलेंस या सामान्य सेवा जांचे के बातचीत आय। कोनो गुप्त जानकारी नइ मांगे गे हे।",
         "en": "Standard inquiry regarding banking procedures or balance checks. No suspicious credential solicitation detected."
     },
     "cyber_reporting": {
@@ -431,6 +512,16 @@ ACTION_MAP = {
         "chg": "कोनो योजना पाए बर पहिले पईसा झन देहू। सीधा पंचायत या सरकारी दफ्तर म पता करव।",
         "en": "Never pay upfront fees to claim prizes or welfare subsidies. Verify with official government offices."
     },
+    "telecom_sim_block": {
+        "hi": "कॉल तुरंत डिस्कनेक्ट करें। DoT के चक्षु (Chakshu) पोर्टल sancharsaathi.gov.in या 1930 पर रिपोर्ट दर्ज करें।",
+        "chg": "फोन ल तुरते काटव। कोनो नंबर म पईसा झन भेजव अउ 1930 म शिकायत करव।",
+        "en": "Hang up immediately. Report the malicious call to DoT's Chakshu portal or call 1930."
+    },
+    "job_task_fraud": {
+        "hi": "कॉल तुरंत काटें। नौकरी या टास्क के लिए कभी भी अग्रिम रजिस्ट्रेशन फीस न दें। 1930 पर शिकायत करें।",
+        "chg": "फोन तुरते काटव। काम पाए बर पहिले पईसा झन देहू। 1930 म रिपोर्ट करव।",
+        "en": "Disconnect immediately. Never pay upfront fees for employment or tasks. Report to 1930."
+    },
     "remote_access": {
         "hi": "कोई भी ऐप इंस्टॉल न करें और स्क्रीन शेयर न करें। कॉल तुरंत डिस्कनेक्ट करें।",
         "chg": "कोनो अनजान ऐप डाउनलोड झन करव अउ स्क्रीन शेयर झन करव। फोन ल तुरते काटव।",
@@ -456,10 +547,20 @@ ACTION_MAP = {
         "chg": "गोठ-बात ल ध्यान से सुनव। कोनो गुप्त कोड या पईसा ट्रांसफर झन करव।",
         "en": "Listen carefully. Do not transfer funds or share any personal verification codes."
     },
+    "credential_prompt_inquiry": {
+        "hi": "किसी भी कॉलर को अपने बैंक खाते, कार्ड या ओटीपी की जानकारी कभी न दें। फोन तुरंत काट दें।",
+        "chg": "ककरो ले अपन बैंक खाता, कार्ड या OTP झन बतावव। फोन ल तुरते काटव।",
+        "en": "Never disclose bank account details, card numbers, or OTPs to any caller. Hang up immediately."
+    },
     "identity_inquiry": {
-        "hi": "कॉलर से उनका कर्मचारी आईडी व आधिकारिक ईमेल मांगें। उनके द्वारा दिए गए नंबर के बजाय बैंक की मुख्य वेबसाइट के नंबर पर कॉल करके पुष्टि करें।",
-        "chg": "कॉलर ले ओकर आईडी कार्ड मांगव। ओकर देहे नंबर म फोन झन लगाके असली बैंक नंबर म पता करव।",
-        "en": "Demand official written communication and employee credentials. Verify independently through official published contact numbers."
+        "hi": "कॉलर से लिखित नोटिस और कार्यालय का आधिकारिक लैंडलाइन नंबर मांगें। ऑनलाइन या फोन पर कोई भुगतान या क्रेडेंशियल साझा न करें।",
+        "chg": "कॉलर ले लिखित नोटिस अउ दफ्तर के सही नंबर मांगव। फोन म कोनो गुप्त जानकारी झन देहू।",
+        "en": "Demand official written correspondence and the verified office landline. Never transfer funds or share credentials over the phone."
+    },
+    "telecom_inquiry": {
+        "hi": "कॉल तुरंत काटें। यदि किसी ने सिम बंद करने की धमकी दी है तो DoT चक्षु पोर्टल (sancharsaathi.gov.in) पर रिपोर्ट करें।",
+        "chg": "फोन ल काटव अउ चक्षु पोर्टल या 1930 म रिपोर्ट करव।",
+        "en": "Disconnect immediately. Report threats to the DoT Chakshu portal (sancharsaathi.gov.in) or call 1930."
     },
     "banking_inquiry": {
         "hi": "हमेशा बैंक के आधिकारिक मोबाइल ऐप, नेट बैंकिंग या बैंक शाखा के आधिकारिक नंबर का ही उपयोग करें।",
@@ -518,9 +619,13 @@ def detect_scam_in_transcript(
         "police_govt_impersonation": [],
         "courier_customs": [],
         "lottery_subsidy": [],
+        "telecom_sim_block": [],
+        "job_task_fraud": [],
         "financial_extortion": [],
         "remote_access": [],
         "psychological_manipulation": [],
+        "credential_prompt_inquiry": [],
+        "telecom_inquiry": [],
         "identity_inquiry": [],
         "banking_inquiry": [],
         "cyber_reporting": []
@@ -544,9 +649,13 @@ def detect_scam_in_transcript(
     check_pats(POLICE_GOVT_PATTERNS, "police_govt_impersonation")
     check_pats(COURIER_CUSTOMS_PATTERNS, "courier_customs")
     check_pats(LOTTERY_SUBSIDY_PATTERNS, "lottery_subsidy")
+    check_pats(TELECOM_SIM_PATTERNS, "telecom_sim_block")
+    check_pats(JOB_TASK_PATTERNS, "job_task_fraud")
     check_pats(FINANCIAL_EXTORTION_PATTERNS, "financial_extortion")
     check_pats(REMOTE_ACCESS_PATTERNS, "remote_access")
     check_pats(PSYCHOLOGICAL_MANIPULATION_PATTERNS, "psychological_manipulation")
+    check_pats(CREDENTIAL_PROMPT_INQUIRY_PATTERNS, "credential_prompt_inquiry")
+    check_pats(TELECOM_INQUIRY_PATTERNS, "telecom_inquiry")
     check_pats(IDENTITY_INQUIRY_PATTERNS, "identity_inquiry")
     check_pats(BANKING_INQUIRY_PATTERNS, "banking_inquiry")
     check_pats(CYBER_REPORTING_INQUIRY_PATTERNS, "cyber_reporting")
@@ -559,7 +668,7 @@ def detect_scam_in_transcript(
     has_attacks = any(len(matches[k]) > 0 for k in [
         "upi_pin_fraud", "otp_fraud", "police_govt_impersonation",
         "financial_extortion", "remote_access", "utility_electricity",
-        "courier_customs", "lottery_subsidy"
+        "courier_customs", "lottery_subsidy", "telecom_sim_block", "job_task_fraud"
     ])
 
     if (is_genuine_alert or is_user_narration) and not has_attacks:
@@ -599,6 +708,10 @@ def detect_scam_in_transcript(
         risk_level = "CRITICAL"
         eval_key = "digital_arrest"
         confidence = 0.98
+    elif len(matches["telecom_sim_block"]) > 0:
+        risk_level = "HIGH"
+        eval_key = "telecom_sim_block"
+        confidence = 0.96
     elif len(matches["remote_access"]) > 0:
         risk_level = "HIGH"
         eval_key = "remote_access"
@@ -615,6 +728,10 @@ def detect_scam_in_transcript(
         risk_level = "HIGH"
         eval_key = "lottery_subsidy"
         confidence = 0.93
+    elif len(matches["job_task_fraud"]) > 0:
+        risk_level = "HIGH"
+        eval_key = "job_task_fraud"
+        confidence = 0.94
     elif len(matches["financial_extortion"]) > 0:
         risk_level = "HIGH"
         eval_key = "financial_extortion"
@@ -634,6 +751,14 @@ def detect_scam_in_transcript(
         risk_level = "MODERATE"
         eval_key = "moderate_urgency"
         confidence = 0.78
+    elif len(matches["credential_prompt_inquiry"]) > 0:
+        risk_level = "LOW"
+        eval_key = "credential_prompt_inquiry"
+        confidence = 0.96
+    elif len(matches["telecom_inquiry"]) > 0:
+        risk_level = "LOW"
+        eval_key = "telecom_inquiry"
+        confidence = 0.96
     elif len(matches["identity_inquiry"]) > 0:
         risk_level = "LOW"
         eval_key = "identity_inquiry"

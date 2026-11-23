@@ -162,6 +162,91 @@ CALL_SCRIPTS = {
             "danger_banner": "ℹ️ Official Helpline: In case of financial cyber fraud, dial 1930 immediately or visit cybercrime.gov.in.",
             "action_advice": "Reporting within the golden hour (first 2 hours) enables rapid freezing of defrauded funds across banks."
         }
+    },
+    "telecom_sim_block": {
+        "hi": {
+            "title": "TRAI / दूरसंचार सिम डिस्कनेक्शन धमकी",
+            "danger_banner": "⚠️ दूरसंचार ठगी अलर्ट: कॉलर TRAI या दूरसंचार विभाग का नाम लेकर 2 घंटे में सिम बंद करने की झूठी धमकी दे रहा है।",
+            "action_advice": "कॉल तुरंत डिस्कनेक्ट करें। TRAI उपभोक्ताओं को सिम बंद करने के लिए कभी कॉल नहीं करता। DoT चक्षु पोर्टल (sancharsaathi.gov.in) पर रिपोर्ट करें।"
+        },
+        "chg": {
+            "title": "दूरसंचार सिम बंद करे के फर्जी धमकी",
+            "danger_banner": "⚠️ दूरसंचार ठगी अलर्ट: कॉलर ट्राई बनके 2 घंटा म सिम बंद करे के डर दिखावत हे।",
+            "action_advice": "फोन ल तुरते काटव। ट्राई कभू उपभोक्ता मन ल फोन नइ करय। 1930 म शिकायत करव।"
+        },
+        "en": {
+            "title": "TRAI / Telecom SIM Disconnection Threat",
+            "danger_banner": "⚠️ TELECOM SCAM ALERT: Caller is impersonating TRAI/DoT threatening to block your SIM card in 2 hours.",
+            "action_advice": "Hang up immediately. TRAI never calls citizens to threaten disconnection. Report via DoT Chakshu (sancharsaathi.gov.in) or call 1930."
+        }
+    },
+    "job_task_fraud": {
+        "hi": {
+            "title": "पार्ट-टाइम जॉब व यूट्यूब वीडियो लाइक फ्रॉड",
+            "danger_banner": "⚠️ जॉब टास्क ठगी अलर्ट: घर बैठे वीडियो लाइक करने या टेलीग्राम टास्क के नाम पर रजिस्ट्रेशन फीस ऐंठने का प्रयास।",
+            "action_advice": "कॉल तुरंत काटें। नौकरी या टास्क के लिए कभी भी अग्रिम पैसे न दें। किसी भी अज्ञात टेलीग्राम ग्रुप में न जुड़ें।"
+        },
+        "chg": {
+            "title": "पार्ट-टाइम काम अउ वीडियो लाइक धोखा",
+            "danger_banner": "⚠️ टास्क ठगी अलर्ट: यूट्यूब वीडियो लाइक करके पईसा कमाए के लालच देके ठगे के चाल हे।",
+            "action_advice": "फोन ल तुरते काटव। काम पाए बर पहिले पईसा झन देहू। 1930 म शिकायत करव।"
+        },
+        "en": {
+            "title": "Part-Time Job & YouTube Like Scam",
+            "danger_banner": "⚠️ TASK SCAM ALERT: Caller promises daily income for liking YouTube videos or completing Telegram tasks to extort upfront fees.",
+            "action_advice": "Hang up immediately. Legitimate companies never charge registration fees for work. Never join unsolicited Telegram task groups."
+        }
+    },
+    "credential_prompt_inquiry": {
+        "hi": {
+            "title": "गोपनीय बैंक क्रेडेंशियल सुरक्षा पूछताछ",
+            "danger_banner": "🛡️ सुरक्षा नियम: आरबीआई के दिशानिर्देशानुसार बैंक, पुलिस या कोई भी अधिकारी कभी भी फोन पर पासवर्ड, कार्ड नंबर, CVV या OTP नहीं मांगते।",
+            "action_advice": "किसी भी कॉलर को अपने बैंक खाते, कार्ड या ओटीपी की जानकारी कभी न दें। फोन तुरंत काट दें।"
+        },
+        "chg": {
+            "title": "गोपनीय बैंक जानकारी सुरक्षा पड़ताल",
+            "danger_banner": "🛡️ सुरक्षा नियम: बैंक या पुलिस कभू फोन म पासवर्ड, पिन या OTP नइ मांगय।",
+            "action_advice": "ककरो ले अपन बैंक खाता या OTP झन बतावव। फोन ल तुरते काटव।"
+        },
+        "en": {
+            "title": "Confidential Banking Credential Protection Inquiry",
+            "danger_banner": "🛡️ SECURITY DIRECTIVE: Under RBI regulations, banks, police, or government officials NEVER solicit passwords, card CVVs, or OTPs over the phone.",
+            "action_advice": "Never share confidential banking credentials. Disconnect immediately."
+        }
+    },
+    "identity_inquiry": {
+        "hi": {
+            "title": "कॉलर पहचान व आधिकारिक विवरण पड़ताल",
+            "danger_banner": "🔍 आधिकारिक पड़ताल: असली बैंक या सरकारी अधिकारी आधिकारिक लैंडलाइन और लिखित नोटिस देते हैं; ठग बहाने बनाते हैं व धमकाते हैं।",
+            "action_advice": "कॉलर से लिखित नोटिस और उनके कार्यालय का आधिकारिक लैंडलाइन नंबर मांगें। फोन पर कोई भुगतान न करें।"
+        },
+        "chg": {
+            "title": "कॉलर के पहचान अउ दफ्तर के पड़ताल",
+            "danger_banner": "🔍 सही पड़ताल: असली अधिकारी सही पता अउ लिखित नोटिस देथें, ठग मन डरवाथें।",
+            "action_advice": "कॉलर ले लिखित नोटिस अउ दफ्तर के सही नंबर मांगव। फोन म कोनो पईसा झन भेजव।"
+        },
+        "en": {
+            "title": "Caller Identity & Authority Verification",
+            "danger_banner": "🔍 IDENTITY VERIFICATION: Legitimate bank and police officers provide official landlines and written notices; fraudsters evade and threaten.",
+            "action_advice": "Demand official written correspondence and the verified office landline. Never transfer funds or share codes over the phone."
+        }
+    },
+    "banking_inquiry": {
+        "hi": {
+            "title": "सुरक्षित बैंकिंग सेवा व प्रक्रिया पूछताछ",
+            "danger_banner": "🏦 सुरक्षित बैंकिंग: बैलेंस, पासबुक या चेकबुक सेवाओं के लिए केवल बैंक के आधिकारिक ऐप (जैसे YONO, iMobile) या बैंक शाखा का उपयोग करें।",
+            "action_advice": "बैंक खाते से संबंधित कार्य हमेशा बैंक की आधिकारिक शाखा में जाकर या प्रमाणित ऐप से ही करें।"
+        },
+        "chg": {
+            "title": "सुरक्षित बैंक सेवा पड़ताल",
+            "danger_banner": "🏦 सुरक्षित बैंक सेवा: पासबुक या बैलेंस जांचे बर बैंक के असली ऐप या शाखा म जावव।",
+            "action_advice": "अपन बैंक के मुख्य शाखा म जाके ही खाता के काम करव।"
+        },
+        "en": {
+            "title": "Safe Banking Procedures & Inquiry",
+            "danger_banner": "🏦 SAFE BANKING: For balance, passbook, or chequebook inquiries, always use official banking apps or visit your local branch.",
+            "action_advice": "Conduct banking inquiries exclusively through verified official branch channels."
+        }
     }
 }
 
@@ -195,7 +280,7 @@ def analyze_call_transcript(
 
     # Merge verdict and confidence
     eval_key = scam_eval.get("eval_key", "safe")
-    is_inquiry = eval_key in ("safe", "identity_inquiry", "banking_inquiry", "cyber_reporting")
+    is_inquiry = eval_key in ("safe", "identity_inquiry", "banking_inquiry", "cyber_reporting", "credential_prompt_inquiry", "telecom_inquiry")
 
     if scam_eval["risk_level"] in ("HIGH", "CRITICAL"):
         pipeline_res["verdict"] = "likely_scam"
@@ -255,6 +340,10 @@ def analyze_call_transcript(
         script_key = "otp_fraud"
     elif "police_govt_impersonation" in scam_eval.get("matched_categories", []) or "digital_arrest" in transcript.lower() or "digital arrest" in transcript.lower() or scam_eval.get("eval_key") == "digital_arrest":
         script_key = "digital_arrest"
+    elif "telecom_sim_block" in scam_eval.get("matched_categories", []) or scam_eval.get("eval_key") == "telecom_sim_block":
+        script_key = "telecom_sim_block"
+    elif "job_task_fraud" in scam_eval.get("matched_categories", []) or scam_eval.get("eval_key") == "job_task_fraud":
+        script_key = "job_task_fraud"
     elif "utility_electricity" in scam_eval.get("matched_categories", []) or scam_eval.get("eval_key") == "utility_electricity":
         script_key = "utility_electricity"
     elif "remote_access" in scam_eval.get("matched_categories", []) or scam_eval.get("eval_key") == "remote_access":
@@ -265,6 +354,12 @@ def analyze_call_transcript(
         script_key = "lottery_subsidy"
     elif "bank_impersonation" in scam_eval.get("matched_categories", []) or scam_eval.get("eval_key") == "bank_impersonation" or "fake_kyc" in transcript.lower():
         script_key = "fake_kyc"
+    elif scam_eval.get("eval_key") == "credential_prompt_inquiry":
+        script_key = "credential_prompt_inquiry"
+    elif scam_eval.get("eval_key") == "identity_inquiry" or "manager" in transcript.lower() or "employee id" in transcript.lower():
+        script_key = "identity_inquiry"
+    elif scam_eval.get("eval_key") == "banking_inquiry":
+        script_key = "banking_inquiry"
     elif scam_eval.get("eval_key") == "cyber_reporting" or "1930" in transcript:
         script_key = "cyber_reporting"
 
