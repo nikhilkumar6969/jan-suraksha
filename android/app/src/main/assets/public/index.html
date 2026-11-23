@@ -141,6 +141,12 @@
             <span class="kiosk-btn-label" data-i18n="kiosk_mode_btn">कियोस्क मोड (CSC)</span>
           </button>
 
+          <!-- Quick Demo Mode Launcher -->
+          <button type="button" class="quick-demo-btn" id="btnQuickDemo" title="3-मिनट त्वरित लाइव डेमो (Quick Demo Launcher)">
+            <span class="quick-demo-icon" aria-hidden="true">⚡</span>
+            <span class="quick-demo-label">त्वरित डेमो</span>
+          </button>
+
           <!-- Theme Switcher -->
           <button class="icon-btn" id="themeToggleBtn" aria-label="Toggle Dark/Light Mode" title="डार्क / लाइट मोड">
             <svg viewBox="0 0 24 24"><use href="#icon-moon"/></svg>
@@ -1403,6 +1409,55 @@
       </div>
     </div>
 
+    <!-- 3-Minute Hackathon Quick Demo Modal -->
+    <div class="modal-overlay" id="quickDemoModalOverlay" role="dialog" aria-modal="true" aria-labelledby="quickDemoModalTitle">
+      <div class="modal-content" style="max-width: 580px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-3);">
+          <div>
+            <div style="font-size: var(--text-xs); font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-primary); margin-bottom: 2px;">
+              3-मिनट हैकथॉन प्रस्तुति व मूल्यांकन
+            </div>
+            <h3 class="modal-title" id="quickDemoModalTitle" style="margin-bottom: 0;">⚡ 1-क्लिक लाइव डेमो लॉन्चर</h3>
+          </div>
+          <button type="button" class="btn btn-secondary" id="btnCloseQuickDemoModal" style="padding: 2px 10px; min-height: 32px; font-size: 1.25rem;">×</button>
+        </div>
+
+        <p style="font-size: var(--text-sm); color: var(--text-secondary); margin-bottom: var(--space-4);">
+          जज व मूल्यांकनकर्ताओं के समक्ष त्वरित प्रस्तुति हेतु नीचे दिए गए किसी भी परिदृश्य पर एक क्लिक करें:
+        </p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); margin-bottom: var(--space-4);">
+          <button type="button" class="card" id="btnDemoElectricity" style="cursor: pointer; text-align: left; padding: var(--space-3); border: 2px solid rgba(239, 68, 68, 0.4); background: var(--bg-card-subtle); transition: all 0.2s;">
+            <div style="font-size: 1.3rem; margin-bottom: 4px;">⚡</div>
+            <div style="font-weight: 800; font-size: var(--text-sm); color: var(--color-danger);">CSPDCL बिजली बिल ठगी</div>
+            <div style="font-size: var(--text-xs); color: var(--text-secondary); margin-top: 4px;">बिजली काटने की धमकी व अनधिकृत नंबर पर कॉल दबाव (SMS AI)</div>
+          </button>
+
+          <button type="button" class="card" id="btnDemoDigitalArrest" style="cursor: pointer; text-align: left; padding: var(--space-3); border: 2px solid rgba(14, 165, 233, 0.4); background: var(--bg-card-subtle); transition: all 0.2s;">
+            <div style="font-size: 1.3rem; margin-bottom: 4px;">🚨</div>
+            <div style="font-weight: 800; font-size: var(--text-sm); color: var(--color-primary);">डिजिटल अरेस्ट व फर्जी पुलिस</div>
+            <div style="font-size: var(--text-xs); color: var(--text-secondary); margin-top: 4px;">CBI/नारकोटिक्स पार्सल जबरन वसूली (कॉल ऑडियो व वॉर्निंग)</div>
+          </button>
+
+          <button type="button" class="card" id="btnDemoChhattisgarhi" style="cursor: pointer; text-align: left; padding: var(--space-3); border: 2px solid rgba(16, 185, 129, 0.4); background: var(--bg-card-subtle); transition: all 0.2s;">
+            <div style="font-size: 1.3rem; margin-bottom: 4px;">🌾</div>
+            <div style="font-weight: 800; font-size: var(--text-sm); color: var(--status-safe);">छत्तीसगढ़ी महतारी वंदन</div>
+            <div style="font-size: var(--text-xs); color: var(--text-secondary); margin-top: 4px;">स्थानिक बोली में सरकारी योजना बोनस व OTP चोरी जांच</div>
+          </button>
+
+          <button type="button" class="card" id="btnDemoKioskReceipt" style="cursor: pointer; text-align: left; padding: var(--space-3); border: 2px solid rgba(245, 158, 11, 0.4); background: var(--bg-card-subtle); transition: all 0.2s;">
+            <div style="font-size: 1.3rem; margin-bottom: 4px;">🏛️</div>
+            <div style="font-weight: 800; font-size: var(--text-sm); color: #d97706;">CSC परामर्श पावती (Slip)</div>
+            <div style="font-size: var(--text-xs); color: var(--text-secondary); margin-top: 4px;">चॉइस सेंटर हेतु आधिकारिक शासन पावती व थर्मल प्रिंटर दृश्य</div>
+          </button>
+        </div>
+
+        <div style="font-size: var(--text-xs); color: var(--text-tertiary); text-align: center; border-top: 1px solid var(--border-color); padding-top: var(--space-2);">
+          ✓ 100% ऑन-डिवाइस ऑफलाइन काम करता है • शून्य क्लाउड निर्भरता • शून्य डेटा लीक
+        </div>
+      </div>
+    </div>
+
     <!-- MyGov Style Floating Civic Action Dock (Speed Dial / Emergency Shortcuts) -->
     <aside class="floating-civic-dock" aria-label="त्वरित नागरिक सहायता">
       <a href="tel:1930" class="floating-dock-btn dock-btn-danger" title="राष्ट्रीय हेल्पलाइन 1930 (कॉल करें)" aria-label="Call 1930 Helpline">
@@ -1463,6 +1518,7 @@
   <script src="/js/crypto_verify.js"></script>
   <script src="/js/hero-slider.js"></script>
   <script src="/js/kiosk.js"></script>
+  <script src="/js/demo.js"></script>
   <script src="/js/app.js"></script>
 
 </body>

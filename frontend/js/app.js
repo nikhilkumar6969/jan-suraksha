@@ -21,6 +21,9 @@ window.App = {
     if (window.KioskManager) {
       window.KioskManager.init();
     }
+    if (window.DemoManager) {
+      window.DemoManager.init();
+    }
 
     // 3. Setup Navigation
     this.setupNavigation();

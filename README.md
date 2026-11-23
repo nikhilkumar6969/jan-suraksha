@@ -3,6 +3,13 @@
 **Hackasol 5.0 — Problem Statement GT-02 Option B**  
 *Target Users: First-time digital payment users in rural & semi-urban Chhattisgarh (Raipur, Durg, Bilaspur, Korba, Bastar, Raigarh, Rajnandgaon, Surguja)*
 
+> 📚 **Core Documentation & Field Guides:**
+> - [**`MASTER_RELEASE_SUMMARY.md`**](MASTER_RELEASE_SUMMARY.md) — Complete 10-Phase Project Milestone & Metrics Synthesis
+> - [**`DEMO_RUNBOOK.md`**](DEMO_RUNBOOK.md) — 3-Minute Live Hackathon Pitch & Demonstration Runbook
+> - [**`FIELD_OPERATOR_MANUAL.md`**](FIELD_OPERATOR_MANUAL.md) — Village Kiosk (CSC / Choice Centre) Operator Guide
+> - [**`PHASE8_DEPLOYMENT_AND_KIOSK_REPORT.md`**](PHASE8_DEPLOYMENT_AND_KIOSK_REPORT.md) — CI/CD Cloud Pipeline & Kiosk Mode Report
+> - [**`REAL_WORLD_VALIDATION_REPORT.md`**](REAL_WORLD_VALIDATION_REPORT.md) — 42-Scenario Chhattisgarhi Dialect Benchmark
+
 ---
 
 ## 🌟 Overview
@@ -150,6 +157,8 @@ Jan Suraksha includes a complete GitHub Actions CI/CD workflow at [`.github/work
 ---
 
 ## ⏱️ 3-Minute Hackathon Demo Script (Airplane-Mode Proof)
+
+> 💡 **For Presenters & Judges:** A complete second-by-second live presentation runbook is available at [**`DEMO_RUNBOOK.md`**](DEMO_RUNBOOK.md). You can also click the **`⚡ त्वरित डेमो (Quick Demo)`** pill in the top header to run 1-click test scenarios for CSPDCL electricity fraud, digital arrest calls, Chhattisgarhi dialect detection, and CSC advisory slip generation.
 
 ### Phase 1: Airplane Mode Offline Verification (0:00 - 1:15)
 1. **Turn OFF WiFi / Mobile Data** on the demonstration device or laptop.
