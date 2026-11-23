@@ -42,7 +42,7 @@ Suraksha follows a strict three-zone decoupled architectural model:
                                         v
 +-----------------------------------------------------------------------------------+
 |                                3. EVALUATION ZONE                                 |
-|  - Labelled synthetic corpus (3,300 balanced messages: EN, HI, Hinglish)          |
+|  - Labelled synthetic corpus (3,600 balanced messages: EN, HI, Hinglish, CHG)     |
 |  - Stratified 80/20 train/held-out test split (Fixed random seed: 42)             |
 |  - Character n-grams (2-5) + Word n-grams (1-2) with calibrated Logistic Regr.   |
 |  - Automated evaluation pipeline exporting metrics.json and in-app dashboard     |
@@ -63,7 +63,7 @@ pip install -r requirements.txt
 ```
 
 ### 2. Run Model Training & Evaluation
-Generate the synthetic dataset (3,300 samples), train the model, evaluate on held-out test split, and export metrics:
+Generate the synthetic dataset (3,600 samples across 4 languages), train the model, evaluate on held-out test split, and export metrics:
 ```bash
 # From repository root:
 python -m backend.app.evaluation.run
@@ -97,26 +97,26 @@ Open your browser at: **[http://127.0.0.1:8000](http://127.0.0.1:8000)**
 
 ## 📊 Held-Out Test Evaluation Results
 
-The dataset consists of **3,300 balanced synthetic samples** generated across 3 language categories (English, Hindi Devanagari, and Hinglish). The genuine class deliberately contains authentic bank transaction debits/credits, CSPDCL utility receipts, delivery notifications, and genuine bank OTP alerts ("DO NOT SHARE WITH ANYONE").
+The dataset consists of **3,600 synthetic samples** generated across 4 language categories: English, Hindi (Devanagari), Hinglish, and Chhattisgarhi. The genuine class deliberately contains authentic bank transaction debits/credits, CSPDCL utility receipts, delivery notifications, agricultural mandi prices, and genuine bank OTP alerts ("DO NOT SHARE WITH ANYONE").
 
 > **Synthetic Dataset Disclosure:** All messages in `backend/data/dataset.json` are synthetically generated using rule templates based on reported CERT-In, CSPDCL, and Indian Cybercrime Coordination Centre (I4C) advisories.
 
-### Performance on Held-Out Test Set (80/20 Stratified Split, 660 test samples, Seed=42):
+### Exact Performance on Held-Out Test Set (80/20 Stratified Split, 720 test samples, Seed=42, from `backend/data/metrics.json`):
 
-| Metric | Overall | English (EN) | Hindi (HI) | Hinglish |
-| :--- | :---: | :---: | :---: | :---: |
-| **Accuracy** | **100.00%** | 100.00% | 100.00% | 100.00% |
-| **Precision** | **100.00%** | 100.00% | 100.00% | 100.00% |
-| **Recall** | **100.00%** | 100.00% | 100.00% | 100.00% |
-| **F1 Score** | **1.0000** | 1.0000 | 1.0000 | 1.0000 |
-| **False Positive Rate (FPR)** | **0.00%** | 0.00% | 0.00% | 0.00% |
-| **Test Samples** | **660** | 220 | 220 | 220 |
+| Metric | Overall | English (EN) | Hindi (HI) | Hinglish | Chhattisgarhi (CHG) |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **Accuracy** | **85.56%** | 83.89% | 87.22% | 83.33% | **87.78%** |
+| **Precision** | **89.75%** | 90.67% | 86.81% | 91.67% | 90.48% |
+| **Recall** | **80.28%** | 75.56% | 87.78% | 73.33% | 84.44% |
+| **F1 Score** | **84.75%** | 82.42% | 87.29% | 81.48% | 87.36% |
+| **False Positive Rate (FPR)** | **9.17%** | 7.78% | 13.33% | 6.67% | 8.89% |
+| **Test Samples** | **720** | 180 | 180 | 180 | 180 |
 
 #### Confusion Matrix (Held-out Test Split):
 ```
                   Predicted Genuine    Predicted Scam
-Actual Genuine           330                 0       (True Negatives: 330, False Positives: 0)
-Actual Scam                0               330       (False Negatives: 0, True Positives: 330)
+Actual Genuine           327                 33       (True Negatives: 327, False Positives: 33)
+Actual Scam               71                289       (False Negatives: 71, True Positives: 289)
 ```
 *Zero false alarms on genuine bank OTP alerts containing "DO NOT SHARE WITH ANYONE" safeguards user trust.*
 
@@ -239,12 +239,28 @@ SmsRepository & Room Database (SmsClassificationEntity stored locally)
 
 ### How to Build and Run in Android Studio
 1. Open **Android Studio** (Hedgehog / Iguana / Jellyfish / Ladybug).
-2. Select **File -> Open...** and navigate to `c:\project\hackasol\android`.
+2. Select **File -> Open...** and navigate to `./android`.
 3. Allow Gradle to sync dependencies (`androidx.room`, `kotlinx.coroutines`, `material3`).
 4. Select an Android emulator (API 26+) or connected physical device.
 5. Click **Run 'app'** (`Shift + F10`).
 6. Tap **"Grant SMS Permission"** when prompted.
 7. Test using the built-in SMS simulator on the dashboard or by sending an SMS from emulator extended controls (`... -> Phone -> SMS`).
+
+---
+
+## 🙏 Open-Source Credits & AI Disclosure
+
+### Open-Source Technologies
+Suraksha stands on the shoulders of outstanding open-source projects and libraries:
+- **FastAPI & Uvicorn**: High-performance asynchronous backend and WebSocket streaming framework.
+- **Scikit-learn**: Machine learning algorithms, vectorizers, and evaluation pipelines (TF-IDF, Logistic Regression, LinearSVC).
+- **Vosk**: Offline, lightweight automatic speech recognition engine for Indian speech.
+- **OpenCV (opencv-python)**: Offline computer vision and QR code detector (`QRCodeDetector`).
+- **PyNaCl**: Python binding to libsodium for high-speed cryptographic Ed25519 signatures.
+- **Android Jetpack & Material 3**: Native Android architecture components (Room database, Coroutines, NotificationManager, Material 3 design system).
+
+### AI Assistance Disclosure
+In accordance with open engineering standards, development of this project was assisted by Google DeepMind's **Antigravity** autonomous AI coding assistant. AI was utilized for architecture design, test suite automation, code generation, refactoring, and dialect dataset curation, with all outputs verified, tested, and validated by the engineering team.
 
 ---
 
