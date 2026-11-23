@@ -93,6 +93,9 @@ DIGITAL_ARREST_PATTERNS = [
     # Chhattisgarhi forms
     r"थाना\s+ले\s+बोलत\s+हंव",
     r"तोर\s+नाम\s+म\s+वारंट",
+    r"\b(?:thana|kotwali)\s+.*?(?:warrant|arrest|nikal\s+ge|jail|bhejo)\b",
+    r"\bwarrant\s+nikal\s+ge\s+he\b",
+    r"\bthana\s+le\s+aawat\b",
     r"कॉल\s+ल\s+झन\s+काटव",
     r"वीडियो\s+कॉल\s+म\s+बने\s+रहव",
     r"पईसा\s+जमा\s+करव\s+नइ\s+ते\s+जेल",
@@ -206,7 +209,18 @@ def check_rules(text: str, raw_text: str = None) -> dict:
         found = find_in_targets(pat)
         if found:
             matched_phrase = found[0] if isinstance(found[0], str) else str(found[0])
-            if not any(neg in matched_phrase.lower() for neg in ["न बताएं", "मत बताएं", "साझा न करें", "do not", "never", "झन बताव"]):
+            is_negated = False
+            for target in target_texts:
+                if re.search(r'\b(?:never|do\s+not|don\'t|kisi\s+ko\s+(?:bhi\s+)?na|kisi\s+se\s+na|kisi\s+ke\s+sath\s+na|न\s+बताएं|मत\s+बताएं|साझा\s+न\s+करें|झन\s+बताव|झन\s+बतावव|ककरो\s+ले\s+झन)\s+' + re.escape(matched_phrase), target, re.IGNORECASE):
+                    is_negated = True
+                    break
+                if re.search(r'\b(?:never|do\s+not|don\'t)\s+share\s+(?:your\s+)?(?:secret\s+)?(?:otp|pin|cvv|code)\b', target, re.I):
+                    is_negated = True
+                    break
+                if re.search(r'ककरो\s+ले\s+(?:घलो\s+)?(?:otp|पिन)\s+साझा\s+झन\s+करव', target, re.I):
+                    is_negated = True
+                    break
+            if not is_negated:
                 rule_flags["explicit_otp_demand"] = True
                 matches.append({"rule": "fraudulent_otp_demand", "phrase": matched_phrase, "risk": True})
 

@@ -70,3 +70,23 @@ def test_deduplication():
     r2 = submit_anonymous_report("OTP Request", "Durg", unique_ind, dev)
     assert r2["success"] is True
     assert r2.get("deduplicated") is True
+
+def test_hmac_secret_and_hashing(monkeypatch):
+    from app.reports.service import hash_salted, get_report_hmac_secret
+    import os
+
+    # 1. Custom env secret
+    custom_secret = "test_custom_env_secret_12345"
+    monkeypatch.setenv("SURAKSHA_REPORT_SECRET", custom_secret)
+    assert get_report_hmac_secret() == custom_secret.encode("utf-8")
+
+    h1 = hash_salted("test_vpa@upi")
+    assert len(h1) == 64  # SHA-256 hex digest
+    # Consistent output
+    assert h1 == hash_salted("  TEST_VPA@UPI  ")
+
+    # 2. Secret change changes hash
+    monkeypatch.setenv("SURAKSHA_REPORT_SECRET", "another_secret_67890")
+    h2 = hash_salted("test_vpa@upi")
+    assert h1 != h2
+

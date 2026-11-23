@@ -18,8 +18,13 @@ def train_scam_model(dataset: list, models_dir: Path = None, random_state: int =
     if has_explicit_split:
         train_items = [item for item in dataset if item.get("split") == "train"]
         test_items = [item for item in dataset if item.get("split") == "test"]
-        train_texts = [normalize_text(item["text"])["clean"] for item in train_items]
-        train_labels = [item["label"] for item in train_items]
+        
+        # Apply adversarial & Chhattisgarhi dialect augmentation strictly to training split
+        from app.detect.augmentation import augment_training_dataset
+        augmented_train = augment_training_dataset(train_items, seed=random_state)
+        
+        train_texts = [normalize_text(item["text"])["clean"] for item in augmented_train]
+        train_labels = [item["label"] for item in augmented_train]
         test_data = test_items
         test_texts = [normalize_text(item["text"])["clean"] for item in test_items]
     else:
@@ -38,7 +43,7 @@ def train_scam_model(dataset: list, models_dir: Path = None, random_state: int =
             "language": languages[i]
         } for i in test_idx]
 
-    # Robust word (1-2) and character (3-5) n-grams with min_df to eliminate overfitting & noise
+    # Robust word (1-2) and character (2-5) n-grams with min_df to eliminate noise and capture regional morphology
     feature_union = FeatureUnion([
         ("word_tfidf", TfidfVectorizer(
             analyzer="word",
@@ -49,9 +54,9 @@ def train_scam_model(dataset: list, models_dir: Path = None, random_state: int =
         )),
         ("char_tfidf", TfidfVectorizer(
             analyzer="char",
-            ngram_range=(3, 5),
-            min_df=3,
-            max_features=12000,
+            ngram_range=(2, 5),
+            min_df=2,
+            max_features=15000,
             sublinear_tf=True
         ))
     ])

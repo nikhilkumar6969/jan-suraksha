@@ -6,17 +6,34 @@ Anonymous Report Ingestion and Abuse Prevention Service
 - Never stores message text or personal data
 """
 
+import os
+import hmac
 import hashlib
+from pathlib import Path
 from datetime import datetime, timedelta, timezone
 from app.reports.database import get_connection
 
 DEFAULT_CONFIRMATION_THRESHOLD = 3
 MAX_REPORTS_PER_HOUR = 10
-SALT = "SURAKSHA_CHHATTISGARH_2026_SALT"
 
-def hash_salted(value: str) -> str:
-    """Hashes device ID or indicator with a security salt."""
-    return hashlib.sha256(f"{SALT}_{value.strip().lower()}".encode("utf-8")).hexdigest()
+def get_report_hmac_secret() -> bytes:
+    """Returns cryptographic secret from environment or per-deployment key."""
+    env_secret = os.environ.get("SURAKSHA_REPORT_SECRET")
+    if env_secret:
+        return env_secret.encode("utf-8")
+    secret_file = Path(__file__).resolve().parent.parent.parent / "data" / ".report_secret"
+    if secret_file.exists():
+        try:
+            return secret_file.read_bytes().strip()
+        except Exception:
+            pass
+    return b"SURAKSHA_CHHATTISGARH_PRODUCTION_SECRET_2026_HMAC"
+
+def hash_salted(value: str, secret: bytes = None) -> str:
+    """Hashes device ID or indicator using HMAC-SHA256 with environment secret."""
+    key = secret or get_report_hmac_secret()
+    clean_val = value.strip().lower().encode("utf-8")
+    return hmac.new(key, clean_val, hashlib.sha256).hexdigest()
 
 def submit_anonymous_report(scam_type: str, district: str, raw_indicator: str, raw_device_id: str, confirmation_n: int = DEFAULT_CONFIRMATION_THRESHOLD) -> dict:
     if not scam_type or not district or not raw_indicator:

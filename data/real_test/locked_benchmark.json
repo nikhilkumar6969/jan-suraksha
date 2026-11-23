@@ -1,0 +1,167 @@
+{
+  "version": "1.0-locked",
+  "description": "Locked, immutable real-world benchmark test set for Suraksha. Kept strictly out of all training splits.",
+  "benchmark_count": 20,
+  "samples": [
+    {
+      "id": "rw_001",
+      "text": "Your SBI OTP is 482910 for txn of INR 2,500 at Flipkart. Never share OTP with anyone including SBI officials.",
+      "label": 0,
+      "expected_verdict": "genuine",
+      "category": "bank_otp",
+      "language": "en"
+    },
+    {
+      "id": "rw_002",
+      "text": "HDFC Bank: 692014 is the secret OTP for netbanking login. Bank never calls to ask for OTP/passwords.",
+      "label": 0,
+      "expected_verdict": "genuine",
+      "category": "bank_otp",
+      "language": "en"
+    },
+    {
+      "id": "rw_003",
+      "text": "ICICI Bank: OTP for txn of Rs 1,450.00 is 318942. Do NOT share OTP/CVV with anyone.",
+      "label": 0,
+      "expected_verdict": "genuine",
+      "category": "bank_otp",
+      "language": "en"
+    },
+    {
+      "id": "rw_004",
+      "text": "Dear Customer, A/c *4910 credited by INR 15,000.00 on 23-Nov-26 by UPI/3910294104/Salary. - Axis Bank",
+      "label": 0,
+      "expected_verdict": "genuine",
+      "category": "upi_credit",
+      "language": "en"
+    },
+    {
+      "id": "rw_005",
+      "text": "Paid Rs. 350 to Sharma Kirana Store using PhonePe UPI. UPI Ref ID: 4120938192.",
+      "label": 0,
+      "expected_verdict": "genuine",
+      "category": "upi_merchant",
+      "language": "en"
+    },
+    {
+      "id": "rw_006",
+      "text": "Dear Consumer, your electricity bill of Rs 840 is due on 30-Nov-26. Pay online at cspdcl.co.in or CSPDCL Mor Bijlee app.",
+      "label": 0,
+      "expected_verdict": "genuine",
+      "category": "utility_bill",
+      "language": "en"
+    },
+    {
+      "id": "rw_007",
+      "text": "प्रिय ग्राहक, आपके खाता संख्या XX4102 से रु 500 की एटीएम निकासी हुई है। शेष राशि रु 14,200। बैंक कभी फोन पर पिन नहीं पूछता।",
+      "label": 0,
+      "expected_verdict": "genuine",
+      "category": "bank_debit",
+      "language": "hi"
+    },
+    {
+      "id": "rw_008",
+      "text": "तोर खाता म किसान न्याय योजना के 2000 रुपया क्रेडिट हो गे हे। सहकारी बैंक शाखा बिलासपुर।",
+      "label": 0,
+      "expected_verdict": "genuine",
+      "category": "subsidy_credit",
+      "language": "chg"
+    },
+    {
+      "id": "rw_009",
+      "text": "नमस्ते भैया, कल सुबह 10 बजे धान खरीदी केंद्र में टोकन लेने आना है, आधार कार्ड साथ रखना।",
+      "label": 0,
+      "expected_verdict": "genuine",
+      "category": "peer_message",
+      "language": "hi"
+    },
+    {
+      "id": "rw_010",
+      "text": "PhonePe: 500 rs received from Ramesh Kumar for vegetable purchase. Transaction successful.",
+      "label": 0,
+      "expected_verdict": "genuine",
+      "category": "upi_merchant",
+      "language": "hinglish"
+    },
+    {
+      "id": "rw_011",
+      "text": "Dear consumer your electricity power will be disconnected tonight at 9:30 PM because your previous month bill was not updated. Immediately contact electricity officer 9821039102",
+      "label": 1,
+      "expected_verdict": "likely_scam",
+      "category": "electricity_scam",
+      "language": "en"
+    },
+    {
+      "id": "rw_012",
+      "text": "CBI POLICE NOTICE: An arrest warrant has been issued against you in money laundering case. Connect immediately on WhatsApp video call for digital arrest verification.",
+      "label": 1,
+      "expected_verdict": "likely_scam",
+      "category": "digital_arrest",
+      "language": "en"
+    },
+    {
+      "id": "rw_013",
+      "text": "Dear customer your SBI YONO account has been suspended today. Immediately click http://bit.ly/sbi-kyc-update to complete KYC or your account will be permanently blocked.",
+      "label": 1,
+      "expected_verdict": "likely_scam",
+      "category": "phishing_kyc",
+      "language": "en"
+    },
+    {
+      "id": "rw_014",
+      "text": "Congratulations! You have won Rs 25,00,000 in KBC Kaun Banega Crorepati WhatsApp lucky draw. Call lottery manager Rana Pratap Singh on +917291029102 to claim cash.",
+      "label": 1,
+      "expected_verdict": "likely_scam",
+      "category": "lottery_scam",
+      "language": "en"
+    },
+    {
+      "id": "rw_015",
+      "text": "Dear user, enter your 6-digit UPI PIN in Google Pay to receive refund of Rs 4,500 directly into your bank account.",
+      "label": 1,
+      "expected_verdict": "likely_scam",
+      "category": "upi_reverse_pin",
+      "language": "en"
+    },
+    {
+      "id": "rw_016",
+      "text": "Customer Care: Install AnyDesk app from play store and share 9 digit code to verify your failed bank transaction.",
+      "label": 1,
+      "expected_verdict": "likely_scam",
+      "category": "remote_access",
+      "language": "en"
+    },
+    {
+      "id": "rw_017",
+      "text": "अति आवश्यक सूचना: आपका बिजली बिल पेंडिंग है, आज रात 9:30 बजे बिजली काट दी जाएगी। तुरंत अधिकारी 9821039102 पर फोन कर बिल जमा करें।",
+      "label": 1,
+      "expected_verdict": "likely_scam",
+      "category": "electricity_scam",
+      "language": "hi"
+    },
+    {
+      "id": "rw_018",
+      "text": "तोर बिजली बिल नइ भरे हस, आज संझा 9:30 बजे तोर घर के बिजली लाइन कट जाही। लाइन कटने ले बचे बर तुरते 9827012345 म फोन लगाके पईसा पटाव।",
+      "label": 1,
+      "expected_verdict": "likely_scam",
+      "category": "electricity_scam",
+      "language": "chg"
+    },
+    {
+      "id": "rw_019",
+      "text": "थाना कोतवाली रायपुर ले बोलत हंव। तोर नाम म गैर जमानती वारंट निकल गे हे। कॉल ल झन काटव, तुरते 40000 पईसा जमा करव नइ ते जेल भेज देबो।",
+      "label": 1,
+      "expected_verdict": "likely_scam",
+      "category": "extortion",
+      "language": "chg"
+    },
+    {
+      "id": "rw_020",
+      "text": "Aapka SBI account freeze ho gaya hai. Abhi turant 9 digit OTP share kare verification ke liye nahi toh 5000 fine lagega.",
+      "label": 1,
+      "expected_verdict": "likely_scam",
+      "category": "otp_fraud",
+      "language": "hinglish"
+    }
+  ]
+}

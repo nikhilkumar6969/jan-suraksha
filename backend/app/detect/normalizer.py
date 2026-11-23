@@ -120,10 +120,48 @@ def detect_language(text: str) -> str:
 
     return "en"
 
+def deobfuscate_adversarial_tokens(text: str) -> str:
+    """Deobfuscates leetspeak, homoglyphs, spaced letters, and punctuation within keywords."""
+    res = text
+    # 1. Punctuation within acronyms: U.P.I -> UPI, P*I*N -> PIN, Any.Desk -> AnyDesk
+    res = re.sub(r'\b([A-Za-z])[\.\*\s_]+([A-Za-z])[\.\*\s_]+([A-Za-z])\b', r'\1\2\3', res)
+    res = re.sub(r'\b([A-Za-z])[\.\*\s_]+([A-Za-z])\b', r'\1\2', res)
+    res = re.sub(r'\bany[\.\*\s_-]+desk\b', 'anydesk', res, flags=re.I)
+    res = re.sub(r'\bquick[\.\*\s_-]+support\b', 'quicksupport', res, flags=re.I)
+    res = re.sub(r'\b(o)\s+(t)\s+(p)\b', r'\1\2\3', res, flags=re.I)
+    res = re.sub(r'\b(u)\s+(p)\s+(i)\b', r'\1\2\3', res, flags=re.I)
+    res = re.sub(r'\b(k)\s+(y)\s+(c)\b', r'\1\2\3', res, flags=re.I)
+    res = re.sub(r'\b(p)\s+(i)\s+(n)\b', r'\1\2\3', res, flags=re.I)
+
+    # 2. Cyrillic homoglyphs
+    homoglyphs = {
+        '\u0430': 'a', '\u0435': 'e', '\u043e': 'o', '\u0440': 'p', '\u0441': 'c', '\u0443': 'y'
+    }
+    for h, l in homoglyphs.items():
+        res = res.replace(h, l)
+
+    # 3. Leetspeak substitutions in suspected scam keywords
+    leet_subs = [
+        (r'\bsh[@a]re\b', 'share'),
+        (r'\b[0o]tp\b', 'otp'),
+        (r'\bp[1i]n\b', 'pin'),
+        (r'\bbl[0o]ck(?:ed)?\b', 'blocked'),
+        (r'\b[1i]mm[3e]d[1i]ately\b', 'immediately'),
+        (r'\bunbl[0o]ck\b', 'unblock'),
+        (r'\bacc[0o]unt\b', 'account'),
+        (r'\b6[- ]?d[1i]g[1i]t\b', '6-digit'),
+        (r'\bqu[1i]k(?:ly)?\b', 'quickly'),
+        (r'\bexpered\b', 'expired')
+    ]
+    for pat, rep in leet_subs:
+        res = re.sub(pat, rep, res, flags=re.I)
+
+    return res
+
 def normalize_text(text: str) -> dict:
     """
-    Normalizes unicode, strips excess whitespace, normalizes Hinglish & CG variants,
-    and returns detected script/dialect and clean text.
+    Normalizes unicode, strips excess whitespace, deobfuscates adversarial mutations,
+    normalizes Hinglish & CG variants, and returns detected script/dialect and clean text.
     """
     if not text:
         return {"original": "", "clean": "", "language": "en", "tokens": []}
@@ -133,6 +171,7 @@ def normalize_text(text: str) -> dict:
     lang = detect_language(raw)
 
     clean = raw.lower()
+    clean = deobfuscate_adversarial_tokens(clean)
     for pattern, repl in HINGLISH_AND_CG_MAP.items():
         clean = re.sub(pattern, repl, clean, flags=re.IGNORECASE)
 

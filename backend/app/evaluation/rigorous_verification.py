@@ -71,9 +71,9 @@ def run_dataset_eval(samples, dataset_name="Dataset"):
 
     for item in samples:
         text = item["text"]
-        expected_label = item.get("label", item.get("expected_verdict"))
-        # Map labels: 1/scam/likely_scam -> positive; 0/ham/genuine/normal -> negative
-        is_scam_expected = expected_label in (1, "1", "scam", "likely_scam", "spam")
+        expected_label = item.get("label", item.get("expected_verdict", item.get("is_scam")))
+        # Map labels: 1/scam/likely_scam/True -> positive; 0/ham/genuine/normal/False -> negative
+        is_scam_expected = expected_label in (1, "1", True, "scam", "likely_scam", "spam")
 
         pred = detect_scam(text)
         is_scam_predicted = (pred["verdict"] == "likely_scam")
@@ -293,12 +293,12 @@ def main():
             "held_out_test_leakage": leak_heldout["leakage_detected"],
             "hardened_eval_leakage": leak_hardened["leakage_detected"],
             "cg_eval_leakage": leak_cg["leakage_detected"],
-            "is_leak_free": True
+            "is_leak_free": not (leak_heldout["leakage_detected"] or leak_hardened["leakage_detected"] or leak_cg["leakage_detected"])
         },
         "pillar_2_duplicate_detection": {
             "cross_split_duplicates": cross_check["exact_matches"],
             "cross_split_near_duplicates": cross_check["high_similarity_matches"],
-            "is_disjoint": True
+            "is_disjoint": (cross_check["exact_matches"] == 0 and cross_check["high_similarity_matches"] == 0)
         },
         "pillar_3_independent_testing": {
             "held_out_accuracy": res_heldout["accuracy"],
