@@ -62,6 +62,7 @@
   --bg-surface:    #ffffff;
   --bg-subtle:     var(--neutral-100);
   --bg-muted:      var(--neutral-200);
+  --bg-card-overlay: rgba(255, 255, 255, 0.94);
 
   /* Borders */
   --border-subtle: var(--neutral-200);
@@ -205,6 +206,7 @@
   --bg-surface:    #0f172a;
   --bg-subtle:     #162035;
   --bg-muted:      #1e293b;
+  --bg-card-overlay: rgba(15, 23, 42, 0.92);
 
   --border-subtle: rgba(255, 255, 255, 0.08);
   --border-strong: rgba(255, 255, 255, 0.14);

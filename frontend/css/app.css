@@ -22,12 +22,56 @@ body {
   line-height: var(--leading-base);
   color: var(--text-primary);
   background-color: var(--bg-canvas);
+  background-image: url('../assets/bg.jpg');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
+}
+
+@media (max-width: 768px) {
+  body {
+    background-attachment: scroll;
+    background-position: center top;
+  }
+}
+
+[data-theme="dark"] body {
+  background-image: linear-gradient(rgba(8, 12, 20, 0.88), rgba(8, 12, 20, 0.88)), url('../assets/bg.jpg');
+}
+
+/* --- Content Card Overlays for Civic Background Readability --- */
+.input-card,
+.mygov-metrics-card,
+.score-card,
+.lesson-card-wrapper,
+.quiz-box,
+.checklist-container,
+.stat-card,
+.summary-kpi-card,
+.chart-container,
+.stage-timeline-container,
+.highlighted-text-box,
+.report-review-card,
+.badge-gallery-card,
+.streak-box,
+.guardian-log-container {
+  background-color: var(--bg-card-overlay) !important;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  box-shadow: 0 4px 18px -2px rgba(15, 23, 42, 0.05);
+}
+
+.scam-textarea,
+.text-input,
+.select-input {
+  background-color: var(--bg-surface) !important;
 }
 
 /* Headings use Display Font */
@@ -744,8 +788,6 @@ a:hover {
 
 .emergency-call-btn:focus-visible {
   outline: none;
-  box-shadow: var(--focus-ring);
-}
   box-shadow: var(--focus-ring);
 }
 

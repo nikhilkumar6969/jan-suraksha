@@ -26,6 +26,8 @@ const ASSETS_TO_CACHE = [
   '/content/quiz_hi.json',
   '/content/quiz_chg.json',
   '/manifest.json',
+  '/assets/bg.jpg',
+  '/assets/banner.jpg',
   '/assets/alerts/alert_chime.wav',
   '/assets/alerts/alert_upi_pin_hi.wav',
   '/assets/alerts/alert_upi_pin_chg.wav',
