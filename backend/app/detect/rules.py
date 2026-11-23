@@ -117,8 +117,11 @@ URGENCY_PATTERNS = [
     r"\b(?:turte|aaj\s+sanjha|jhan\s+deri\s+karaw)\b"
 ]
 
-def check_rules(text: str) -> dict:
-    text_lower = text.lower()
+def check_rules(text: str, raw_text: str = None) -> dict:
+    target_texts = [text.lower()]
+    if raw_text and raw_text.lower() not in target_texts:
+        target_texts.append(raw_text.lower())
+
     matches = []
     rule_flags = {
         "is_genuine_alert": False,
@@ -130,51 +133,58 @@ def check_rules(text: str) -> dict:
         "urgency_pressure": False
     }
 
+    def find_in_targets(pattern):
+        for target in target_texts:
+            res = re.findall(pattern, target, flags=re.IGNORECASE)
+            if res:
+                return res
+        return []
+
     # Check genuine bank guard first
     for pat in GENUINE_SAFETY_PATTERNS:
-        found = re.findall(pat, text_lower, flags=re.IGNORECASE)
+        found = find_in_targets(pat)
         if found:
             rule_flags["is_genuine_alert"] = True
             matches.append({"rule": "genuine_safety_notice", "phrase": found[0], "risk": False})
 
     # Fraudulent OTP request
     for pat in FRAUDULENT_OTP_PATTERNS:
-        found = re.findall(pat, text_lower, flags=re.IGNORECASE)
+        found = find_in_targets(pat)
         if found:
             rule_flags["explicit_otp_demand"] = True
             matches.append({"rule": "fraudulent_otp_demand", "phrase": found[0], "risk": True})
 
     # Digital Arrest
     for pat in DIGITAL_ARREST_PATTERNS:
-        found = re.findall(pat, text_lower, flags=re.IGNORECASE)
+        found = find_in_targets(pat)
         if found:
             rule_flags["digital_arrest"] = True
             matches.append({"rule": "digital_arrest_extortion", "phrase": found[0], "risk": True})
 
     # Fake KYC & Power Cut threats
     for pat in FAKE_KYC_PATTERNS:
-        found = re.findall(pat, text_lower, flags=re.IGNORECASE)
+        found = find_in_targets(pat)
         if found:
             rule_flags["fake_kyc"] = True
             matches.append({"rule": "fake_kyc_threat", "phrase": found[0], "risk": True})
 
     # Remote Access Apps
     for pat in REMOTE_ACCESS_PATTERNS:
-        found = re.findall(pat, text_lower, flags=re.IGNORECASE)
+        found = find_in_targets(pat)
         if found:
             rule_flags["remote_access_apk"] = True
             matches.append({"rule": "remote_access_app", "phrase": found[0], "risk": True})
 
     # Suspicious Links
     for pat in SUSPICIOUS_LINK_PATTERNS:
-        found = re.findall(pat, text_lower, flags=re.IGNORECASE)
+        found = find_in_targets(pat)
         if found:
             rule_flags["suspicious_link"] = True
             matches.append({"rule": "suspicious_link", "phrase": found[0], "risk": True})
 
     # Urgency & Panic
     for pat in URGENCY_PATTERNS:
-        found = re.findall(pat, text_lower, flags=re.IGNORECASE)
+        found = find_in_targets(pat)
         if found:
             rule_flags["urgency_pressure"] = True
             matches.append({"rule": "urgency_panic", "phrase": found[0], "risk": True})

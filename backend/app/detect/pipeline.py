@@ -74,8 +74,8 @@ def run_detection_pipeline(text: str, user_lang: str = "hi") -> dict:
     p_scam = clf_res["p_scam"]
     top_ngrams = clf_res["top_contributing_ngrams"]
 
-    # Check 2: Rule Engine
-    rule_res = check_rules(clean_text)
+    # Check 2: Rule Engine (evaluates both normalized and raw text for dialect safety guards)
+    rule_res = check_rules(clean_text, raw_text=text)
     rule_flags = rule_res["flags"]
     rule_risk = rule_res["rule_risk_score"]
 

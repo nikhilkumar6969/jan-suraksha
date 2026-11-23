@@ -281,6 +281,9 @@ def test_pipeline_performance_comparison():
     pcm_bytes = test_samples.tobytes()
 
     # Benchmark New Pipeline: Direct in-memory Int16 PCM processing (Zero disk, zero container)
+    # Warm up session and feature extractor before timing loop
+    _ = process_streaming_chunk("bench_warmup", pcm_bytes, sample_rate=16000)
+
     new_latencies = []
     for _ in range(5):
         t0 = time.perf_counter()

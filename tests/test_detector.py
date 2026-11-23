@@ -49,6 +49,32 @@ def test_genuine_bank_otp_guard():
     assert res["rule_flags"]["is_genuine_alert"] is True
     assert res["rule_flags"]["explicit_otp_demand"] is False
 
+def test_genuine_bank_otp_multilingual_guard():
+    # Hindi genuine bank alert
+    sms_hi = "582910 आपका गुप्त OTP है लेन-देन रु 450 के लिए। किसी को न बताएं। बैंक कभी भी OTP नहीं पूछता।"
+    res_hi = run_detection_pipeline(sms_hi, user_lang="hi")
+    assert res_hi["verdict"] == "genuine"
+    assert res_hi["rule_flags"]["is_genuine_alert"] is True
+
+    # Chhattisgarhi genuine bank alert
+    sms_chg = "918234 तोर बैंक लेन-देन के OTP हे। ककरो ले साझा झन करव। बैंक कभू घलो OTP नइ मांगय।"
+    res_chg = run_detection_pipeline(sms_chg, user_lang="chg")
+    assert res_chg["verdict"] == "genuine"
+    assert res_chg["rule_flags"]["is_genuine_alert"] is True
+
+def test_fraudulent_otp_demands_flagged():
+    # Fraudulent demand for OTP with urgency must be flagged as scam
+    sms_fraud = "Bank Officer Calling: Send your 6-digit OTP to 9876543210 immediately to verify and unfreeze your bank account."
+    res_fraud = run_detection_pipeline(sms_fraud, user_lang="en")
+    assert res_fraud["verdict"] == "likely_scam"
+    assert res_fraud["rule_flags"]["explicit_otp_demand"] is True
+
+    # Chhattisgarhi fraudulent OTP demand with urgency
+    sms_fraud_chg = "बैंक मैनेजर: तुरंत मोबाइल म आए OTP ल बताव नइ ते तोर खाता बंद हो जाही।"
+    res_fraud_chg = run_detection_pipeline(sms_fraud_chg, user_lang="chg")
+    assert res_fraud_chg["verdict"] == "likely_scam"
+    assert res_fraud_chg["rule_flags"]["explicit_otp_demand"] is True
+
 def test_electricity_bill_scam():
     sms = "URGENT: CSPDCL Electricity officer notice. Your electricity power will be disconnected tonight at 9:30 PM. Call officer at 9876543210 immediately."
     res = run_detection_pipeline(sms, user_lang="hi")
