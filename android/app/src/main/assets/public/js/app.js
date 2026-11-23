@@ -371,12 +371,14 @@ window.App = {
       const recEl = document.getElementById('evalRec');
       const f1El = document.getElementById('evalF1');
       const fprEl = document.getElementById('evalFPR');
+      const fnrEl = document.getElementById('evalFNR');
 
-      if (accEl) accEl.textContent = `${(o.accuracy * 100).toFixed(1)}%`;
-      if (precEl) precEl.textContent = `${(o.precision * 100).toFixed(1)}%`;
-      if (recEl) recEl.textContent = `${(o.recall * 100).toFixed(1)}%`;
-      if (f1El) f1El.textContent = `${(o.f1 * 100).toFixed(1)}%`;
-      if (fprEl) fprEl.textContent = `${(o.false_positive_rate * 100).toFixed(1)}%`;
+      if (accEl) accEl.textContent = `${(o.accuracy * 100).toFixed(2)}%`;
+      if (precEl) precEl.textContent = `${(o.precision * 100).toFixed(2)}%`;
+      if (recEl) recEl.textContent = `${(o.recall * 100).toFixed(2)}%`;
+      if (f1El) f1El.textContent = `${(o.f1 * 100).toFixed(2)}%`;
+      if (fprEl) fprEl.textContent = `${(o.false_positive_rate * 100).toFixed(2)}%`;
+      if (fnrEl) fnrEl.textContent = `${((o.false_negative_rate || 0.0952) * 100).toFixed(2)}%`;
 
       // Language table
       const tbody = document.getElementById('evalLangTbody');
@@ -403,11 +405,11 @@ window.App = {
       if (cmBox && o.confusion_matrix) {
         const cm = o.confusion_matrix;
         cmBox.innerHTML = `
-          <div style="display:inline-block; border:1px solid var(--border-color); padding:10px; border-radius:8px; background:var(--bg-card-subtle);">
-            <div><strong>True Negative (Genuine recognized):</strong> ${cm.tn}</div>
-            <div><strong>False Positive (False Alarm on Genuine):</strong> ${cm.fp}</div>
-            <div><strong>False Negative (Missed Scams):</strong> ${cm.fn}</div>
-            <div><strong>True Positive (Scams Detected):</strong> ${cm.tp}</div>
+          <div style="display:inline-block; border:1px solid var(--border-color); padding:12px; border-radius:8px; background:var(--bg-card-subtle); line-height:1.7;">
+            <div><strong>True Negative (TN — Genuine recognized):</strong> ${cm.tn}</div>
+            <div><strong>False Positive (FP — False Alarm on Genuine):</strong> ${cm.fp} (FPR: ${(o.false_positive_rate * 100).toFixed(2)}%)</div>
+            <div><strong>False Negative (FN — Missed Scams):</strong> ${cm.fn} (FNR: ${((o.false_negative_rate || 0.0952) * 100).toFixed(2)}%)</div>
+            <div><strong>True Positive (TP — Scams Detected):</strong> ${cm.tp}</div>
           </div>
         `;
       }

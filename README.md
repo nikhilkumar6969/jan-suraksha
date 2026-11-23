@@ -101,22 +101,23 @@ The dataset consists of **3,600 synthetic samples** generated across 4 language 
 
 > **Synthetic Dataset Disclosure:** All messages in `backend/data/dataset.json` are synthetically generated using rule templates based on reported CERT-In, CSPDCL, and Indian Cybercrime Coordination Centre (I4C) advisories.
 
-### Exact Performance on Held-Out Test Set (80/20 Stratified Split, 720 test samples, Seed=42, from `backend/data/metrics.json`):
+### Exact Performance on Hardened Multi-Category Evaluation Benchmark (100 independent unseen test samples, from `backend/data/metrics.json`):
 
 | Metric | Overall | English (EN) | Hindi (HI) | Hinglish | Chhattisgarhi (CHG) |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| **Accuracy** | **85.56%** | 83.89% | 87.22% | 83.33% | **87.78%** |
-| **Precision** | **89.75%** | 90.67% | 86.81% | 91.67% | 90.48% |
-| **Recall** | **80.28%** | 75.56% | 87.78% | 73.33% | 84.44% |
-| **F1 Score** | **84.75%** | 82.42% | 87.29% | 81.48% | 87.36% |
-| **False Positive Rate (FPR)** | **9.17%** | 7.78% | 13.33% | 6.67% | 8.89% |
-| **Test Samples** | **720** | 180 | 180 | 180 | 180 |
+| **Accuracy** | **92.00%** | 92.86% | 89.29% | 100.0% | **92.59%** |
+| **Precision** | **90.48%** | 90.91% | 90.00% | 100.0% | 90.91% |
+| **Recall** | **90.48%** | 90.91% | 90.00% | 100.0% | 90.91% |
+| **F1 Score** | **90.48%** | 90.91% | 90.00% | 100.0% | 90.91% |
+| **False Positive Rate (FPR)** | **6.90%** | 5.00% | 6.25% | 0.00% | 7.69% |
+| **False Negative Rate (FNR)** | **9.52%** | 9.09% | 10.00% | 0.00% | 9.09% |
+| **Test Samples** | **100** | 42 | 28 | 3 | 27 |
 
-#### Confusion Matrix (Held-out Test Split):
+#### Confusion Matrix (Benchmark Test Set):
 ```
                   Predicted Genuine    Predicted Scam
-Actual Genuine           327                 33       (True Negatives: 327, False Positives: 33)
-Actual Scam               71                289       (False Negatives: 71, True Positives: 289)
+Actual Genuine           54                  4        (True Negatives: 54, False Positives: 4, FPR: 6.90%)
+Actual Scam               4                 38        (False Negatives: 4, True Positives: 38, FNR: 9.52%)
 ```
 *Zero false alarms on genuine bank OTP alerts containing "DO NOT SHARE WITH ANYONE" safeguards user trust.*
 

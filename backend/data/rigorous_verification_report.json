@@ -1,4 +1,19 @@
 {
+  "benchmark_summary": {
+    "accuracy": 0.92,
+    "precision": 0.9048,
+    "recall": 0.9048,
+    "f1": 0.9048,
+    "false_positive_rate": 0.069,
+    "false_negative_rate": 0.0952,
+    "confusion_matrix": {
+      "tp": 38,
+      "tn": 54,
+      "fp": 4,
+      "fn": 4
+    },
+    "total_samples": 100
+  },
   "pillar_1_data_leakage": {
     "held_out_test_leakage": true,
     "hardened_eval_leakage": false,
@@ -11,8 +26,18 @@
     "is_disjoint": true
   },
   "pillar_3_independent_testing": {
-    "held_out_accuracy": 1.0,
-    "held_out_f1": 1.0,
+    "accuracy": 0.92,
+    "precision": 0.9048,
+    "recall": 0.9048,
+    "f1": 0.9048,
+    "false_positive_rate": 0.069,
+    "false_negative_rate": 0.0952,
+    "confusion_matrix": {
+      "tp": 38,
+      "tn": 54,
+      "fp": 4,
+      "fn": 4
+    },
     "hardened_accuracy": 0.92,
     "hardened_f1": 0.9048,
     "cg_accuracy": 0.4524,
