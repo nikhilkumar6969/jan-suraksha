@@ -1138,7 +1138,7 @@ const CallDetector = {
         player.style.display = 'block';
       }
 
-      this.showStatus(`✅ ऑडियो लोड हुआ (${file.name})। ऑफलाइन Sherpa-ONNX से विश्लेषण शुरू हो रहा है...`, 'info');
+      this.showStatus(`✅ ऑडियो लोड हुआ (${file.name})। ऑफलाइन Whisper Medium AI से विश्लेषण शुरू हो रहा है...`, 'info');
       await this.analyzeCall();
     } catch (e) {
       console.error('Audio load error:', e);
@@ -1163,7 +1163,7 @@ const CallDetector = {
     const formData = new FormData();
     if (file) {
       formData.append('audio', file);
-      this.showStatus('🎙️ ऑफलाइन Sherpa-ONNX मॉडल द्वारा आवाज़ से टेक्स्ट निकाला जा रहा है...', 'info');
+      this.showStatus('🎙️ ऑफलाइन Whisper Medium AI मॉडल द्वारा आवाज़ से टेक्स्ट निकाला जा रहा है...', 'info');
     }
     if (text) formData.append('transcript', text);
     formData.append('language', currentUiLang);
@@ -1205,7 +1205,7 @@ const CallDetector = {
 
       if (extractedText) {
         const wordCount = extractedText.trim().split(/\s+/).length;
-        this.showStatus(`✅ आवाज़ से बातचीत सफलतापूर्वक निकाली गई (${wordCount} शब्द) • ${data.transcription_notice || 'Sherpa-ONNX 100% On-Device Engine'}`, 'success');
+        this.showStatus(`✅ आवाज़ से बातचीत सफलतापूर्वक निकाली गई (${wordCount} शब्द) • ${data.transcription_notice || 'Whisper Medium 100% On-Device Engine'}`, 'success');
       } else {
         this.showStatus('⚠️ आवाज़ से कोई स्पष्ट बातचीत नहीं मिली। कृपया साफ़ आवाज़ की रिकॉर्डिंग अपलोड करें या बातचीत पेस्ट करें।', 'error');
       }

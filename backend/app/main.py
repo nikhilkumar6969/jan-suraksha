@@ -130,16 +130,33 @@ async def detect_call_endpoint(
         temp_path.write_bytes(content)
         try:
             target_lang = call_lang or "auto"
-            # Primary: Sherpa-ONNX offline engine (Whisper or Zipformer), with Vosk fallback
-            try:
-                from app.calls.streaming_asr import offline_transcribe_audio
-                trans_res = offline_transcribe_audio(temp_path, lang=target_lang)
-            except Exception as ex:
-                logger.warning(f"Sherpa-ONNX transcribe fallback: {ex}")
-                trans_res = transcribe_audio_file(temp_path, lang=target_lang)
+            whisper_target_lang = None if target_lang == "auto" else target_lang
 
-            final_transcript = trans_res.get("text", "")
-            notice = trans_res.get("notice", "")
+            # 1. Primary: Whisper Medium (faster-whisper) offline speech-to-text
+            try:
+                whisper_res = transcribe_audio(
+                    audio_input=content,
+                    filename=audio.filename or "call_recording.wav",
+                    language=whisper_target_lang
+                )
+                if whisper_res.get("success") and whisper_res.get("text"):
+                    final_transcript = whisper_res["text"].strip()
+                    lang_label = whisper_res.get("language") or target_lang
+                    notice = f"OpenAI Whisper Medium Offline Engine (100% On-Device • {lang_label})"
+            except Exception as w_err:
+                logger.warning(f"Whisper Medium call transcribe fallback: {w_err}")
+
+            # 2. Secondary: Sherpa-ONNX offline engine (Whisper or Zipformer), with Vosk fallback
+            if not final_transcript:
+                try:
+                    from app.calls.streaming_asr import offline_transcribe_audio
+                    trans_res = offline_transcribe_audio(temp_path, lang=target_lang)
+                except Exception as ex:
+                    logger.warning(f"Sherpa-ONNX transcribe fallback: {ex}")
+                    trans_res = transcribe_audio_file(temp_path, lang=target_lang)
+
+                final_transcript = trans_res.get("text", "")
+                notice = trans_res.get("notice", "")
         finally:
             if temp_path.exists():
                 temp_path.unlink()

@@ -60,7 +60,7 @@
   "verdict_genuine": "सीधा साधा संदेश दिखत हे (Looks Genuine)",
   "sample_scams_title": "उदाहरण संदेश ले जांच के देखव:",
   "call_upload_label": "फोन के रिकार्डिंग डालव या बात ला इहां लिखव",
-  "call_transcribe_notice": "बिना नेट के आवाज़ समझे बर वोस्क व Sherpa-ONNX हे। बात ला नीचे लिख घलो सकथो।",
+  "call_transcribe_notice": "बिना नेट के आवाज़ समझे बर Whisper Medium व Sherpa-ONNX हे। बात ला नीचे लिख घलो सकथो।",
   "call_paste_placeholder": "फोन म का गोठ-बात होइस, इहां लिखव (जैसे: 'तोरे पार्सल म नशा मिले हे, जेल भेज देबो...')",
   "call_guardian_title": "रीयल-टाइम AI कॉल सुरक्षा कवच (Offline Call Guardian)",
   "call_privacy_notice": "गोपनीयता सुरक्षा: माइक केवल तोर अनुमति ले सुनथे। कोनो ऑडियो सर्वर म नइ जावय अउ बातचीत सेव नइ होवय।",

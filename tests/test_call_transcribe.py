@@ -56,6 +56,25 @@ def test_detect_call_api_with_audio_upload():
     assert len(data["transcript"]) > 0
     assert "confidence_percent" in data
     assert data["verdict"] in ["likely_scam", "unsure"]
+    assert "Whisper Medium" in data.get("transcription_notice", "") or "Sherpa" in data.get("transcription_notice", "")
+
+def test_detect_call_whisper_engine_priority():
+    """Verify /api/detect/call prioritizes Whisper Medium for audio analysis."""
+    sample_file = Path("frontend/assets/samples/bank_kyc_call.wav")
+    assert sample_file.exists()
+
+    with open(sample_file, "rb") as f:
+        response = client.post(
+            "/api/detect/call",
+            files={"audio": ("bank_kyc_call.wav", f, "audio/wav")},
+            data={"language": "en", "call_lang": "en"}
+        )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["verdict"] == "likely_scam"
+    assert "sbi" in data["transcript"].lower()
+    assert "Whisper Medium" in data.get("transcription_notice", "")
 
 def test_prepare_16k_mono_wav_pyav():
     """Verify PyAV universal decoding resamples to 16kHz mono PCM WAV."""
