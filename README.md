@@ -123,10 +123,29 @@ Actual Scam               71                289       (False Negatives: 71, True
 ---
 
 ## 🧪 Running Automated Pytest Suite
-Run the 13 automated tests covering detection, fake-QR verification, abuse checks, indicator confirmation ($N=3$), and Ed25519 signature checks:
+Run the 46 automated regression tests covering call transcription, 42-scenario Chhattisgarhi dialect benchmarks, fake-QR verification, abuse checks, indicator confirmation ($N=3$), DoS protections, and Ed25519 signature checks:
 ```bash
 pytest -v
 ```
+
+---
+
+## 🏛️ Village Kiosk & CSC Assisted Mode (चॉइस सेंटर / कियोस्क मोड)
+
+Designed specifically for Village Level Entrepreneurs (VLEs), Common Service Centres (CSCs), and Gram Panchayat volunteers assisting non-literate or elderly citizens:
+- **One-Click Kiosk Toggle:** Accessible in the civic header bar (`कियोस्क मोड (CSC)`) for large-display touch monitors.
+- **Citizen Cyber Safety Advisory Slip (नागरिक परामर्श पावती):** Generates an official Government of Chhattisgarh branded printable/downloadable slip (`JS-CG-YYYYMM-XXXXX`) detailing the risk level, detected indicators, and required emergency steps (e.g. Do NOT pay, Dial 1930).
+- **Print & Thermal Printer Ready:** Full `@media print` layout engineered for standard A4 and village thermal receipt printers.
+- **Offline Gram Panchayat Log:** Maintains a local, privacy-preserving inquiry register with one-click CSV export for local Thana or Cyber Crime reporting.
+
+---
+
+## 🚀 Automated CI/CD Cloud Build Pipeline (GitHub Actions)
+
+Jan Suraksha includes a complete GitHub Actions CI/CD workflow at [`.github/workflows/ci.yml`](.github/workflows/ci.yml):
+- **Automated Backend Regression:** Executes Python 3.11 regression suite (46 tests) on every push and pull request.
+- **Automated Android APK Compilation:** Automatically checks out code, configures Temurin JDK 17, and runs `./gradlew assembleDebug` in the cloud on `ubuntu-latest`.
+- **Downloadable APK Artifacts:** Automatically attaches `JanSuraksha-Debug-APK` (`app-debug.apk`) directly to GitHub Workflow runs for one-click download without requiring local Android Studio.
 
 ---
 

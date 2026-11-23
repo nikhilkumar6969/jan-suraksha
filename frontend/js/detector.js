@@ -74,6 +74,27 @@ const MessageDetector = {
         if (window.App) window.App.navigate('help');
       });
     }
+
+    const btnReceipt = document.getElementById('btnReceiptFromVerdict');
+    if (btnReceipt) {
+      btnReceipt.addEventListener('click', () => {
+        if (window.KioskManager) {
+          const text = smsInput ? smsInput.value.trim() : '';
+          const vTitle = document.getElementById('verdictTitle')?.textContent || '';
+          const vExpl = document.getElementById('verdictExplanation')?.textContent || '';
+          const isScam = this.lastData ? (this.lastData.verdict === 'likely_scam') : (vTitle.includes('खतरा') || vTitle.includes('Scam'));
+          const conf = this.lastData ? (this.lastData.confidence_percent / 100) : 0.88;
+
+          window.KioskManager.openReceiptModal({
+            text: text,
+            is_scam: isScam,
+            confidence: conf,
+            scam_type: this.lastData?.scam_type || (isScam ? 'संदिग्ध SMS / साइबर ठगी' : 'सामान्य संदेश'),
+            threat_indicators: this.lastData?.top_ngrams?.map(n => n.ngram) || [vExpl]
+          });
+        }
+      });
+    }
   },
 
   async analyzeMessage() {
@@ -118,6 +139,7 @@ const MessageDetector = {
   },
 
   renderVerdict(data) {
+    this.lastData = data;
     const box = document.getElementById('smsVerdictBox');
     const vTitle = document.getElementById('verdictTitle');
     const vConf = document.getElementById('verdictConfidence');
