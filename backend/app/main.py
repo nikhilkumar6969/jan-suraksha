@@ -155,7 +155,8 @@ async def detect_call_endpoint(
     transcript: Optional[str] = Form(None),
     language: Optional[str] = Form("hi"),
     call_lang: Optional[str] = Form("auto"),
-    mode: Optional[str] = Form("balanced")
+    mode: Optional[str] = Form("balanced"),
+    session_id: Optional[str] = Form(None)
 ):
     final_transcript = ""
     notice = ""
@@ -227,7 +228,7 @@ async def detect_call_endpoint(
             }
         )
 
-    analysis = analyze_call_transcript(final_transcript, user_lang=language or "hi")
+    analysis = analyze_call_transcript(final_transcript, user_lang=language or "hi", session_id=session_id)
     analysis["text"] = final_transcript
     analysis["transcript"] = final_transcript
     if notice:
@@ -318,7 +319,8 @@ async def stream_chunk_endpoint(
     language: Optional[str] = Form("auto"),
     sample_rate: Optional[int] = Form(16000)
 ):
-    from app.calls.streaming_asr import process_streaming_chunk, prepare_16k_mono_wav
+    from app.calls.streaming_asr import process_streaming_chunk
+    from app.calls.transcribe import prepare_16k_mono_wav
     from app.detect.scam_engine import detect_scam_in_transcript
     from app.calls.conversation_tracker import track_conversation_step
 
@@ -365,10 +367,20 @@ async def stream_chunk_endpoint(
         **asr_result,
         "scam_assessment": scam_result,
         "timeline": timeline_result,
+        "stages": timeline_result,
         "risk_level": scam_result["risk_level"],
         "scam_category": scam_result["scam_category"],
+        "scam_category_hi": scam_result.get("scam_category_hi", scam_result["scam_category"]),
+        "scam_category_en": scam_result.get("scam_category_en", scam_result["scam_category"]),
+        "scam_category_chg": scam_result.get("scam_category_chg", scam_result["scam_category"]),
         "reason": scam_result["reason"],
+        "reason_hi": scam_result.get("reason_hi", scam_result["reason"]),
+        "reason_en": scam_result.get("reason_en", scam_result["reason"]),
+        "reason_chg": scam_result.get("reason_chg", scam_result["reason"]),
         "recommended_action": scam_result["recommended_action"],
+        "recommended_action_hi": scam_result.get("recommended_action_hi", scam_result["recommended_action"]),
+        "recommended_action_en": scam_result.get("recommended_action_en", scam_result["recommended_action"]),
+        "recommended_action_chg": scam_result.get("recommended_action_chg", scam_result["recommended_action"]),
         "audio_warning_hi": scam_result.get("audio_warning_hi", ""),
         "audio_warning_en": scam_result.get("audio_warning_en", ""),
         "audio_warning_chg": scam_result.get("audio_warning_chg", ""),

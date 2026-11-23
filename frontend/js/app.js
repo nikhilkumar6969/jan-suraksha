@@ -246,6 +246,14 @@ window.App = {
 
   navigate(viewName) {
     this.currentView = viewName;
+
+    // Safety: Stop Call Guardian microphone if leaving check view
+    if (viewName !== 'check') {
+      if (window.CallDetector && window.CallDetector.isListening) {
+        window.CallDetector.stopLiveListening();
+      }
+    }
+
     document.querySelectorAll('.view-panel').forEach((panel) => {
       panel.classList.remove('active');
     });
@@ -274,6 +282,13 @@ window.App = {
   },
 
   switchSubtab(subtabId) {
+    // Safety: Stop Call Guardian microphone if leaving call subtab
+    if (subtabId !== 'subtab-call') {
+      if (window.CallDetector && window.CallDetector.isListening) {
+        window.CallDetector.stopLiveListening();
+      }
+    }
+
     document.querySelectorAll('.subtab-btn').forEach((b) => {
       b.classList.remove('active');
       b.setAttribute('aria-selected', 'false');

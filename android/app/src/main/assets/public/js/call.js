@@ -59,6 +59,31 @@ const CallDetector = {
       title: "11. Chhattisgarhi Thana & Warrant",
       text: "थाना कोतवाली रायपुर ले बोलत हंव। तोर नाम म गैर जमानती वारंट निकल गे हे। कॉल ल झन काटव, वीडियो कॉल म बने रहव अउ तुरते 40000 पईसा जमा करव नइ ते जेल भेज देबो।",
       lang: "chg"
+    },
+    utility_hindi: {
+      title: "12. Electricity Power Cut Threat (Hindi)",
+      text: "प्रिय उपभोक्ता, आपका पिछला बिजली बिल अपडेट नहीं हुआ है। आज रात 9:30 बजे बिजली कनेक्शन काट दिया जाएगा। तुरंत इस नंबर 9827012345 पर कॉल करके बिल जमा करें।",
+      lang: "hi"
+    },
+    fedex_customs: {
+      title: "13. FedEx Customs Seizure (English)",
+      text: "This is FedEx International Courier Department. Your parcel containing illegal narcotics and passports has been seized by customs officials. Press 1 to speak with Investigation Officer or pay customs penalty now.",
+      lang: "en"
+    },
+    job_like_fraud: {
+      title: "14. YouTube Like & Part-Time Job Scam",
+      text: "घर बैठे रोजाना 3000 से 5000 रुपये कमाएं। केवल यूट्यूब वीडियो लाइक करें और टेलीग्राम ग्रुप जॉइन करके 500 रुपये रजिस्ट्रेशन फीस तुरंत जमा करें।",
+      lang: "hi"
+    },
+    kbc_lottery: {
+      title: "15. KBC 25 Lakh Lottery Fraud",
+      text: "बधाई हो! आपको कौन बनेगा करोड़पति से 25 लाख रुपये की लॉटरी लगी है। पुरस्कार राशि अपने बैंक खाते में ट्रांसफर कराने के लिए 12500 रुपये फाइल चार्ज तुरंत भेजें।",
+      lang: "hi"
+    },
+    safe_helpline: {
+      title: "16. 1930 Cyber Fraud Helpline Safe Inquiry",
+      text: "क्या ऑनलाइन ठगी होने पर तुरंत 1930 राष्ट्रीय साइबर हेल्पलाइन पर कॉल करके खाता और पैसा फ्रीज कराया जा सकता है?",
+      lang: "hi"
     }
   },
 
@@ -89,12 +114,31 @@ const CallDetector = {
   isPlayingAlert: false,
   lastAnalysisData: null,
   lastStageData: null,
+  silenceTimer: null,
+
+  resetSilenceTimer() {
+    if (this.silenceTimer) clearTimeout(this.silenceTimer);
+    if (!this.isListening) return;
+    this.silenceTimer = setTimeout(() => {
+      if (this.isListening) {
+        console.log('[CallGuardian] 45s silence timeout reached - stopping mic');
+        this.stopLiveListening();
+        if (window.App) {
+          window.App.showToast('माइक स्वतः बंद हुआ (45 सेकंड निष्क्रियता के बाद)', 3000);
+        }
+      }
+    }, 45000);
+  },
 
   init() {
     this.bindButtons();
     this.bindScenarios();
     this.bindAudioSamples();
     this.checkMicrophonePermission();
+
+    // Auto-stop mic on page unload / hide
+    window.addEventListener('beforeunload', () => this.stopLiveListening());
+    window.addEventListener('pagehide', () => this.stopLiveListening());
 
     // Critical modal close button
     const btnCloseCrit = document.getElementById('btnCloseCritWarning');
@@ -168,6 +212,8 @@ const CallDetector = {
         btnModeUpload.setAttribute('aria-selected', 'false');
         liveSection.style.display = 'block';
         uploadSection.style.display = 'none';
+        const player = document.getElementById('callAudioPlayer');
+        if (player) player.pause();
       });
 
       btnModeUpload.addEventListener('click', () => {
@@ -177,6 +223,9 @@ const CallDetector = {
         btnModeLive.setAttribute('aria-selected', 'false');
         uploadSection.style.display = 'block';
         liveSection.style.display = 'none';
+        if (this.isListening) {
+          this.stopLiveListening();
+        }
       });
     }
 
@@ -274,7 +323,11 @@ const CallDetector = {
   async checkMicrophonePermission() {
     const pill = document.getElementById('micPermPill');
     if (!navigator.permissions || !navigator.permissions.query) {
-      if (pill) pill.textContent = '🎙️ माइक: उपलब्ध';
+      if (pill) {
+        pill.textContent = '🎙️ माइक: बंद (Mic OFF)';
+        pill.classList.remove('active', 'recording', 'danger');
+        pill.classList.add('idle');
+      }
       return;
     }
     try {
@@ -282,24 +335,30 @@ const CallDetector = {
       this.updateMicPermissionPill(perm.state);
       perm.onchange = () => this.updateMicPermissionPill(perm.state);
     } catch (e) {
-      if (pill) pill.textContent = '🎙️ माइक: मानक';
+      if (pill) {
+        pill.textContent = '🎙️ माइक: बंद (Mic OFF)';
+        pill.classList.remove('active', 'recording', 'danger');
+        pill.classList.add('idle');
+      }
     }
   },
 
   updateMicPermissionPill(state) {
     const pill = document.getElementById('micPermPill');
     if (!pill) return;
-    if (state === 'granted') {
-      pill.textContent = '🎙️ माइक: अनुमति प्राप्त (Ready)';
-      pill.classList.add('active');
-      pill.classList.remove('danger');
+    if (this.isListening) {
+      pill.textContent = '🔴 माइक: सक्रिय (RECORDING)';
+      pill.classList.remove('idle', 'danger');
+      pill.classList.add('recording');
     } else if (state === 'denied') {
       pill.textContent = '🎙️ माइक: अनुमति अस्वीकृत (Denied)';
+      pill.classList.remove('active', 'recording', 'idle');
       pill.classList.add('danger');
-      pill.classList.remove('active');
     } else {
-      pill.textContent = '🎙️ माइक: अनुमति प्रतीक्षारत (Prompt)';
-      pill.classList.remove('active', 'danger');
+      // Microphone is completely idle and off
+      pill.textContent = '🎙️ माइक: बंद (Mic OFF)';
+      pill.classList.remove('active', 'recording', 'danger');
+      pill.classList.add('idle');
     }
   },
 
@@ -337,6 +396,11 @@ const CallDetector = {
     }
 
     this.isListening = true;
+    this.updateMicPermissionPill('granted');
+    const pulseDot = document.getElementById('livePulseDot');
+    if (pulseDot) pulseDot.classList.add('active');
+    const statusText = document.getElementById('liveStatusText');
+    if (statusText) statusText.textContent = 'लाइव बातचीत (माइक सुन रहा है...)';
 
     // Notify native Android CallGuardianService foreground service if running inside APK
     if (window.SurakshaNative && window.SurakshaNative.startCallGuardian) {
@@ -358,6 +422,8 @@ const CallDetector = {
       vadPill.textContent = '🟢 VAD: आवाज़ सुन रहे हैं';
       vadPill.classList.add('active');
     }
+
+    this.resetSilenceTimer();
 
     // Start live timer
     const timerLabel = document.getElementById('liveDurationTimer');
@@ -496,7 +562,14 @@ const CallDetector = {
       }
     };
 
-    this.mediaRecorder.start(600);
+    this.mediaRecorder.start();
+    if (this.chunkIntervalTimer) clearInterval(this.chunkIntervalTimer);
+    this.chunkIntervalTimer = setInterval(() => {
+      if (this.isListening && this.mediaRecorder && this.mediaRecorder.state === 'recording') {
+        this.mediaRecorder.stop();
+        this.mediaRecorder.start();
+      }
+    }, 1200);
   },
 
   setupInterimSpeechPreview() {
@@ -512,6 +585,7 @@ const CallDetector = {
       this.speechRecognizer.interimResults = true;
 
       this.speechRecognizer.onresult = (event) => {
+        this.resetSilenceTimer();
         let interimText = '';
         for (let i = event.resultIndex; i < event.results.length; ++i) {
           interimText += event.results[i][0].transcript + ' ';
@@ -520,6 +594,13 @@ const CallDetector = {
           this.renderLiveTranscriptInterim(interimText.trim());
           // Also feed interim text for fast local rule evaluation
           this.evaluateLiveText(interimText.trim());
+        }
+      };
+
+      this.speechRecognizer.onend = () => {
+        if (!this.isListening && this.speechRecognizer) {
+          try { this.speechRecognizer.abort(); } catch (e) {}
+          this.speechRecognizer = null;
         }
       };
 
@@ -563,6 +644,7 @@ const CallDetector = {
 
   handleStreamingResponse(data) {
     if (!this.isListening && !data.force_update) return;
+    this.resetSilenceTimer();
 
     // 1. Update Transcription Terminal & Input Field
     const recognizedText = data.text || data.transcript || '';
@@ -611,13 +693,13 @@ const CallDetector = {
     cleaned = cleaned.replace(/(?:\s*(?:Good|Thank you|Bye|Okay|Yes|No)[.!?]?){2,}\s*$/gi, '');
 
     // 3. Collapse 2 or more repeated single tokens / words: "Good. Good. Good. Good." -> "Good."
-    cleaned = cleaned.replace(/\b([A-Za-z\u0900-\u097F]+)(?:[.,!?])?(?:\s+\1(?:[.,!?])?)+/gi, (match, word) => {
+    cleaned = cleaned.replace(/(?:^|\s)([A-Za-z\u0900-\u097F]+)(?:[.,!?])?(?:\s+\1(?:[.,!?])?)+(?=$|\s|[.,!?])/gi, (match, word) => {
       const lastChar = match.trim().slice(-1);
-      return /[.,!?]/.test(lastChar) ? (word + lastChar) : word;
+      return /[.,!?]/.test(lastChar) ? (' ' + word + lastChar) : (' ' + word);
     });
 
     // 4. Collapse adjacent identical words: "the the" -> "the"
-    cleaned = cleaned.replace(/\b([A-Za-z\u0900-\u097F]+)\s+\1\b/gi, '$1');
+    cleaned = cleaned.replace(/(?:^|\s)([A-Za-z\u0900-\u097F]+)\s+\1(?=$|\s|[.,!?])/gi, ' $1');
 
     return cleaned.replace(/\s{2,}/g, ' ').trim();
   },
@@ -879,13 +961,23 @@ const CallDetector = {
 
     // Resolve primary category
     const categories = (data && data.matched_categories) || [];
+    const ruleFlags = (data && data.rule_flags) || {};
     let catKey = 'upi_pin';
-    if (categories.includes('upi_pin_fraud')) catKey = 'upi_pin';
-    else if (categories.includes('otp_fraud')) catKey = 'otp';
-    else if (categories.includes('digital_arrest') || categories.includes('police_govt_impersonation')) catKey = 'police';
-    else if (categories.includes('remote_access')) catKey = 'remote_access';
-    else if (categories.includes('financial_extortion')) catKey = 'extortion';
-    else if (categories.includes('bank_impersonation')) catKey = 'bank_kyc';
+    if (categories.includes('upi_pin_fraud')) {
+      catKey = 'upi_pin';
+    } else if (categories.includes('otp_fraud') || ruleFlags.explicit_otp_demand) {
+      catKey = 'otp';
+    } else if (categories.includes('digital_arrest') || categories.includes('police_govt_impersonation') || ruleFlags.digital_arrest) {
+      catKey = 'police';
+    } else if (categories.includes('remote_access') || ruleFlags.remote_access_apk) {
+      catKey = 'remote_access';
+    } else if (categories.includes('bank_impersonation') || ruleFlags.fake_kyc) {
+      catKey = 'bank_kyc';
+    } else if (categories.includes('financial_extortion') || categories.includes('utility_electricity') || categories.includes('lottery_subsidy') || categories.includes('courier_customs')) {
+      catKey = 'extortion';
+    } else {
+      catKey = 'extortion';
+    }
 
     const alertFile = `/assets/alerts/alert_${catKey}_${targetLang}.wav`;
 
@@ -941,8 +1033,10 @@ const CallDetector = {
 
       // Select matching regional voice if available
       const voices = window.speechSynthesis.getVoices();
-      const matchVoice = voices.find(v => v.lang.startsWith(utter.lang));
-      if (matchVoice) utter.voice = matchVoice;
+      if (voices && voices.length > 0) {
+        const matchVoice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith(utter.lang.toLowerCase()));
+        if (matchVoice) utter.voice = matchVoice;
+      }
 
       window.speechSynthesis.speak(utter);
     } catch (e) {
@@ -957,6 +1051,22 @@ const CallDetector = {
 
   stopLiveListening() {
     this.isListening = false;
+    this.updateMicPermissionPill();
+
+    const pulseDot = document.getElementById('livePulseDot');
+    if (pulseDot) pulseDot.classList.remove('active');
+    const statusText = document.getElementById('liveStatusText');
+    if (statusText) statusText.textContent = 'लाइव बातचीत (माइक बंद)';
+
+    if (this.silenceTimer) {
+      clearTimeout(this.silenceTimer);
+      this.silenceTimer = null;
+    }
+
+    if (this.chunkIntervalTimer) {
+      clearInterval(this.chunkIntervalTimer);
+      this.chunkIntervalTimer = null;
+    }
 
     // Stop native Android CallGuardianService foreground service if running inside APK
     if (window.SurakshaNative && window.SurakshaNative.stopCallGuardian) {
@@ -1001,8 +1111,14 @@ const CallDetector = {
     }
     this.webSocketConnected = false;
 
+    // Release and stop all audio tracks immediately
     if (this.mediaStream) {
-      this.mediaStream.getTracks().forEach(t => t.stop());
+      try {
+        this.mediaStream.getTracks().forEach((track) => {
+          track.stop();
+          track.enabled = false;
+        });
+      } catch (e) {}
       this.mediaStream = null;
     }
 
@@ -1012,7 +1128,11 @@ const CallDetector = {
     }
 
     if (this.speechRecognizer) {
-      try { this.speechRecognizer.stop(); } catch (e) {}
+      try {
+        this.speechRecognizer.abort();
+        this.speechRecognizer.stop();
+      } catch (e) {}
+      this.speechRecognizer = null;
     }
 
     if (this.durationTimer) {
@@ -1030,7 +1150,7 @@ const CallDetector = {
     }
     if (btnText) btnText.textContent = 'कॉल सुनना शुरू करें (Start Listening)';
     if (vadPill) {
-      vadPill.textContent = '⚪ VAD: निष्क्रिय';
+      vadPill.textContent = '⚪ VAD: माइक बंद (Inactive)';
       vadPill.classList.remove('active');
     }
 
@@ -1077,6 +1197,7 @@ const CallDetector = {
     formData.append('transcript', text);
     formData.append('language', currentUiLang);
     formData.append('call_lang', lang || currentUiLang);
+    formData.append('session_id', `scenario_${Date.now()}`);
 
     try {
       const resp = await fetch('/api/detect/call', {
@@ -1106,6 +1227,7 @@ const CallDetector = {
     formData.append('transcript', text);
     formData.append('language', currentUiLang);
     formData.append('call_lang', lang);
+    formData.append('session_id', this.streamSessionId || `live_${Date.now()}`);
 
     try {
       const resp = await fetch('/api/detect/call', { method: 'POST', body: formData });
@@ -1168,6 +1290,7 @@ const CallDetector = {
     if (text) formData.append('transcript', text);
     formData.append('language', currentUiLang);
     formData.append('call_lang', (langSelect && langSelect.value) || 'auto');
+    formData.append('session_id', `manual_${Date.now()}`);
 
     const btn = document.getElementById('btnAnalyzeCall');
     if (btn) {
@@ -1206,6 +1329,8 @@ const CallDetector = {
       if (extractedText) {
         const wordCount = extractedText.trim().split(/\s+/).length;
         this.showStatus(`✅ आवाज़ से बातचीत सफलतापूर्वक निकाली गई (${wordCount} शब्द) • ${data.transcription_notice || 'Whisper Medium 100% On-Device Engine'}`, 'success');
+        // Clear activeAudioFile once transcribed so subsequent Analyze clicks instantly re-evaluate the text
+        this.activeAudioFile = null;
       } else {
         this.showStatus('⚠️ आवाज़ से कोई स्पष्ट बातचीत नहीं मिली। कृपया साफ़ आवाज़ की रिकॉर्डिंग अपलोड करें या बातचीत पेस्ट करें।', 'error');
       }
@@ -1297,6 +1422,18 @@ const CallDetector = {
       certLabel.textContent = `${accuracyLabel} ${data.confidence_percent || 95}% • 100% On-Device`;
     }
 
+    // Display localized script danger advisory banner inside explanation box
+    const scriptBanner = document.getElementById('callScriptBannerContainer');
+    if (scriptBanner) {
+      if (scriptHtml) {
+        scriptBanner.innerHTML = scriptHtml;
+        scriptBanner.style.display = 'block';
+      } else {
+        scriptBanner.innerHTML = '';
+        scriptBanner.style.display = 'none';
+      }
+    }
+
     // Keep legacy callVerdictBox hidden to avoid duplicate card rendering
     vBox.style.display = 'none';
     vBox.innerHTML = '';
@@ -1372,6 +1509,11 @@ const CallDetector = {
       player.style.display = 'none';
     }
     this.hideStatus();
+    const scriptBanner = document.getElementById('callScriptBannerContainer');
+    if (scriptBanner) {
+      scriptBanner.innerHTML = '';
+      scriptBanner.style.display = 'none';
+    }
     if (vBox) vBox.classList.remove('show', 'danger', 'warning', 'safe');
     if (termArea) termArea.innerHTML = '<span style="color: #64748b;">कॉल सुनना शुरू करने के लिए ऊपर \'कॉल सुनना शुरू करें\' बटन दबाएं, या नीचे दिया गया कोई सैंपल चलाएं...</span>';
 

@@ -2575,10 +2575,23 @@ html[data-a11y-size="large"] {
   color: var(--text-secondary);
 }
 
+.call-pill.idle {
+  background: var(--bg-subtle, #f8fafc);
+  color: var(--text-secondary, #64748b);
+  border-color: var(--border-subtle, #cbd5e1);
+}
+
 .call-pill.active {
   background: #ecfdf5;
   color: #065f46;
   border-color: #a7f3d0;
+}
+
+.call-pill.recording {
+  background: #fef2f2;
+  color: #b91c1c;
+  border-color: #fca5a5;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
 }
 
 .call-pill.danger {
@@ -2960,9 +2973,14 @@ html[data-a11y-size="large"] {
 .live-pulse-dot {
   width: 8px;
   height: 8px;
-  background-color: #ef4444;
+  background-color: #94a3b8;
   border-radius: 50%;
   display: inline-block;
+  transition: background-color 0.2s ease;
+}
+
+.live-pulse-dot.active {
+  background-color: #ef4444;
   animation: liveDotPulse 1.5s infinite;
 }
 
