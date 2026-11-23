@@ -123,6 +123,7 @@ const MessageDetector = {
     const vConf = document.getElementById('verdictConfidence');
     const vExpl = document.getElementById('verdictExplanation');
     const vHigh = document.getElementById('smsHighlightedText');
+    const vTriggerLabel = document.getElementById('smsTriggerLabel');
     const vIcon = document.getElementById('verdictIcon');
     const vNgrams = document.getElementById('ngramTokensBox');
 
@@ -134,6 +135,9 @@ const MessageDetector = {
       box.classList.add('danger');
       vTitle.textContent = I18n.t('verdict_likely_scam', 'Likely Scam (खतरा / High Risk)');
       vIcon.innerHTML = `<svg viewBox="0 0 24 24"><use href="#icon-alert-triangle"/></svg>`;
+      if (vTriggerLabel) {
+        vTriggerLabel.textContent = I18n.t('label_trigger_phrases', 'संदेश में खतरे वाले शब्द (Trigger Phrases):');
+      }
       if (window.SurakshaNative && typeof window.SurakshaNative.vibrate === 'function') {
         window.SurakshaNative.vibrate(JSON.stringify([250, 100, 250, 100, 400]));
       }
@@ -141,10 +145,16 @@ const MessageDetector = {
       box.classList.add('warning');
       vTitle.textContent = I18n.t('verdict_unsure', 'Unsure (संदेहास्पद / Verify with Bank)');
       vIcon.innerHTML = `<svg viewBox="0 0 24 24"><use href="#icon-alert-triangle"/></svg>`;
+      if (vTriggerLabel) {
+        vTriggerLabel.textContent = I18n.t('label_suspicious_phrases', 'संदेश में संदेहास्पद संकेत (Suspicious Signals):');
+      }
     } else {
       box.classList.add('safe');
       vTitle.textContent = I18n.t('verdict_genuine', 'Looks Genuine (सामान्य / Safe)');
       vIcon.innerHTML = `<svg viewBox="0 0 24 24"><use href="#icon-check"/></svg>`;
+      if (vTriggerLabel) {
+        vTriggerLabel.textContent = I18n.t('label_safe_text', 'विश्लेषित संदेश (Analyzed Message - Safe):');
+      }
     }
 
     vConf.textContent = `Confidence Score: ${data.confidence_percent}%`;

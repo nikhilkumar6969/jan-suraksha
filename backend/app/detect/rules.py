@@ -17,9 +17,9 @@ GENUINE_SAFETY_PATTERNS = [
     r"किसी\s+को\s+न\s+बताएं",
     r"ओटीपी\s+साझा\s+न\s+करें",
     r"बैंक\s+कभी\s+भी\s+otp\s+नहीं\s+पूछता",
-    r"ककरो\s+ले\s+(?:शेयर\s+)?झन\s+बताव",
+    r"ककरो\s+ले\s+.*?(?:झन\s+बताव|झन\s+बतावव|साझा\s+झन\s+करव)",
     r"ककरो\s+ले\s+साझा\s+झन\s+करव",
-    r"बैंक\s+कभू\s+(?:घलो\s+)?otp\s+नइ\s+मांगय",
+    r"बैंक\s+कभू\s+(?:फोन\s+म\s+)?(?:घलो\s+)?(?:otp|ओटीपी|पिन)\s+नइ\s+मांगय",
     r"kakar\s+sang\s+jhan\s+share\s+karaw\b",
     # Hard negative protections: genuine bank advisories, visit branch, maintenance, government notices
     r"bank\s+advisory\b",
@@ -38,22 +38,38 @@ GENUINE_SAFETY_PATTERNS = [
     r"order\s+(?:with\s+tracking\s+)?(?:[a-z0-9]+\s+)?(?:is\s+out\s+for|will\s+be)\s+delivery|पार्सल\s+.*?आज\s+डिलीवर|delivery\s+agent",
     r"धान\s+परिवहन|टोकन|राशन\s+दुकान|चांउर|सोसाइटी\s+म\s+संपर्क|पासबुक\s+म\s+इंदराज",
     r"power\s+line\s+maintenance|लाइन\s+रखरखाव",
-    r"सार्वजनिक\s+अवकाश|public\s+holiday"
+    r"सार्वजनिक\s+अवकाश|public\s+holiday",
+    # User narration & benign personal finance statements
+    r"\b(?:maine|humne|i\s+have|i\s+already)\s+(?:entered|dala|bhara|diya|paid|pay\s+kar\s+diya|transferred)\b",
+    r"मैंने\s+(?:अपना\s+)?(?:otp|पिन|बिल|पैसे|रुपये|राशि)\s+(?:डाल\s+दिया|भर\s+दिया|दे\s+दिया|ट्रांसफर\s+कर\s+दिए)",
+    r"मंय\s+(?:अपन\s+)?(?:बिल|प[ईइ]सा|रुपिया)\s+पटा\s+दे\s+हंव",
+    r"मंय\s+(?:अपन\s+)?हाथ\s+ले\s+बिल\s+पटाए\s+हंव",
+    r"धान\s+के\s+बोनस",
+    r"सोसाइटी\s+म\s+धान",
+    r"पासबुक\s+चढ़ाए\s+बर",
+    r"पासबुक\s+में\s+एंट्री",
+    r"प[ईइ]सा\s+निकाले\s+बर\s+बैंक\s+शाखा"
 ]
 
-# Fraudulent OTP demands (demanding customer send or tell the OTP to someone)
+# Fraudulent OTP & UPI PIN demands
 FRAUDULENT_OTP_PATTERNS = [
-    r"(?:share|send|tell|give|enter|forward)\s+(?:the\s+)?(?:your\s+)?(?:6\s*[-]?\s*digit\s+)?(?:otp|pin|cvv|code|password|confirmation\s+code|verification\s+code)\b",
+    r"(?:share|send|tell|give|enter|forward|put|type)\s+(?:the\s+)?(?:your\s+)?(?:google\s+pay\s+|gpay\s+|phonepe\s+|paytm\s+|bank\s+)?(?:6\s*[-]?\s*digit\s+)?(?:upi\s+)?(?:otp|pin|cvv|code|password|confirmation\s+code|verification\s+code)\b",
+    r"\benter\s+(?:your\s+)?(?:upi\s+)?pin\s+to\s+(?:receive|accept|get|credit)\s+(?:money|cashback|payment|rupees)\b",
+    r"\b(?:upi\s+)?pin\s+(?:dalo|batao|share\s+kare|daraw|bataw)\b",
     r"otp\s+(?:batao|bataiye|send\s+karo|share\s+kare|dijiye|forward\s+kare|forward|bataye)\b",
-    r"apna\s+(?:6\s*[-]?\s*digit\s+)?(?:otp|pin|cvv)\s+batao\b",
+    r"apna\s+(?:6\s*[-]?\s*digit\s+)?(?:upi\s+)?(?:otp|pin|cvv)\s+batao\b",
+    r"पैसे\s+पाने\s+के\s+लिए\s+(?:अपना\s+)?(?:upi\s+)?पिन\s*(?:डालें|दर्ज\s+करें|लगाएं)",
+    r"(?:अपना\s+)?(?:6\s*अंकों\s+का\s+)?(?:गुप्त\s+)?(?:otp|पिन)\s+(?:हमारे\s+)?(?:बैंक\s+)?(?:अधिकारी|एग्जीक्यूटिव|प्रतिनिधि|कस्टमर\s+केयर|नंबर)?\s*(?:को\s+)?(?:बताएं|दीजिए|भेजें|डालें|साझा\s+करें|दर्ज\s+करें)",
     r"ओटीपी\s*(?:बताएं|दीजिए|भेजें|दर्ज\s+करें|साझा\s+करें|बताव|डारव)",
     r"(?:otp|ओटीपी)\s*(?:साझा\s+करें|शेयर\s+करें|बताएं|दीजिए|भेजें|दर्ज\s+करें)",
-    r"मोबाइल\s+म\s+आए\s+(?:6\s*अंक\s+के\s+)?otp\s+ल\s+बताव",
-    r"ओटीपी\s*(?:बताव|डारव|भेजव)",
+    r"खाता\s+म\s+प[ईइ]सा\s+आही.*(?:upi\s+)?पिन\s*(?:डारव|बताव|डालव)",
+    r"प[ईइ]सा\s+पाए\s+बर.*(?:upi\s+)?पिन\s*(?:डारव|बताव|डालव)",
+    r"मोबाइल\s+म\s+आए\s+(?:6\s*अंक\s+के\s+)?(?:otp|कोड)\s+ल\s+(?:बताव|भेजव|डारव)",
+    r"(?:otp|ओटीपी|पिन)\s*(?:ला|ल|ओला)?\s*(?:बताव|बतावव|डारव|भेजव)",
     r"otp\s+(?:बताव|डारव|भेजव|la\s+bataw|daraw|bhejaw)",
     r"share\s+your\s+debit\s+card\s+cvv\b",
     r"card\s+ka\s+cvv\s+aur\s+otp\b",
-    r"(?:lottery|prize|draw|इनाम)\s+.*?otp\b"
+    r"(?:lottery|prize|draw|इनाम|लॉटरी)\s+.*?otp\b"
 ]
 
 # Digital Arrest & Extortion (English, Hindi, Hinglish, Chhattisgarhi)
@@ -88,7 +104,10 @@ DIGITAL_ARREST_PATTERNS = [
 
 # Fake KYC and Account Suspend Threats (English, Hindi, Hinglish, Chhattisgarhi)
 FAKE_KYC_PATTERNS = [
-    r"(?:account|a/c|yono|sim|debit\s+card)\s+.*?(?:suspended|blocked|deactivated|closed|sealed|disabled)\b",
+    r"(?:your\s+)?(?:account|a/c|yono|sim|debit\s+card)\s+.*?(?:suspended|blocked|deactivated|closed|sealed|disabled)\b",
+    r"(?:your\s+)?account\s+has\s+been\s+blocked\b",
+    r"(?:your\s+)?kyc\s+will\s+expire\b",
+    r"kyc\s+(?:समाप्त|एक्सपायर|खत्म)",
     r"(?:बैंक\s+)?खाता\s+.*?(?:बंद|ब्लॉक|सील)\s+(?:हो\s+गया|कर\s+दिया|होवत\s+हे)",
     r"account\s+(?:block|freeze|suspend)\s+ho\s+gaya\b",
     r"update\s+(?:your\s+)?kyc\s+immediately\b",
@@ -101,6 +120,7 @@ FAKE_KYC_PATTERNS = [
     r"cspdcl\s+electricity\s+officer\b",
     r"electricity\s+meter|मीटर\s+म\s+रीडिंग|मीटर\s+में\s+तकनीकी\s+गड़बड़ी",
     r"kbc|lottery|लॉटरी|इनाम\s+मिला|mega\s+draw|cash\s+reward|lucky\s+draw",
+    r"रजिस्ट्रेशन\s+फीस|registration\s+fees?|लाइक\s+करके\s+.*?कमा|like\s+videos?\s+.*?earn",
     r"document\s+verification\s+for\s+your\s+recent\s+subsidy|subsidy\s+.*?call\s+back",
     r"data\s+entry\s+operator|part-time\s+work",
     r"yojana\s+form|योजना\s+फार्म\s+.*?विवरण\s+अधूरा|राहत\s+राशि\s+की\s+जांच",
@@ -128,6 +148,8 @@ REMOTE_ACCESS_PATTERNS = [
 
 # Suspicious Link Patterns
 SUSPICIOUS_LINK_PATTERNS = [
+    r"\b(?:click\s+(?:this\s+)?link\s+to\s+(?:verify|update|complete)|verify\s+your\s+account\s+at|update\s+kyc\s+at)\b",
+    r"सत्यापन\s+हेतु\s+लिंक|लिंक\s+पर\s+क्लिक\s+करें|लिंक\s+खोल",
     r"\b(?:bit\.ly|tinyurl\.com|is\.gd|cutt\.ly|t\.co)/\S+",
     r"\b[a-zA-Z0-9.-]+\.(?:top|vip|xyz|cc|site|live)\b",
     r"\b\w+[-_](?:kyc|sbi|yono|cspdcl|police|customs)\.(?:top|vip|xyz|cc|site|live|online|in)\b",
@@ -178,8 +200,10 @@ def check_rules(text: str, raw_text: str = None) -> dict:
     for pat in FRAUDULENT_OTP_PATTERNS:
         found = find_in_targets(pat)
         if found:
-            rule_flags["explicit_otp_demand"] = True
-            matches.append({"rule": "fraudulent_otp_demand", "phrase": found[0], "risk": True})
+            matched_phrase = found[0] if isinstance(found[0], str) else str(found[0])
+            if not any(neg in matched_phrase.lower() for neg in ["न बताएं", "मत बताएं", "साझा न करें", "do not", "never", "झन बताव"]):
+                rule_flags["explicit_otp_demand"] = True
+                matches.append({"rule": "fraudulent_otp_demand", "phrase": matched_phrase, "risk": True})
 
     # Digital Arrest
     for pat in DIGITAL_ARREST_PATTERNS:

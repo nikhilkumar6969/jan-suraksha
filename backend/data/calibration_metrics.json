@@ -1,0 +1,1852 @@
+{
+  "status": "success",
+  "dataset_metadata": {
+    "title": "Jan Suraksha Hardened Multi-Category Evaluation Benchmark",
+    "description": "Balanced, independently labelled dataset covering ordinary messages, normal financial communications, suspicious prompts, explicit scams, and regional Hindi/Chhattisgarhi variations.",
+    "version": "1.0.0",
+    "total_samples": 100,
+    "category_distribution": {
+      "A_ordinary": 20,
+      "B_normal_financial": 20,
+      "C_suspicious": 20,
+      "D_explicit_scams": 20,
+      "E_regional": 20
+    },
+    "ground_truth_distribution": {
+      "genuine_total": 50,
+      "scam_suspicious_total": 50
+    }
+  },
+  "overall_classification": {
+    "sample_count": 100,
+    "accuracy": 0.98,
+    "precision": 0.98,
+    "recall": 0.98,
+    "f1": 0.98,
+    "false_positive_rate": 0.02,
+    "false_negative_rate": 0.02,
+    "confusion_matrix": {
+      "tn": 49,
+      "fp": 1,
+      "fn": 1,
+      "tp": 49
+    }
+  },
+  "calibration": {
+    "raw_ml_classifier": {
+      "expected_calibration_error": 0.2132,
+      "maximum_calibration_error": 0.3981,
+      "brier_score": 0.1469,
+      "n_bins": 10,
+      "bins": [
+        {
+          "bin_range": "0.0-0.1",
+          "count": 2,
+          "confidence": 0.0731,
+          "empirical_accuracy": 0.0,
+          "calibration_gap": 0.0731
+        },
+        {
+          "bin_range": "0.1-0.2",
+          "count": 5,
+          "confidence": 0.1771,
+          "empirical_accuracy": 0.2,
+          "calibration_gap": 0.0229
+        },
+        {
+          "bin_range": "0.2-0.3",
+          "count": 8,
+          "confidence": 0.2477,
+          "empirical_accuracy": 0.0,
+          "calibration_gap": 0.2477
+        },
+        {
+          "bin_range": "0.3-0.4",
+          "count": 4,
+          "confidence": 0.3666,
+          "empirical_accuracy": 0.25,
+          "calibration_gap": 0.1166
+        },
+        {
+          "bin_range": "0.4-0.5",
+          "count": 18,
+          "confidence": 0.4537,
+          "empirical_accuracy": 0.0556,
+          "calibration_gap": 0.3981
+        },
+        {
+          "bin_range": "0.5-0.6",
+          "count": 18,
+          "confidence": 0.5615,
+          "empirical_accuracy": 0.2778,
+          "calibration_gap": 0.2837
+        },
+        {
+          "bin_range": "0.6-0.7",
+          "count": 11,
+          "confidence": 0.6558,
+          "empirical_accuracy": 0.9091,
+          "calibration_gap": 0.2533
+        },
+        {
+          "bin_range": "0.7-0.8",
+          "count": 11,
+          "confidence": 0.7485,
+          "empirical_accuracy": 0.9091,
+          "calibration_gap": 0.1606
+        },
+        {
+          "bin_range": "0.8-0.9",
+          "count": 16,
+          "confidence": 0.858,
+          "empirical_accuracy": 0.9375,
+          "calibration_gap": 0.0795
+        },
+        {
+          "bin_range": "0.9-1.0",
+          "count": 7,
+          "confidence": 0.9265,
+          "empirical_accuracy": 1.0,
+          "calibration_gap": 0.0735
+        }
+      ]
+    },
+    "calibrated_hybrid_risk": {
+      "expected_calibration_error": 0.1495,
+      "maximum_calibration_error": 0.3182,
+      "brier_score": 0.0492,
+      "n_bins": 10,
+      "bins": [
+        {
+          "bin_range": "0.0-0.1",
+          "count": 7,
+          "confidence": 0.05,
+          "empirical_accuracy": 0.0,
+          "calibration_gap": 0.05
+        },
+        {
+          "bin_range": "0.1-0.2",
+          "count": 11,
+          "confidence": 0.1475,
+          "empirical_accuracy": 0.0,
+          "calibration_gap": 0.1475
+        },
+        {
+          "bin_range": "0.2-0.3",
+          "count": 28,
+          "confidence": 0.2437,
+          "empirical_accuracy": 0.0357,
+          "calibration_gap": 0.208
+        },
+        {
+          "bin_range": "0.3-0.4",
+          "count": 4,
+          "confidence": 0.3182,
+          "empirical_accuracy": 0.0,
+          "calibration_gap": 0.3182
+        },
+        {
+          "bin_range": "0.4-0.5",
+          "count": 0,
+          "confidence": 0.45,
+          "empirical_accuracy": 0.0,
+          "calibration_gap": 0.0
+        },
+        {
+          "bin_range": "0.5-0.6",
+          "count": 8,
+          "confidence": 0.6,
+          "empirical_accuracy": 0.875,
+          "calibration_gap": 0.275
+        },
+        {
+          "bin_range": "0.6-0.7",
+          "count": 0,
+          "confidence": 0.65,
+          "empirical_accuracy": 0.0,
+          "calibration_gap": 0.0
+        },
+        {
+          "bin_range": "0.7-0.8",
+          "count": 5,
+          "confidence": 0.7429,
+          "empirical_accuracy": 1.0,
+          "calibration_gap": 0.2571
+        },
+        {
+          "bin_range": "0.8-0.9",
+          "count": 11,
+          "confidence": 0.8587,
+          "empirical_accuracy": 1.0,
+          "calibration_gap": 0.1413
+        },
+        {
+          "bin_range": "0.9-1.0",
+          "count": 26,
+          "confidence": 0.9679,
+          "empirical_accuracy": 1.0,
+          "calibration_gap": 0.0321
+        }
+      ]
+    }
+  },
+  "category_metrics": {
+    "A_ordinary": {
+      "metrics": {
+        "sample_count": 20,
+        "accuracy": 1.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.0,
+        "confusion_matrix": {
+          "tn": 20,
+          "fp": 0,
+          "fn": 0,
+          "tp": 0
+        }
+      },
+      "samples": [
+        {
+          "id": "A_01",
+          "text": "Hello",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 75,
+          "calibrated_confidence": 0.7522,
+          "model_probability": {
+            "p_scam": 0.4941,
+            "p_genuine": 0.5059
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.247,
+          "correct": true
+        },
+        {
+          "id": "A_02",
+          "text": "Hi",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 79,
+          "calibrated_confidence": 0.7911,
+          "model_probability": {
+            "p_scam": 0.3919,
+            "p_genuine": 0.6081
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.196,
+          "correct": true
+        },
+        {
+          "id": "A_03",
+          "text": "Good morning",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 76,
+          "calibrated_confidence": 0.7593,
+          "model_probability": {
+            "p_scam": 0.4756,
+            "p_genuine": 0.5244
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.238,
+          "correct": true
+        },
+        {
+          "id": "A_04",
+          "text": "Namaste",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 79,
+          "calibrated_confidence": 0.7856,
+          "model_probability": {
+            "p_scam": 0.4063,
+            "p_genuine": 0.5937
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.203,
+          "correct": true
+        },
+        {
+          "id": "A_05",
+          "text": "Kaise ho?",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 75,
+          "calibrated_confidence": 0.7502,
+          "model_probability": {
+            "p_scam": 0.4996,
+            "p_genuine": 0.5004
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.25,
+          "correct": true
+        },
+        {
+          "id": "A_06",
+          "text": "Thank you",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 89,
+          "calibrated_confidence": 0.8879,
+          "model_probability": {
+            "p_scam": 0.1371,
+            "p_genuine": 0.8629
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.069,
+          "correct": true
+        },
+        {
+          "id": "A_07",
+          "text": "Where are you?",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 76,
+          "calibrated_confidence": 0.7574,
+          "model_probability": {
+            "p_scam": 0.4804,
+            "p_genuine": 0.5196
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.24,
+          "correct": true
+        },
+        {
+          "id": "A_08",
+          "text": "I will call you later.",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 77,
+          "calibrated_confidence": 0.7658,
+          "model_probability": {
+            "p_scam": 0.4583,
+            "p_genuine": 0.5417
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.229,
+          "correct": true
+        },
+        {
+          "id": "A_09",
+          "text": "Are you free this weekend?",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 75,
+          "calibrated_confidence": 0.7514,
+          "model_probability": {
+            "p_scam": 0.4963,
+            "p_genuine": 0.5037
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.248,
+          "correct": true
+        },
+        {
+          "id": "A_10",
+          "text": "Let us meet for lunch at 1 PM.",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 79,
+          "calibrated_confidence": 0.7867,
+          "model_probability": {
+            "p_scam": 0.4033,
+            "p_genuine": 0.5967
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.202,
+          "correct": true
+        },
+        {
+          "id": "A_11",
+          "text": "नमस्ते, आप कैसे हैं?",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 75,
+          "calibrated_confidence": 0.75,
+          "model_probability": {
+            "p_scam": 0.5304,
+            "p_genuine": 0.4696
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.265,
+          "correct": true
+        },
+        {
+          "id": "A_12",
+          "text": "सुप्रभात, आज का दिन शुभ हो।",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 75,
+          "calibrated_confidence": 0.75,
+          "model_probability": {
+            "p_scam": 0.5914,
+            "p_genuine": 0.4086
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.296,
+          "correct": true
+        },
+        {
+          "id": "A_13",
+          "text": "धन्यवाद, आपकी मदद के लिए शुक्रिया।",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 87,
+          "calibrated_confidence": 0.8666,
+          "model_probability": {
+            "p_scam": 0.1932,
+            "p_genuine": 0.8068
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.097,
+          "correct": true
+        },
+        {
+          "id": "A_14",
+          "text": "कहाँ हो भाई? मैं स्टेशन पर इंतज़ार कर रहा हूँ।",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 75,
+          "calibrated_confidence": 0.75,
+          "model_probability": {
+            "p_scam": 0.5759,
+            "p_genuine": 0.4241
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.288,
+          "correct": true
+        },
+        {
+          "id": "A_15",
+          "text": "मैं थोड़ी देर में कॉल बैक करता हूँ।",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 75,
+          "calibrated_confidence": 0.75,
+          "model_probability": {
+            "p_scam": 0.582,
+            "p_genuine": 0.418
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.291,
+          "correct": true
+        },
+        {
+          "id": "A_16",
+          "text": "खाना खा लिया क्या?",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 75,
+          "calibrated_confidence": 0.7537,
+          "model_probability": {
+            "p_scam": 0.4902,
+            "p_genuine": 0.5098
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.245,
+          "correct": true
+        },
+        {
+          "id": "A_17",
+          "text": "जय जोहार संगवारी!",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 84,
+          "calibrated_confidence": 0.8431,
+          "model_probability": {
+            "p_scam": 0.2551,
+            "p_genuine": 0.7449
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.128,
+          "correct": true
+        },
+        {
+          "id": "A_18",
+          "text": "कइसे हस भाई? सब कुशल मंगल हे?",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 75,
+          "calibrated_confidence": 0.75,
+          "model_probability": {
+            "p_scam": 0.557,
+            "p_genuine": 0.443
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.279,
+          "correct": true
+        },
+        {
+          "id": "A_19",
+          "text": "मंय अभी बजार म हंव, बाद म गोठियाबो।",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 75,
+          "calibrated_confidence": 0.75,
+          "model_probability": {
+            "p_scam": 0.5471,
+            "p_genuine": 0.4529
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.274,
+          "correct": true
+        },
+        {
+          "id": "A_20",
+          "text": "सुग्घर काम करे हस भाई, धन्यवाद।",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 84,
+          "calibrated_confidence": 0.8393,
+          "model_probability": {
+            "p_scam": 0.2651,
+            "p_genuine": 0.7349
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.133,
+          "correct": true
+        }
+      ]
+    },
+    "B_normal_financial": {
+      "metrics": {
+        "sample_count": 20,
+        "accuracy": 0.95,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "false_positive_rate": 0.05,
+        "false_negative_rate": 0.0,
+        "confusion_matrix": {
+          "tn": 19,
+          "fp": 1,
+          "fn": 0,
+          "tp": 0
+        }
+      },
+      "samples": [
+        {
+          "id": "B_01",
+          "text": "I transferred money.",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 79,
+          "calibrated_confidence": 0.7866,
+          "model_probability": {
+            "p_scam": 0.4038,
+            "p_genuine": 0.5962
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.202,
+          "correct": true
+        },
+        {
+          "id": "B_02",
+          "text": "Your payment was received.",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 86,
+          "calibrated_confidence": 0.8591,
+          "model_probability": {
+            "p_scam": 0.2128,
+            "p_genuine": 0.7872
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.106,
+          "correct": true
+        },
+        {
+          "id": "B_03",
+          "text": "Please check your bank statement.",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 84,
+          "calibrated_confidence": 0.8422,
+          "model_probability": {
+            "p_scam": 0.2574,
+            "p_genuine": 0.7426
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.129,
+          "correct": true
+        },
+        {
+          "id": "B_04",
+          "text": "Your electricity bill is due.",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 75,
+          "calibrated_confidence": 0.75,
+          "model_probability": {
+            "p_scam": 0.5523,
+            "p_genuine": 0.4477
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.276,
+          "correct": true
+        },
+        {
+          "id": "B_05",
+          "text": "I have already paid the school fees online.",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 77,
+          "calibrated_confidence": 0.7683,
+          "model_probability": {
+            "p_scam": 0.4519,
+            "p_genuine": 0.5481
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.226,
+          "correct": true
+        },
+        {
+          "id": "B_06",
+          "text": "Salary of Rs 35,000 has been credited to your savings account XX1092. -HDFC Bank",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 71,
+          "calibrated_confidence": 0.7117,
+          "model_probability": {
+            "p_scam": 0.2703,
+            "p_genuine": 0.7297
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.135,
+          "correct": true
+        },
+        {
+          "id": "B_07",
+          "text": "INR 350 debited for grocery purchase at Smart Bazaar. Avail Bal: INR 14,200.",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 88,
+          "calibrated_confidence": 0.8753,
+          "model_probability": {
+            "p_scam": 0.1703,
+            "p_genuine": 0.8297
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.085,
+          "correct": true
+        },
+        {
+          "id": "B_08",
+          "text": "Your monthly mobile postpaid bill of Rs 499 is generated. Pay via telecom app.",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 68,
+          "calibrated_confidence": 0.68,
+          "model_probability": {
+            "p_scam": 0.4697,
+            "p_genuine": 0.5303
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.235,
+          "correct": true
+        },
+        {
+          "id": "B_09",
+          "text": "CSPDCL: Your electricity bill for consumer 100234 is Rs 1,420 due on 28th.",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 72,
+          "calibrated_confidence": 0.7245,
+          "model_probability": {
+            "p_scam": 0.2307,
+            "p_genuine": 0.7693
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.115,
+          "correct": true
+        },
+        {
+          "id": "B_10",
+          "text": "458921 is your secret OTP for Amazon purchase of Rs 500. DO NOT SHARE WITH ANYONE. Bank never calls to ask OTP.",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 95,
+          "calibrated_confidence": 0.95,
+          "model_probability": {
+            "p_scam": 0.0496,
+            "p_genuine": 0.9504
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.05,
+          "correct": true
+        },
+        {
+          "id": "B_11",
+          "text": "मैंने 500 रुपये ट्रांसफर कर दिए हैं, चेक कर लो।",
+          "expected_verdict": "genuine",
+          "actual_verdict": "unsure",
+          "confidence_percent": 82,
+          "calibrated_confidence": 0.8154,
+          "model_probability": {
+            "p_scam": 0.8272,
+            "p_genuine": 0.1728
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.414,
+          "correct": false
+        },
+        {
+          "id": "B_12",
+          "text": "आपका बिजली बिल 650 रुपये देय है। अंतिम तिथि 30 तारीख है।",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 68,
+          "calibrated_confidence": 0.68,
+          "model_probability": {
+            "p_scam": 0.5188,
+            "p_genuine": 0.4812
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.259,
+          "correct": true
+        },
+        {
+          "id": "B_13",
+          "text": "खाता संख्या XX4582 में 10,000 रुपये जमा हुए हैं। कुल शेष: 45,000 रुपये। -SBI",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 68,
+          "calibrated_confidence": 0.68,
+          "model_probability": {
+            "p_scam": 0.4321,
+            "p_genuine": 0.5679
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.216,
+          "correct": true
+        },
+        {
+          "id": "B_14",
+          "text": "पासबुक में एंट्री करवाने कल बैंक शाखा जाना है।",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 95,
+          "calibrated_confidence": 0.95,
+          "model_probability": {
+            "p_scam": 0.4316,
+            "p_genuine": 0.5684
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.05,
+          "correct": true
+        },
+        {
+          "id": "B_15",
+          "text": "किराने की दुकान पर फोनपे से 250 रुपये का भुगतान सफल रहा।",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 69,
+          "calibrated_confidence": 0.687,
+          "model_probability": {
+            "p_scam": 0.3467,
+            "p_genuine": 0.6533
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.173,
+          "correct": true
+        },
+        {
+          "id": "B_16",
+          "text": "मैंने अपना बिजली का बिल कल ही ऑनलाइन भर दिया है।",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 75,
+          "calibrated_confidence": 0.75,
+          "model_probability": {
+            "p_scam": 0.5769,
+            "p_genuine": 0.4231
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.288,
+          "correct": true
+        },
+        {
+          "id": "B_17",
+          "text": "मंय बिजली बिल पटा दे हंव, रसीद मिल गे हे।",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 84,
+          "calibrated_confidence": 0.8414,
+          "model_probability": {
+            "p_scam": 0.2595,
+            "p_genuine": 0.7405
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.13,
+          "correct": true
+        },
+        {
+          "id": "B_18",
+          "text": "तोर खाता म 1000 रुपया भेज दे हंव, चेक कर लेबे।",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 80,
+          "calibrated_confidence": 0.8029,
+          "model_probability": {
+            "p_scam": 0.3607,
+            "p_genuine": 0.6393
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.18,
+          "correct": true
+        },
+        {
+          "id": "B_19",
+          "text": "सोसाइटी म धान के बोनस के पईसा आ गे हे।",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 95,
+          "calibrated_confidence": 0.95,
+          "model_probability": {
+            "p_scam": 0.7192,
+            "p_genuine": 0.2808
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.05,
+          "correct": true
+        },
+        {
+          "id": "B_20",
+          "text": "पासबुक चढ़ाए बर बिहाने बैंक शाखा जाबो।",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 95,
+          "calibrated_confidence": 0.95,
+          "model_probability": {
+            "p_scam": 0.4387,
+            "p_genuine": 0.5613
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.05,
+          "correct": true
+        }
+      ]
+    },
+    "C_suspicious": {
+      "metrics": {
+        "sample_count": 20,
+        "accuracy": 0.95,
+        "precision": 1.0,
+        "recall": 0.95,
+        "f1": 0.9744,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.05,
+        "confusion_matrix": {
+          "tn": 0,
+          "fp": 0,
+          "fn": 1,
+          "tp": 19
+        }
+      },
+      "samples": [
+        {
+          "id": "C_01",
+          "text": "Your KYC will expire.",
+          "expected_verdict": "unsure",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 82,
+          "calibrated_confidence": 0.8175,
+          "model_probability": {
+            "p_scam": 0.7255,
+            "p_genuine": 0.2745
+          },
+          "rule_risk": 0.6,
+          "combined_score": 0.663,
+          "correct": true
+        },
+        {
+          "id": "C_02",
+          "text": "Your account has been blocked.",
+          "expected_verdict": "unsure",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 72,
+          "calibrated_confidence": 0.72,
+          "model_probability": {
+            "p_scam": 0.4169,
+            "p_genuine": 0.5831
+          },
+          "rule_risk": 0.6,
+          "combined_score": 0.508,
+          "correct": true
+        },
+        {
+          "id": "C_03",
+          "text": "Click this link to verify your account.",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 80,
+          "calibrated_confidence": 0.8007,
+          "model_probability": {
+            "p_scam": 0.6952,
+            "p_genuine": 0.3048
+          },
+          "rule_risk": 0.5,
+          "combined_score": 0.598,
+          "correct": true
+        },
+        {
+          "id": "C_04",
+          "text": "Your SIM service will stop in 24 hours. Update KYC at bit.ly/sim-kyc.",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 89,
+          "calibrated_confidence": 0.8897,
+          "model_probability": {
+            "p_scam": 0.8555,
+            "p_genuine": 0.1445
+          },
+          "rule_risk": 0.5,
+          "combined_score": 0.678,
+          "correct": true
+        },
+        {
+          "id": "C_05",
+          "text": "Dear user, suspicious login detected. Verify identity at sbi-security.xyz.",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 82,
+          "calibrated_confidence": 0.8235,
+          "model_probability": {
+            "p_scam": 0.7363,
+            "p_genuine": 0.2637
+          },
+          "rule_risk": 0.5,
+          "combined_score": 0.618,
+          "correct": true
+        },
+        {
+          "id": "C_06",
+          "text": "Urgent: Your credit card reward points worth Rs 4500 will lapse today. Click to claim.",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "unsure",
+          "confidence_percent": 84,
+          "calibrated_confidence": 0.8364,
+          "model_probability": {
+            "p_scam": 0.632,
+            "p_genuine": 0.368
+          },
+          "rule_risk": 0.3,
+          "combined_score": 0.466,
+          "correct": true
+        },
+        {
+          "id": "C_07",
+          "text": "Your PAN card is not linked with bank account. Verify details immediately.",
+          "expected_verdict": "unsure",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 85,
+          "calibrated_confidence": 0.8482,
+          "model_probability": {
+            "p_scam": 0.7808,
+            "p_genuine": 0.2192
+          },
+          "rule_risk": 0.3,
+          "combined_score": 0.54,
+          "correct": true
+        },
+        {
+          "id": "C_08",
+          "text": "CSPDCL notice: Unpaid bill pending. Call officer at 9876543210 to avoid cutoff.",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "unsure",
+          "confidence_percent": 82,
+          "calibrated_confidence": 0.8241,
+          "model_probability": {
+            "p_scam": 0.8705,
+            "p_genuine": 0.1295
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.435,
+          "correct": true
+        },
+        {
+          "id": "C_09",
+          "text": "प्रिय ग्राहक, आपकी बैंक KYC समाप्त हो रही है। खाते के सत्यापन हेतु लिंक खोलें।",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 96,
+          "calibrated_confidence": 0.96,
+          "model_probability": {
+            "p_scam": 0.1924,
+            "p_genuine": 0.8076
+          },
+          "rule_risk": 1.0,
+          "combined_score": 0.95,
+          "correct": true
+        },
+        {
+          "id": "C_10",
+          "text": "आपका बिजली कनेक्शन बकाया बिल के कारण आज रात काट दिया जाएगा। संपर्क करें।",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "unsure",
+          "confidence_percent": 85,
+          "calibrated_confidence": 0.85,
+          "model_probability": {
+            "p_scam": 0.748,
+            "p_genuine": 0.252
+          },
+          "rule_risk": 0.3,
+          "combined_score": 0.524,
+          "correct": true
+        },
+        {
+          "id": "C_11",
+          "text": "आपके एसबीआई खाते में असामान्य गतिविधि देखी गई है। तुरंत लॉगिन करें।",
+          "expected_verdict": "unsure",
+          "actual_verdict": "unsure",
+          "confidence_percent": 84,
+          "calibrated_confidence": 0.8412,
+          "model_probability": {
+            "p_scam": 0.6559,
+            "p_genuine": 0.3441
+          },
+          "rule_risk": 0.3,
+          "combined_score": 0.478,
+          "correct": true
+        },
+        {
+          "id": "C_12",
+          "text": "प्रिय उपभोक्ता, आपका सिम कार्ड ब्लॉक कर दिया गया है। पुनः चालू करने हेतु कॉल करें।",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "unsure",
+          "confidence_percent": 83,
+          "calibrated_confidence": 0.8251,
+          "model_probability": {
+            "p_scam": 0.8753,
+            "p_genuine": 0.1247
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.438,
+          "correct": true
+        },
+        {
+          "id": "C_13",
+          "text": "तोर बैंक खाता ब्लॉक हो गे हे, ये लिंक म जाके आधार नंबर सत्यापित कर।",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 72,
+          "calibrated_confidence": 0.72,
+          "model_probability": {
+            "p_scam": 0.3673,
+            "p_genuine": 0.6327
+          },
+          "rule_risk": 0.6,
+          "combined_score": 0.484,
+          "correct": true
+        },
+        {
+          "id": "C_14",
+          "text": "बिजली बिल नइ भरे हस, संझा 9 बजे मीटर काट देबो।",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 75,
+          "calibrated_confidence": 0.7462,
+          "model_probability": {
+            "p_scam": 0.5942,
+            "p_genuine": 0.4058
+          },
+          "rule_risk": 0.6,
+          "combined_score": 0.597,
+          "correct": true
+        },
+        {
+          "id": "C_15",
+          "text": "तोर पैन कार्ड बैंक ले लिंक नइ हे, तुरते अपडेट करवाव।",
+          "expected_verdict": "unsure",
+          "actual_verdict": "unsure",
+          "confidence_percent": 82,
+          "calibrated_confidence": 0.8167,
+          "model_probability": {
+            "p_scam": 0.5336,
+            "p_genuine": 0.4664
+          },
+          "rule_risk": 0.3,
+          "combined_score": 0.417,
+          "correct": true
+        },
+        {
+          "id": "C_16",
+          "text": "Your loan approval is waiting. Confirm registration at bit.ly/easy-loan.",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 82,
+          "calibrated_confidence": 0.8214,
+          "model_probability": {
+            "p_scam": 0.7325,
+            "p_genuine": 0.2675
+          },
+          "rule_risk": 0.5,
+          "combined_score": 0.616,
+          "correct": true
+        },
+        {
+          "id": "C_17",
+          "text": "Aapka netbanking suspend ho sakta hai, turant branch call kare ya link khole.",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 89,
+          "calibrated_confidence": 0.8928,
+          "model_probability": {
+            "p_scam": 0.861,
+            "p_genuine": 0.139
+          },
+          "rule_risk": 0.3,
+          "combined_score": 0.581,
+          "correct": true
+        },
+        {
+          "id": "C_18",
+          "text": "Urgent: Aadhaar biometric update required or banking disabled.",
+          "expected_verdict": "unsure",
+          "actual_verdict": "unsure",
+          "confidence_percent": 85,
+          "calibrated_confidence": 0.85,
+          "model_probability": {
+            "p_scam": 0.7302,
+            "p_genuine": 0.2698
+          },
+          "rule_risk": 0.3,
+          "combined_score": 0.515,
+          "correct": true
+        },
+        {
+          "id": "C_19",
+          "text": "बधाई हो, आपका नंबर लॉटरी ड्रॉ के लिए चुना गया है।",
+          "expected_verdict": "unsure",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 76,
+          "calibrated_confidence": 0.7573,
+          "model_probability": {
+            "p_scam": 0.6172,
+            "p_genuine": 0.3828
+          },
+          "rule_risk": 0.6,
+          "combined_score": 0.609,
+          "correct": true
+        },
+        {
+          "id": "C_20",
+          "text": "तोर नाम म पार्सल आए हे, पोस्ट ऑफिस ले संपर्क करव।",
+          "expected_verdict": "unsure",
+          "actual_verdict": "genuine",
+          "confidence_percent": 75,
+          "calibrated_confidence": 0.75,
+          "model_probability": {
+            "p_scam": 0.6797,
+            "p_genuine": 0.3203
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.34,
+          "correct": false
+        }
+      ]
+    },
+    "D_explicit_scams": {
+      "metrics": {
+        "sample_count": 20,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.0,
+        "confusion_matrix": {
+          "tn": 0,
+          "fp": 0,
+          "fn": 0,
+          "tp": 20
+        }
+      },
+      "samples": [
+        {
+          "id": "D_01",
+          "text": "Share your OTP.",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 98,
+          "calibrated_confidence": 0.98,
+          "model_probability": {
+            "p_scam": 0.5521,
+            "p_genuine": 0.4479
+          },
+          "rule_risk": 0.8,
+          "combined_score": 0.98,
+          "correct": true
+        },
+        {
+          "id": "D_02",
+          "text": "Enter your UPI PIN to receive money.",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 98,
+          "calibrated_confidence": 0.98,
+          "model_probability": {
+            "p_scam": 0.5864,
+            "p_genuine": 0.4136
+          },
+          "rule_risk": 0.8,
+          "combined_score": 0.98,
+          "correct": true
+        },
+        {
+          "id": "D_03",
+          "text": "Pay immediately or police will arrest you.",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 92,
+          "calibrated_confidence": 0.9198,
+          "model_probability": {
+            "p_scam": 0.9097,
+            "p_genuine": 0.0903
+          },
+          "rule_risk": 0.3,
+          "combined_score": 0.605,
+          "correct": true
+        },
+        {
+          "id": "D_04",
+          "text": "Install AnyDesk for bank verification.",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 77,
+          "calibrated_confidence": 0.7711,
+          "model_probability": {
+            "p_scam": 0.6419,
+            "p_genuine": 0.3581
+          },
+          "rule_risk": 0.6,
+          "combined_score": 0.621,
+          "correct": true
+        },
+        {
+          "id": "D_05",
+          "text": "Dear customer, share the 6-digit OTP sent to your phone to activate ATM card.",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 98,
+          "calibrated_confidence": 0.98,
+          "model_probability": {
+            "p_scam": 0.8338,
+            "p_genuine": 0.1662
+          },
+          "rule_risk": 0.8,
+          "combined_score": 0.98,
+          "correct": true
+        },
+        {
+          "id": "D_06",
+          "text": "You have received cashback of Rs 2500. Enter your 6-digit UPI PIN to credit to bank.",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 98,
+          "calibrated_confidence": 0.98,
+          "model_probability": {
+            "p_scam": 0.5842,
+            "p_genuine": 0.4158
+          },
+          "rule_risk": 0.8,
+          "combined_score": 0.98,
+          "correct": true
+        },
+        {
+          "id": "D_07",
+          "text": "CBI Cyber Crime notice: You are placed under DIGITAL ARREST. Pay clearance bond of Rs 50,000 immediately.",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 98,
+          "calibrated_confidence": 0.98,
+          "model_probability": {
+            "p_scam": 0.9275,
+            "p_genuine": 0.0725
+          },
+          "rule_risk": 1.0,
+          "combined_score": 0.98,
+          "correct": true
+        },
+        {
+          "id": "D_08",
+          "text": "Download QuickSupport APK from link to complete verification or SIM deactivated.",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 96,
+          "calibrated_confidence": 0.96,
+          "model_probability": {
+            "p_scam": 0.8889,
+            "p_genuine": 0.1111
+          },
+          "rule_risk": 1.0,
+          "combined_score": 0.95,
+          "correct": true
+        },
+        {
+          "id": "D_09",
+          "text": "Congratulations! You won 25 Lakhs in KBC Lottery. Share 6-digit code to claim prize.",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 98,
+          "calibrated_confidence": 0.98,
+          "model_probability": {
+            "p_scam": 0.892,
+            "p_genuine": 0.108
+          },
+          "rule_risk": 1.0,
+          "combined_score": 0.98,
+          "correct": true
+        },
+        {
+          "id": "D_10",
+          "text": "SBI manager: Tell me the OTP immediately to unblock your netbanking account.",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 87,
+          "calibrated_confidence": 0.8718,
+          "model_probability": {
+            "p_scam": 0.8232,
+            "p_genuine": 0.1768
+          },
+          "rule_risk": 0.3,
+          "combined_score": 0.562,
+          "correct": true
+        },
+        {
+          "id": "D_11",
+          "text": "पैसे पाने के लिए अपना UPI पिन दर्ज करें।",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 98,
+          "calibrated_confidence": 0.98,
+          "model_probability": {
+            "p_scam": 0.8552,
+            "p_genuine": 0.1448
+          },
+          "rule_risk": 0.8,
+          "combined_score": 0.98,
+          "correct": true
+        },
+        {
+          "id": "D_12",
+          "text": "अपना 6 अंकों का गुप्त OTP हमारे बैंक अधिकारी को बताएं।",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 98,
+          "calibrated_confidence": 0.98,
+          "model_probability": {
+            "p_scam": 0.731,
+            "p_genuine": 0.269
+          },
+          "rule_risk": 0.8,
+          "combined_score": 0.98,
+          "correct": true
+        },
+        {
+          "id": "D_13",
+          "text": "क्राइम ब्रांच डिजिटल अरेस्ट: आपके पार्सल में ड्रग्स पकड़े गए हैं। तुरंत 30,000 रु जमानत भरें।",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 98,
+          "calibrated_confidence": 0.98,
+          "model_probability": {
+            "p_scam": 0.9242,
+            "p_genuine": 0.0758
+          },
+          "rule_risk": 1.0,
+          "combined_score": 0.98,
+          "correct": true
+        },
+        {
+          "id": "D_14",
+          "text": "तुरंत AnyDesk ऐप डाउनलोड करें और 9 अंकों का कोड बताएं।",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 95,
+          "calibrated_confidence": 0.9509,
+          "model_probability": {
+            "p_scam": 0.9657,
+            "p_genuine": 0.0343
+          },
+          "rule_risk": 0.9,
+          "combined_score": 0.933,
+          "correct": true
+        },
+        {
+          "id": "D_15",
+          "text": "बधाई! आपने 50,000 रुपये का इनाम जीता है। खाते में पैसे लेने के लिए UPI पिन डालें।",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 98,
+          "calibrated_confidence": 0.98,
+          "model_probability": {
+            "p_scam": 0.6999,
+            "p_genuine": 0.3001
+          },
+          "rule_risk": 0.8,
+          "combined_score": 0.98,
+          "correct": true
+        },
+        {
+          "id": "D_16",
+          "text": "खाता म पईसा आही, मोबाइल निकालव अउ तुरते UPI पिन डारव।",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 98,
+          "calibrated_confidence": 0.98,
+          "model_probability": {
+            "p_scam": 0.8738,
+            "p_genuine": 0.1262
+          },
+          "rule_risk": 1.0,
+          "combined_score": 0.98,
+          "correct": true
+        },
+        {
+          "id": "D_17",
+          "text": "मोबाइल म आए 6 अंक के OTP ला बताव, नइ ते खाता सील हो जाही।",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 98,
+          "calibrated_confidence": 0.98,
+          "model_probability": {
+            "p_scam": 0.9109,
+            "p_genuine": 0.0891
+          },
+          "rule_risk": 0.8,
+          "combined_score": 0.98,
+          "correct": true
+        },
+        {
+          "id": "D_18",
+          "text": "पुलिस थाना ले बोलत हंव, तोर नाम म वारंट हे, तुरते 20000 रुपया भेज नइ ते जेल जाबे।",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 98,
+          "calibrated_confidence": 0.98,
+          "model_probability": {
+            "p_scam": 0.6946,
+            "p_genuine": 0.3054
+          },
+          "rule_risk": 1.0,
+          "combined_score": 0.98,
+          "correct": true
+        },
+        {
+          "id": "D_19",
+          "text": "AnyDesk ऐप डाउनलोड करव अउ अपन स्क्रीन शेयर करव।",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 89,
+          "calibrated_confidence": 0.8931,
+          "model_probability": {
+            "p_scam": 0.8616,
+            "p_genuine": 0.1384
+          },
+          "rule_risk": 0.6,
+          "combined_score": 0.731,
+          "correct": true
+        },
+        {
+          "id": "D_20",
+          "text": "CSPDCL अधिकारी बोलत हंव, बिजली चालू रखे बर तुरते 5000 रुपया ट्रांसफर करव।",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 89,
+          "calibrated_confidence": 0.8873,
+          "model_probability": {
+            "p_scam": 0.8512,
+            "p_genuine": 0.1488
+          },
+          "rule_risk": 0.3,
+          "combined_score": 0.576,
+          "correct": true
+        }
+      ]
+    },
+    "E_regional": {
+      "metrics": {
+        "sample_count": 20,
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.0,
+        "confusion_matrix": {
+          "tn": 10,
+          "fp": 0,
+          "fn": 0,
+          "tp": 10
+        }
+      },
+      "samples": [
+        {
+          "id": "E_01",
+          "text": "का हाल चाल हे संगवारी? चाय पिए बर चलबो का?",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 75,
+          "calibrated_confidence": 0.7518,
+          "model_probability": {
+            "p_scam": 0.4953,
+            "p_genuine": 0.5047
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.248,
+          "correct": true
+        },
+        {
+          "id": "E_02",
+          "text": "कल गांव म धान कटाई के काम सुरू होही।",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 87,
+          "calibrated_confidence": 0.8669,
+          "model_probability": {
+            "p_scam": 0.1923,
+            "p_genuine": 0.8077
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.096,
+          "correct": true
+        },
+        {
+          "id": "E_03",
+          "text": "मंय अपन हाथ ले बिल पटाए हंव, कोनो फोन नइ करे हंव।",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 95,
+          "calibrated_confidence": 0.95,
+          "model_probability": {
+            "p_scam": 0.6237,
+            "p_genuine": 0.3763
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.05,
+          "correct": true
+        },
+        {
+          "id": "E_04",
+          "text": "बैंक कभू फोन म गुप्त ओटीपी नइ मांगय, ककरो ले साझा झन करव।",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 95,
+          "calibrated_confidence": 0.95,
+          "model_probability": {
+            "p_scam": 0.0966,
+            "p_genuine": 0.9034
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.05,
+          "correct": true
+        },
+        {
+          "id": "E_05",
+          "text": "पईसा निकाले बर बैंक शाखा म जाके फॉर्म भरना पड़ही।",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 95,
+          "calibrated_confidence": 0.95,
+          "model_probability": {
+            "p_scam": 0.5766,
+            "p_genuine": 0.4234
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.05,
+          "correct": true
+        },
+        {
+          "id": "E_06",
+          "text": "हेलो भैया, घर कब आ रहे हो? मम्मी पूछ रही हैं।",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 78,
+          "calibrated_confidence": 0.7795,
+          "model_probability": {
+            "p_scam": 0.4223,
+            "p_genuine": 0.5777
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.211,
+          "correct": true
+        },
+        {
+          "id": "E_07",
+          "text": "ऑफिस में काम ज्यादा है, आज थोड़ा लेट हो जाऊंगा।",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 75,
+          "calibrated_confidence": 0.75,
+          "model_probability": {
+            "p_scam": 0.5845,
+            "p_genuine": 0.4155
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.292,
+          "correct": true
+        },
+        {
+          "id": "E_08",
+          "text": "बिजली विभाग का मैसेज आया था लेकिन मैंने ऑनलाइन पहले ही बिल भर दिया है।",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 75,
+          "calibrated_confidence": 0.75,
+          "model_probability": {
+            "p_scam": 0.5392,
+            "p_genuine": 0.4608
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.27,
+          "correct": true
+        },
+        {
+          "id": "E_09",
+          "text": "सुप्रभात! आज की मीटिंग 10 बजे है।",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 75,
+          "calibrated_confidence": 0.75,
+          "model_probability": {
+            "p_scam": 0.5246,
+            "p_genuine": 0.4754
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.262,
+          "correct": true
+        },
+        {
+          "id": "E_10",
+          "text": "Bhai kal Raipur jaa raha hu, kuch mangwana hai kya?",
+          "expected_verdict": "genuine",
+          "actual_verdict": "genuine",
+          "confidence_percent": 85,
+          "calibrated_confidence": 0.8524,
+          "model_probability": {
+            "p_scam": 0.2304,
+            "p_genuine": 0.7696
+          },
+          "rule_risk": 0.0,
+          "combined_score": 0.115,
+          "correct": true
+        },
+        {
+          "id": "E_11",
+          "text": "ए संगवारी, तोर लॉटरी लगे हे, मोबाइल के OTP ला तुरते भेज।",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 98,
+          "calibrated_confidence": 0.98,
+          "model_probability": {
+            "p_scam": 0.7478,
+            "p_genuine": 0.2522
+          },
+          "rule_risk": 1.0,
+          "combined_score": 0.98,
+          "correct": true
+        },
+        {
+          "id": "E_12",
+          "text": "डिजिटल अरेस्ट! तोर आधार कार्ड म नशीला दवाई पकड़ाए हे, पुलिस आही।",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 98,
+          "calibrated_confidence": 0.98,
+          "model_probability": {
+            "p_scam": 0.7894,
+            "p_genuine": 0.2106
+          },
+          "rule_risk": 0.8,
+          "combined_score": 0.98,
+          "correct": true
+        },
+        {
+          "id": "E_13",
+          "text": "बिजली बिल नइ भरे हस, संझा 9:30 बजे बिजली लाइन कट जाही, तुरते ये नंबर म कॉल करव।",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 90,
+          "calibrated_confidence": 0.8994,
+          "model_probability": {
+            "p_scam": 0.846,
+            "p_genuine": 0.154
+          },
+          "rule_risk": 0.9,
+          "combined_score": 0.95,
+          "correct": true
+        },
+        {
+          "id": "E_14",
+          "text": "घर बैठे मोबाइल म लाइक करके 3000 रुपया कमाव, पहिले 500 रुपया रजिस्ट्रेशन फीस डारव।",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 91,
+          "calibrated_confidence": 0.9139,
+          "model_probability": {
+            "p_scam": 0.8991,
+            "p_genuine": 0.1009
+          },
+          "rule_risk": 0.6,
+          "combined_score": 0.75,
+          "correct": true
+        },
+        {
+          "id": "E_15",
+          "text": "तोर महतारी वंदन योजना के पईसा रुके हे, पाए बर अपन एटीएम पिन बताव।",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 98,
+          "calibrated_confidence": 0.98,
+          "model_probability": {
+            "p_scam": 0.7925,
+            "p_genuine": 0.2075
+          },
+          "rule_risk": 0.8,
+          "combined_score": 0.98,
+          "correct": true
+        },
+        {
+          "id": "E_16",
+          "text": "कस्टमर केयर: आपका क्रेडिट कार्ड रिवॉर्ड ब्लॉक हो गया है, ओटीपी साझा करें।",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 98,
+          "calibrated_confidence": 0.98,
+          "model_probability": {
+            "p_scam": 0.6411,
+            "p_genuine": 0.3589
+          },
+          "rule_risk": 0.8,
+          "combined_score": 0.98,
+          "correct": true
+        },
+        {
+          "id": "E_17",
+          "text": "आपका पार्सल कस्टम में अटका है, छुड़ाने के लिए तुरंत 1200 रु पे करें।",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 92,
+          "calibrated_confidence": 0.9214,
+          "model_probability": {
+            "p_scam": 0.9125,
+            "p_genuine": 0.0875
+          },
+          "rule_risk": 0.3,
+          "combined_score": 0.606,
+          "correct": true
+        },
+        {
+          "id": "E_18",
+          "text": "Share your Google Pay OTP to receive 1000 rupees cashback.",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 98,
+          "calibrated_confidence": 0.98,
+          "model_probability": {
+            "p_scam": 0.6326,
+            "p_genuine": 0.3674
+          },
+          "rule_risk": 0.8,
+          "combined_score": 0.98,
+          "correct": true
+        },
+        {
+          "id": "E_19",
+          "text": "Police cyber cell notice: Under digital arrest. Pay fine immediately.",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 98,
+          "calibrated_confidence": 0.98,
+          "model_probability": {
+            "p_scam": 0.9351,
+            "p_genuine": 0.0649
+          },
+          "rule_risk": 1.0,
+          "combined_score": 0.98,
+          "correct": true
+        },
+        {
+          "id": "E_20",
+          "text": "Dear customer, your SBI account is locked. Download anydesk.apk to unlock.",
+          "expected_verdict": "likely_scam",
+          "actual_verdict": "likely_scam",
+          "confidence_percent": 92,
+          "calibrated_confidence": 0.9182,
+          "model_probability": {
+            "p_scam": 0.8136,
+            "p_genuine": 0.1864
+          },
+          "rule_risk": 1.0,
+          "combined_score": 0.907,
+          "correct": true
+        }
+      ]
+    }
+  },
+  "language_metrics": {
+    "en": {
+      "sample_count": 42,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "false_negative_rate": 0.0,
+      "confusion_matrix": {
+        "tn": 19,
+        "fp": 0,
+        "fn": 0,
+        "tp": 23
+      }
+    },
+    "hinglish": {
+      "sample_count": 3,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "false_negative_rate": 0.0,
+      "confusion_matrix": {
+        "tn": 2,
+        "fp": 0,
+        "fn": 0,
+        "tp": 1
+      }
+    },
+    "hi": {
+      "sample_count": 28,
+      "accuracy": 0.9643,
+      "precision": 0.9231,
+      "recall": 1.0,
+      "f1": 0.96,
+      "false_positive_rate": 0.0625,
+      "false_negative_rate": 0.0,
+      "confusion_matrix": {
+        "tn": 15,
+        "fp": 1,
+        "fn": 0,
+        "tp": 12
+      }
+    },
+    "chg": {
+      "sample_count": 27,
+      "accuracy": 0.963,
+      "precision": 1.0,
+      "recall": 0.9286,
+      "f1": 0.963,
+      "false_positive_rate": 0.0,
+      "false_negative_rate": 0.0714,
+      "confusion_matrix": {
+        "tn": 13,
+        "fp": 0,
+        "fn": 1,
+        "tp": 13
+      }
+    }
+  }
+}

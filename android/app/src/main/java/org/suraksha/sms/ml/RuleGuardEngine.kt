@@ -16,11 +16,16 @@ object RuleGuardEngine {
         Pattern.compile("ककरो\\s+ले\\s+झन\\s+बताव", Pattern.CASE_INSENSITIVE)
     )
 
-    // Fraudulent OTP demands
+    // Fraudulent OTP & UPI PIN demands
     private val FRAUDULENT_OTP_PATTERNS = listOf(
-        Pattern.compile("(?:share|send|tell|give|enter)\\s+(?:your\\s+)?(?:6\\s*[-]?\\s*digit\\s+)?(?:otp|pin|cvv|password)\\s+(?:to|with|on)\\b", Pattern.CASE_INSENSITIVE),
-        Pattern.compile("otp\\s+(?:batao|bataiye|send\\s+karo|share\\s+kare|dijiye)\\b", Pattern.CASE_INSENSITIVE),
-        Pattern.compile("ओटीपी\\s*(?:बताएं|दीजिए|भेजें|दर्ज\\s+करें)\\b", Pattern.CASE_INSENSITIVE),
+        Pattern.compile("(?:share|send|tell|give|enter|forward|put|type)\\s+(?:the\\s+)?(?:your\\s+)?(?:google\\s+pay\\s+|gpay\\s+|phonepe\\s+|paytm\\s+|bank\\s+)?(?:6\\s*[-]?\\s*digit\\s+)?(?:upi\\s+)?(?:otp|pin|cvv|code|password)\\b", Pattern.CASE_INSENSITIVE),
+        Pattern.compile("enter\\s+(?:your\\s+)?(?:upi\\s+)?pin\\s+to\\s+(?:receive|accept|get|credit)\\s+(?:money|cashback|payment|rupees)\\b", Pattern.CASE_INSENSITIVE),
+        Pattern.compile("(?:upi\\s+)?pin\\s+(?:dalo|batao|share\\s+kare|daraw|bataw)\\b", Pattern.CASE_INSENSITIVE),
+        Pattern.compile("otp\\s+(?:batao|bataiye|send\\s+karo|share\\s+kare|dijiye|forward|bataye)\\b", Pattern.CASE_INSENSITIVE),
+        Pattern.compile("पैसे\\s+पाने\\s+के\\s+लिए\\s+(?:अपना\\s+)?(?:upi\\s+)?पिन\\s*(?:डालें|दर्ज\\s+करें|लगाएं)", Pattern.CASE_INSENSITIVE),
+        Pattern.compile("खाता\\s+म\\s+प[ईइ]सा\\s+आही.*(?:upi\\s+)?पिन", Pattern.CASE_INSENSITIVE),
+        Pattern.compile("प[ईइ]सा\\s+पाए\\s+बर.*(?:upi\\s+)?पिन", Pattern.CASE_INSENSITIVE),
+        Pattern.compile("ओटीपी\\s*(?:बताएं|दीजिए|भेजें|दर्ज\\s+करें|बताव|डारव)\\b", Pattern.CASE_INSENSITIVE),
         Pattern.compile("card\\s+ka\\s+cvv\\s+aur\\s+otp\\b", Pattern.CASE_INSENSITIVE)
     )
 
@@ -77,10 +82,14 @@ object RuleGuardEngine {
         }
 
         for (p in FRAUDULENT_OTP_PATTERNS) {
-            if (p.matcher(normalizedText).find()) {
-                isOtpDemand = true
-                matched.add("EXPLICIT_OTP_THEFT")
-                break
+            val matcher = p.matcher(normalizedText)
+            if (matcher.find()) {
+                val matchedText = matcher.group().lowercase()
+                if (!matchedText.contains("न बताएं") && !matchedText.contains("do not") && !matchedText.contains("never")) {
+                    isOtpDemand = true
+                    matched.add("EXPLICIT_OTP_THEFT")
+                    break
+                }
             }
         }
 
