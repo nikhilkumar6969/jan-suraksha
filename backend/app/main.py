@@ -53,9 +53,23 @@ app.add_middleware(
 
 frontend_dir = workspace_dir / "frontend"
 
+MAX_AUDIO_UPLOAD_BYTES = 25 * 1024 * 1024  # 25 MB max upload
+MAX_IMAGE_UPLOAD_BYTES = 10 * 1024 * 1024  # 10 MB max upload
+
+def cleanup_orphaned_temp_files():
+    data_dir = backend_dir / "data"
+    if data_dir.exists():
+        for f in data_dir.glob("temp_*"):
+            try:
+                f.unlink(missing_ok=True)
+                logger.info(f"Cleaned up orphaned temp file: {f.name}")
+            except Exception as e:
+                logger.warning(f"Could not clean up temp file {f.name}: {e}")
+
 @app.on_event("startup")
 def startup_event():
     init_db()
+    cleanup_orphaned_temp_files()
     try:
         from app.calls.transcribe import prewarm_models
         prewarm_models()
@@ -102,9 +116,14 @@ async def detect_call_endpoint(
     notice = ""
 
     if audio and audio.filename:
+        content = await audio.read()
+        if len(content) > MAX_AUDIO_UPLOAD_BYTES:
+            raise HTTPException(
+                status_code=413,
+                detail=f"File too large ({len(content) / (1024*1024):.1f} MB). Maximum allowed audio size is 25 MB."
+            )
         # Save temp audio file
         temp_path = backend_dir / "data" / f"temp_{audio.filename}"
-        content = await audio.read()
         temp_path.write_bytes(content)
         try:
             target_lang = call_lang or "auto"
@@ -161,6 +180,11 @@ async def stream_chunk_endpoint(
     raw_bytes = b""
     if audio_chunk:
         content = await audio_chunk.read()
+        if len(content) > 2 * 1024 * 1024:
+            raise HTTPException(
+                status_code=413,
+                detail="Audio chunk exceeds maximum allowed size of 2 MB."
+            )
         # Decode webm/ogg/wav container to 16kHz mono PCM if needed
         fname = audio_chunk.filename or "chunk.wav"
         if any(fname.endswith(ext) for ext in [".webm", ".ogg", ".wav", ".mp3", ".m4a"]):
@@ -326,6 +350,11 @@ async def detect_qr_endpoint(
     qr_text = ""
     if image and image.filename:
         content = await image.read()
+        if len(content) > MAX_IMAGE_UPLOAD_BYTES:
+            raise HTTPException(
+                status_code=413,
+                detail=f"Image too large ({len(content) / (1024*1024):.1f} MB). Maximum allowed image size is 10 MB."
+            )
         qr_text = decode_qr_image_bytes(content)
         if not qr_text:
             return JSONResponse(
