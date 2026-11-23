@@ -121,3 +121,5 @@ const ReportsManager = {
     }
   }
 };
+
+window.ReportsManager = ReportsManager;

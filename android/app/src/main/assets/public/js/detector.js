@@ -179,13 +179,47 @@ const MessageDetector = {
 
   renderOfflineFallback(text) {
     const textLower = text.toLowerCase();
-    const isScam = textLower.includes('otp') || textLower.includes('kyc') || textLower.includes('arrest') || textLower.includes('bijli');
+
+    // 1. Genuine bank safety guard patterns (explicit warnings NOT to share OTP/password)
+    const isGenuineSafety = /(?:do\s+not\s+share|never\s+share|bank\s+never\s+calls?|bank\s+never\s+asks?|kisi\s+ko\s+(?:bhi\s+)?(?:na|mat)\s+batay|kisi\s+ko\s+share\s+na\s+kare|साझा\s+न\s+करें|किसी\s+को\s+न\s+बताएं|ओटीपी\s+साझा\s+न\s+करें|ककरो\s+ले\s+साझा\s+झन\s+करव|बैंक\s+कभी\s+भी\s+otp\s+नहीं\s+पूछता)/i.test(text);
+
+    // 2. Fraudulent OTP / PIN demands (requesting customer to give/send/share secrets)
+    const isFraudOtpDemand = /(?:(?:share|send|tell|give|enter)\s+(?:your\s+)?(?:6\s*[-]?\s*digit\s+)?(?:otp|pin|cvv|password)|otp\s+(?:batao|bataiye|send\s+karo|share\s+kare|dijiye|forward)|apna\s+otp\s+batao|ओटीपी\s*(?:बताएं|दीजिए|भेजें|दर्ज\s+करें|बताव|डारव|भेजव)|मोबाइल\s+म\s+आए\s+otp)/i.test(text);
+
+    // 3. Clear cyber fraud patterns (disconnection, arrest, fake KYC, apk malware)
+    const isScamThreat = /(?:digital\s+arrest|डिजिटल\s+अरेस्ट|police\s+notice|arrest\s+warrant|bijli.*(?:kaat|cut|disconnected|band)|बिजली.*(?:काट|कट|बिल)|(?:kyc|account|sim).*(?:suspended|blocked|update|deactivated)|केवाईसी.*अपडेट|\.apk\b)/i.test(text);
+
+    // 4. Genuine transaction notifications (credit/debit, merchant purchase)
+    const isGenuineTxn = /(?:credited|debited|txn\s+of|transaction\s+of|inr\s+\d+|rs\.?\s*\d+|spent\s+on\s+card|valid\s+for\s+\d+\s+mins?)/i.test(text);
+
+    let verdict = 'genuine';
+    let confidence = 88;
+    let explanation = 'Offline check: No urgent fraud patterns detected.';
+
+    if (isFraudOtpDemand) {
+      verdict = 'likely_scam';
+      confidence = 95;
+      explanation = 'Offline rule alert: Message demands secret OTP/PIN/password. Legitimate banks and officials never demand OTP.';
+    } else if (isGenuineSafety || (isGenuineTxn && !isScamThreat)) {
+      verdict = 'genuine';
+      confidence = 94;
+      explanation = 'Offline rule alert: Genuine bank transaction alert detected with security warnings to never share OTP.';
+    } else if (isScamThreat) {
+      verdict = 'likely_scam';
+      confidence = 92;
+      explanation = 'Offline rule alert: High-risk urgency tactics detected (electricity disconnection, arrest, or fake KYC threat).';
+    } else if (textLower.includes('kyc') || textLower.includes('verify') || textLower.includes('urgent')) {
+      verdict = 'unsure';
+      confidence = 65;
+      explanation = 'Offline check: Unverified urgent prompt. Please confirm directly with official customer care.';
+    }
+
     this.renderVerdict({
-      verdict: isScam ? 'likely_scam' : 'genuine',
-      confidence_percent: 88,
-      explanation: isScam ? 'Offline check detected keywords associated with high cyber fraud risks.' : 'No urgent fraud patterns detected offline.',
+      verdict: verdict,
+      confidence_percent: confidence,
+      explanation: explanation,
       highlighted_html: text,
-      stages: { current_stage: isScam ? 2 : 0, stages: [] },
+      stages: { current_stage: verdict === 'likely_scam' ? 2 : 0, stages: [] },
       top_ngrams: []
     });
   },
@@ -202,3 +236,5 @@ const MessageDetector = {
     if (window.App) window.App.showToast('🔊 बोलकर सुनाया जा रहा है (Playing audio)');
   }
 };
+
+window.MessageDetector = MessageDetector;

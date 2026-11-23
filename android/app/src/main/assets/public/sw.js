@@ -1,5 +1,5 @@
 // Suraksha Service Worker - Offline Caching Strategy
-const CACHE_NAME = 'suraksha-v2.1';
+const CACHE_NAME = 'suraksha-v2.2';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -57,7 +57,22 @@ const ASSETS_TO_CACHE = [
   '/assets/alerts/alert_extortion_en.wav',
   '/assets/alerts/alert_bank_kyc_hi.wav',
   '/assets/alerts/alert_bank_kyc_chg.wav',
-  '/assets/alerts/alert_bank_kyc_en.wav'
+  '/assets/alerts/alert_bank_kyc_en.wav',
+  '/assets/lessons/lesson_otp_hi.wav',
+  '/assets/lessons/lesson_otp_chg.wav',
+  '/assets/lessons/lesson_otp_en.wav',
+  '/assets/lessons/lesson_atm_pin_hi.wav',
+  '/assets/lessons/lesson_atm_pin_chg.wav',
+  '/assets/lessons/lesson_atm_pin_en.wav',
+  '/assets/lessons/lesson_upi_pin_hi.wav',
+  '/assets/lessons/lesson_upi_pin_chg.wav',
+  '/assets/lessons/lesson_upi_pin_en.wav',
+  '/assets/lessons/lesson_qr_code_hi.wav',
+  '/assets/lessons/lesson_qr_code_chg.wav',
+  '/assets/lessons/lesson_qr_code_en.wav',
+  '/assets/lessons/lesson_fake_bank_call_hi.wav',
+  '/assets/lessons/lesson_fake_bank_call_chg.wav',
+  '/assets/lessons/lesson_fake_bank_call_en.wav'
 ];
 
 self.addEventListener('install', (event) => {

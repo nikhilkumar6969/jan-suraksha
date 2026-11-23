@@ -113,7 +113,7 @@ const DashboardManager = {
     });
 
     box.innerHTML = `
-      <svg viewBox="0 0 600 ${chartHeight}" width="100%" height="auto" preserveAspectRatio="xMinYMin meet" xmlns="http://www.w3.org/2000/svg">
+      <svg viewBox="0 0 600 ${chartHeight}" width="100%" preserveAspectRatio="xMinYMin meet" xmlns="http://www.w3.org/2000/svg" style="max-width: 100%; height: auto; display: block;">
         ${barsHtml}
       </svg>
     `;
@@ -154,7 +154,7 @@ const DashboardManager = {
     });
 
     box.innerHTML = `
-      <svg viewBox="0 0 600 ${chartHeight}" width="100%" height="auto" preserveAspectRatio="xMinYMin meet" xmlns="http://www.w3.org/2000/svg">
+      <svg viewBox="0 0 600 ${chartHeight}" width="100%" preserveAspectRatio="xMinYMin meet" xmlns="http://www.w3.org/2000/svg" style="max-width: 100%; height: auto; display: block;">
         ${barsHtml}
       </svg>
     `;

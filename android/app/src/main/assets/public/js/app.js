@@ -104,10 +104,10 @@ window.App = {
         if (!val) return;
         this.navigate('check');
         this.switchSubtab('subtab-sms');
-        const scamInput = document.getElementById('scamTextInput');
+        const scamInput = document.getElementById('smsInput') || document.getElementById('scamTextInput');
         if (scamInput) {
           scamInput.value = val;
-          const btn = document.getElementById('btnAnalyzeScam');
+          const btn = document.getElementById('btnAnalyzeSms') || document.getElementById('btnAnalyzeScam');
           if (btn) btn.click();
         }
       });
