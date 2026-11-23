@@ -94,3 +94,5 @@ const HelpManager = {
     if (window.App) window.App.showToast('साक्ष्य सारांश डाउनलोड हो गया है (Evidence Summary Downloaded)');
   }
 };
+
+window.HelpManager = HelpManager;
