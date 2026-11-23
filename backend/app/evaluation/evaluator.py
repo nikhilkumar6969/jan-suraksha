@@ -17,6 +17,7 @@ def compute_metrics(y_true, y_pred):
     rec = float(recall_score(y_true, y_pred, zero_division=0))
     f1 = float(f1_score(y_true, y_pred, zero_division=0))
     fpr = float(fp / (fp + tn)) if (fp + tn) > 0 else 0.0
+    fnr = float(fn / (fn + tp)) if (fn + tp) > 0 else 0.0
 
     return {
         "accuracy": round(acc, 4),
@@ -24,6 +25,7 @@ def compute_metrics(y_true, y_pred):
         "recall": round(rec, 4),
         "f1": round(f1, 4),
         "false_positive_rate": round(fpr, 4),
+        "false_negative_rate": round(fnr, 4),
         "confusion_matrix": {
             "tn": int(tn),
             "fp": int(fp),

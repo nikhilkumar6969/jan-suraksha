@@ -373,12 +373,24 @@ window.App = {
       const fprEl = document.getElementById('evalFPR');
       const fnrEl = document.getElementById('evalFNR');
 
+      const fnr = (o.false_negative_rate !== undefined && o.false_negative_rate !== null)
+        ? o.false_negative_rate
+        : (o.confusion_matrix && (o.confusion_matrix.fn + o.confusion_matrix.tp > 0)
+            ? o.confusion_matrix.fn / (o.confusion_matrix.fn + o.confusion_matrix.tp)
+            : 0.0);
+
       if (accEl) accEl.textContent = `${(o.accuracy * 100).toFixed(2)}%`;
       if (precEl) precEl.textContent = `${(o.precision * 100).toFixed(2)}%`;
-      if (recEl) recEl.textContent = `${(o.recall * 100).toFixed(2)}%`;
+      if (recEl) {
+        recEl.textContent = `${(o.recall * 100).toFixed(2)}%`;
+        recEl.style.color = o.recall >= 0.95 ? 'var(--status-safe, #16a34a)' : 'var(--warning, #eab308)';
+      }
       if (f1El) f1El.textContent = `${(o.f1 * 100).toFixed(2)}%`;
       if (fprEl) fprEl.textContent = `${(o.false_positive_rate * 100).toFixed(2)}%`;
-      if (fnrEl) fnrEl.textContent = `${((o.false_negative_rate || 0.0952) * 100).toFixed(2)}%`;
+      if (fnrEl) {
+        fnrEl.textContent = `${(fnr * 100).toFixed(2)}%`;
+        fnrEl.style.color = fnr <= 0.02 ? 'var(--status-safe, #16a34a)' : 'var(--danger, #dc2626)';
+      }
 
       // Language table
       const tbody = document.getElementById('evalLangTbody');
@@ -408,7 +420,7 @@ window.App = {
           <div style="display:inline-block; border:1px solid var(--border-color); padding:12px; border-radius:8px; background:var(--bg-card-subtle); line-height:1.7;">
             <div><strong>True Negative (TN — Genuine recognized):</strong> ${cm.tn}</div>
             <div><strong>False Positive (FP — False Alarm on Genuine):</strong> ${cm.fp} (FPR: ${(o.false_positive_rate * 100).toFixed(2)}%)</div>
-            <div><strong>False Negative (FN — Missed Scams):</strong> ${cm.fn} (FNR: ${((o.false_negative_rate || 0.0952) * 100).toFixed(2)}%)</div>
+            <div><strong>False Negative (FN — Missed Scams):</strong> ${cm.fn} (FNR: ${(fnr * 100).toFixed(2)}%)</div>
             <div><strong>True Positive (TP — Scams Detected):</strong> ${cm.tp}</div>
           </div>
         `;
