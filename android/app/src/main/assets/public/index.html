@@ -2,7 +2,7 @@
 <html lang="hi" data-theme="light">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
   <title>Jan Suraksha — Cyber Fraud & Scam Defense</title>
   <link rel="icon" type="image/png" href="/assets/icons/favicon.png">
   <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
@@ -134,6 +134,12 @@
             <span class="status-dot"></span>
             <span id="netStatusText" data-i18n="working_offline">ऑफलाइन</span>
           </span>
+
+          <!-- PWA Install Button -->
+          <button type="button" class="pwa-install-top-btn" id="btnInstallPwaTop" aria-label="Install Jan Suraksha App" title="फोन में ऐप इंस्टॉल करें (Install App)">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span class="pwa-top-btn-text">ऐप इंस्टॉल</span>
+          </button>
 
           <!-- Theme Switcher -->
           <button class="icon-btn" id="themeToggleBtn" aria-label="Toggle Dark/Light Mode" title="डार्क / लाइट मोड">
@@ -1789,6 +1795,58 @@
         <span class="dock-tooltip">ऊपर जाएं</span>
       </button>
     </aside>
+
+    <!-- PWA Install Banner (Android / Mobile Chrome / Desktop) -->
+    <div class="pwa-install-banner" id="pwaInstallBanner" role="region" aria-label="Install Application" style="display: none;">
+      <div class="pwa-banner-content">
+        <div class="pwa-banner-icon">
+          <img src="/assets/icons/icon-192.png" alt="Jan Suraksha Logo" width="48" height="48">
+        </div>
+        <div class="pwa-banner-info">
+          <strong class="pwa-banner-title">जन सुरक्षा ऐप इंस्टॉल करें</strong>
+          <p class="pwa-banner-desc">100% ऑफलाइन साइबर सुरक्षा, बिना इंटरनेट के तुरंत उपयोग करें।</p>
+        </div>
+        <div class="pwa-banner-actions">
+          <button type="button" class="btn-pwa-install" id="btnPwaBannerInstall">📲 इंस्टॉल करें (Install)</button>
+          <button type="button" class="btn-pwa-dismiss" id="btnPwaBannerDismiss" aria-label="Close">✕</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PWA Installation Instructions Modal (Fallback for iOS Safari & manual browser steps) -->
+    <div class="modal" id="pwaInstallModal" role="dialog" aria-modal="true" aria-labelledby="pwaModalTitle" style="display: none;">
+      <div class="modal-content pwa-modal-box">
+        <button class="modal-close" id="btnClosePwaModal" aria-label="Close">&times;</button>
+        <div class="pwa-modal-header">
+          <img src="/assets/icons/icon-192.png" alt="Jan Suraksha Icon" class="pwa-modal-logo">
+          <h2 id="pwaModalTitle">जन सुरक्षा ऐप इंस्टॉल करें (Install PWA)</h2>
+          <p class="pwa-modal-subtitle">फोन में सुरक्षित, तेज़ और 100% ऑफलाइन चलाएं</p>
+        </div>
+        <div class="pwa-modal-body">
+          <div class="pwa-step-card">
+            <div class="pwa-step-num">1</div>
+            <div class="pwa-step-text">
+              <strong>Android Chrome:</strong> ब्राउज़र के ऊपरी कोने में <strong>तीन बिंदु (⋮)</strong> दबाएं और <strong>"Add to Home screen" (ऐप इंस्टॉल करें)</strong> चुनें।
+            </div>
+          </div>
+          <div class="pwa-step-card">
+            <div class="pwa-step-num">2</div>
+            <div class="pwa-step-text">
+              <strong>iPhone / iPad Safari:</strong> नीचे <strong>Share</strong> बटन दबाएं और <strong>"Add to Home Screen"</strong> पर टैप करें।
+            </div>
+          </div>
+          <div class="pwa-step-card">
+            <div class="pwa-step-num">3</div>
+            <div class="pwa-step-text">
+              <strong>Computer / Laptop:</strong> क्रोम ब्राउज़र के URL बार में दाएं तरफ दिए गए <strong>Install आइकन</strong> पर क्लिक करें।
+            </div>
+          </div>
+        </div>
+        <div class="pwa-modal-footer">
+          <button type="button" class="btn btn-primary" id="btnPwaModalAction" style="width:100%;">📲 इंस्टॉल का प्रयास करें (Try Install)</button>
+        </div>
+      </div>
+    </div>
 
     <!-- Toast Notification -->
     <div class="toast-msg" id="appToast" role="alert" aria-live="polite"></div>

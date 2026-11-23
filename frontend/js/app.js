@@ -34,7 +34,10 @@ window.App = {
     // 7. Register Service Worker
     this.registerServiceWorker();
 
-    // 8. Load Evaluation Metrics
+    // 8. Setup PWA Installability & Prompt Experience
+    this.setupPwaInstall();
+
+    // 9. Load Evaluation Metrics
     this.loadEvaluationMetrics();
   },
 
@@ -367,6 +370,93 @@ window.App = {
         console.log('[Suraksha] ServiceWorker registered successfully:', reg.scope);
       }).catch((err) => {
         console.warn('[Suraksha] ServiceWorker registration failed:', err);
+      });
+    }
+  },
+
+  setupPwaInstall() {
+    this.deferredInstallPrompt = null;
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    const topInstallBtn = document.getElementById('btnInstallPwaTop');
+    const banner = document.getElementById('pwaInstallBanner');
+    const bannerInstallBtn = document.getElementById('btnPwaBannerInstall');
+    const bannerDismissBtn = document.getElementById('btnPwaBannerDismiss');
+    const modal = document.getElementById('pwaInstallModal');
+    const modalCloseBtn = document.getElementById('btnClosePwaModal');
+    const modalActionBtn = document.getElementById('btnPwaModalAction');
+
+    if (isStandalone) {
+      if (topInstallBtn) topInstallBtn.style.display = 'none';
+      if (banner) banner.style.display = 'none';
+      return;
+    }
+
+    // Capture beforeinstallprompt for supported browsers (Chrome, Edge, Samsung Internet)
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      this.deferredInstallPrompt = e;
+
+      // Check if user dismissed banner recently (within 5 days)
+      const lastDismissed = localStorage.getItem('suraksha_pwa_dismissed');
+      const fiveDays = 5 * 24 * 60 * 60 * 1000;
+      if (!lastDismissed || (Date.now() - parseInt(lastDismissed, 10)) > fiveDays) {
+        if (banner) {
+          banner.style.display = 'block';
+        }
+      }
+    });
+
+    window.addEventListener('appinstalled', () => {
+      this.deferredInstallPrompt = null;
+      if (banner) banner.style.display = 'none';
+      if (topInstallBtn) topInstallBtn.style.display = 'none';
+      if (modal) modal.style.display = 'none';
+      this.showToast('✓ जन सुरक्षा ऐप सफलतापूर्वक इंस्टॉल हुआ (App Installed)!');
+    });
+
+    const triggerInstall = async () => {
+      if (this.deferredInstallPrompt) {
+        this.deferredInstallPrompt.prompt();
+        const choice = await this.deferredInstallPrompt.userChoice;
+        if (choice.outcome === 'accepted') {
+          if (banner) banner.style.display = 'none';
+          this.showToast('✓ जन सुरक्षा ऐप इंस्टॉल हो रहा है...');
+        }
+        this.deferredInstallPrompt = null;
+      } else {
+        // Open instruction modal for Safari, manual steps, or browsers without prompt
+        if (modal) modal.style.display = 'flex';
+      }
+    };
+
+    if (topInstallBtn) {
+      topInstallBtn.addEventListener('click', () => triggerInstall());
+    }
+
+    if (bannerInstallBtn) {
+      bannerInstallBtn.addEventListener('click', () => triggerInstall());
+    }
+
+    if (bannerDismissBtn && banner) {
+      bannerDismissBtn.addEventListener('click', () => {
+        banner.style.display = 'none';
+        localStorage.setItem('suraksha_pwa_dismissed', Date.now().toString());
+      });
+    }
+
+    if (modalCloseBtn && modal) {
+      modalCloseBtn.addEventListener('click', () => {
+        modal.style.display = 'none';
+      });
+    }
+
+    if (modalActionBtn) {
+      modalActionBtn.addEventListener('click', () => triggerInstall());
+    }
+
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.style.display = 'none';
       });
     }
   },

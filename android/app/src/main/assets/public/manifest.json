@@ -1,27 +1,83 @@
 {
-  "name": "Jan Suraksha - Cyber Fraud Shield",
+  "name": "Jan Suraksha — Cyber Fraud & Scam Defense",
   "short_name": "Jan Suraksha",
-  "description": "Offline Scam Detection, Call Analysis, UPI QR Verification and Financial Literacy for Chhattisgarh",
+  "description": "Offline-first Cyber Fraud Detection, Call Analysis, UPI QR Verification and Financial Literacy Platform",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "portrait-primary",
   "background_color": "#0f172a",
   "theme_color": "#1e40af",
-  "orientation": "portrait-primary",
+  "categories": ["finance", "security", "utilities", "education"],
+  "lang": "hi",
+  "dir": "ltr",
+  "prefer_related_applications": false,
   "icons": [
+    {
+      "src": "/assets/icons/favicon.png",
+      "sizes": "64x64",
+      "type": "image/png",
+      "purpose": "any"
+    },
     {
       "src": "/assets/icons/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "/assets/icons/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "/assets/icons/logo.png",
       "sizes": "1024x1024",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "जांचें (Check Scam SMS)",
+      "short_name": "Scam Check",
+      "description": "Verify suspicious SMS, WhatsApp or Telegram message",
+      "url": "/#check",
+      "icons": [{ "src": "/assets/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "लाइव कॉल सुरक्षा (Call Shield)",
+      "short_name": "Call Shield",
+      "description": "Real-time AI speech scanner for fraud calls",
+      "url": "/#check",
+      "icons": [{ "src": "/assets/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "QR कोड जांचें (UPI QR Check)",
+      "short_name": "QR Checker",
+      "description": "Decode and analyze UPI payment QR codes",
+      "url": "/#check",
+      "icons": [{ "src": "/assets/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "सीखें (Learn & Quiz)",
+      "short_name": "Learn",
+      "description": "Audio lessons and interactive fraud quizzes",
+      "url": "/#learn",
+      "icons": [{ "src": "/assets/icons/icon-192.png", "sizes": "192x192" }]
     }
   ]
 }

@@ -21,8 +21,9 @@ from fastapi.responses import JSONResponse, FileResponse
 from contextlib import asynccontextmanager
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional
+import os
 import time
 import wave
 import logging
@@ -79,24 +80,53 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )
 
+@app.middleware("http")
+async def add_security_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "SAMEORIGIN"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Permissions-Policy"] = "geolocation=(), camera=(self), microphone=(self)"
+    return response
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    logger.error(f"Unhandled error processing {request.method} {request.url.path}: {exc}", exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "An unexpected server error occurred. Please try again later."}
+    )
+
+# Health Check Endpoints
+@app.get("/health")
+@app.get("/api/health")
+def health_check():
+    return {
+        "status": "healthy",
+        "service": "jan-suraksha",
+        "timestamp": time.time(),
+        "platform": "FastAPI/Production"
+    }
+
 # Models
 class MessageCheckRequest(BaseModel):
-    text: str
+    text: str = Field(..., max_length=25000)
     language: Optional[str] = "hi"
     sender: Optional[str] = None
 
 class SmsHeaderCheckRequest(BaseModel):
-    sender: str
-    body: str
+    sender: str = Field(..., max_length=128)
+    body: str = Field(..., max_length=25000)
     language: Optional[str] = "hi"
 
 class UpiCheckRequest(BaseModel):
-    upi_string: str
+    upi_string: str = Field(..., max_length=4096)
     language: Optional[str] = "hi"
 
 class ReportRequest(BaseModel):
@@ -591,6 +621,10 @@ def get_manifest():
 def get_sw():
     return FileResponse(frontend_dir / "sw.js", media_type="application/javascript")
 
+@app.get("/offline.html")
+def get_offline():
+    return FileResponse(frontend_dir / "offline.html")
+
 @app.get("/")
 @app.get("/index.html")
 def get_index():
@@ -598,4 +632,6 @@ def get_index():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("app.main:app", host="127.0.0.1", port=8000, reload=True)
+    port = int(os.environ.get("PORT", 8000))
+    host = os.environ.get("HOST", "0.0.0.0")
+    uvicorn.run("app.main:app", host=host, port=port, reload=False)

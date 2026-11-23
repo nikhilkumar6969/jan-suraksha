@@ -2,10 +2,12 @@
 SQLite Database and Schema for Suraksha Reports & Indicators
 """
 
+import os
 import sqlite3
 from pathlib import Path
 
-DB_PATH = Path(__file__).resolve().parent.parent.parent / "data" / "suraksha.db"
+DEFAULT_DB_PATH = Path(__file__).resolve().parent.parent.parent / "data" / "suraksha.db"
+DB_PATH = Path(os.environ.get("SURAKSHA_DB_PATH", str(DEFAULT_DB_PATH)))
 
 def _create_tables(conn: sqlite3.Connection):
     cursor = conn.cursor()

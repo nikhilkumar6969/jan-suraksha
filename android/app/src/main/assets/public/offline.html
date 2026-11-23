@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Jan Suraksha — ऑफलाइन मोड (Offline)</title>
+  <link rel="icon" type="image/png" href="/assets/icons/favicon.png">
+  <meta name="theme-color" content="#1e40af">
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --border: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --warning: #f59e0b;
+      --success: #10b981;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    .offline-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 2rem 1.5rem;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+    .icon-badge {
+      width: 4rem;
+      height: 4rem;
+      border-radius: 50%;
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--warning);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.25rem;
+    }
+    .icon-badge svg {
+      width: 2.25rem;
+      height: 2.25rem;
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+    .feature-list {
+      text-align: left;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .feature-list h2 {
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--primary);
+      margin-bottom: 0.75rem;
+    }
+    .feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+    .feature-item:last-child { margin-bottom: 0; }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      margin-top: 6px;
+      flex-shrink: 0;
+    }
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.875rem 1.25rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 0.5rem;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+    }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+    }
+    .footer-note {
+      margin-top: 1.5rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="offline-card">
+    <div class="icon-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="1" y1="1" x2="23" y2="23"></line>
+        <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"></path>
+        <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path>
+        <path d="M10.71 5.05A16 16 0 0 1 22.58 9"></path>
+        <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path>
+        <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+        <line x1="12" y1="20" x2="12.01" y2="20"></line>
+      </svg>
+    </div>
+    <h1>जन सुरक्षा — ऑफलाइन मोड</h1>
+    <p class="subtitle">
+      इंटरनेट कनेक्शन उपलब्ध नहीं है (No Internet Connection).<br>
+      आप पहले से इंस्टॉल किए गए ऑफलाइन फीचर्स का उपयोग जारी रख सकते हैं।
+    </p>
+
+    <div class="feature-list">
+      <h2>सक्रिय ऑफलाइन सुविधाएं (Active Offline Tools)</h2>
+      <div class="feature-item">
+        <span class="status-dot"></span>
+        <span><strong>संदेश जांच (SMS Check):</strong> स्थानीय नियम और ऑन-डिवाइस स्कैन सक्रिय है।</span>
+      </div>
+      <div class="feature-item">
+        <span class="status-dot"></span>
+        <span><strong>सीखें व क्विज़ (Learn & Quiz):</strong> सभी ऑडियो पाठ व क्विज़ फोन में सुरक्षित हैं।</span>
+      </div>
+      <div class="feature-item">
+        <span class="status-dot"></span>
+        <span><strong>ऑफलाइन रिपोर्ट कतार:</strong> दर्ज की गई रिपोर्ट इंटरनेट आते ही स्वतः सिंक होगी।</span>
+      </div>
+      <div class="feature-item">
+        <span class="status-dot"></span>
+        <span><strong>हेल्पलाइन:</strong> डायल 1930 बिना इंटरनेट के हमेशा काम करता है।</span>
+      </div>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="window.location.reload()">
+        🔄 पुनः प्रयास करें (Retry Connection)
+      </button>
+      <a class="btn btn-secondary" href="/#home">
+        📱 मुख्य ऐप पर जाएं (Open Cached App)
+      </a>
+    </div>
+
+    <p class="footer-note">
+      Jan Suraksha • छत्तीसगढ़ साइबर अपराध रोकथाम एवं वित्तीय साक्षरता
+    </p>
+  </div>
+</body>
+</html>

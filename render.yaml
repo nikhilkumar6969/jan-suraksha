@@ -1,0 +1,25 @@
+# ==============================================================================
+# Jan Suraksha — Render Infrastructure-as-Code Blueprint
+# https://render.com/docs/blueprint-spec
+# ==============================================================================
+
+services:
+  - type: web
+    name: jan-suraksha
+    runtime: python
+    region: oregon
+    plan: free # or starter
+    branch: main
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT"
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.8"
+      - key: ENVIRONMENT
+        value: "production"
+      - key: SURAKSHA_REPORT_SECRET
+        generateValue: true
+      - key: SURAKSHA_DB_PATH
+        value: "backend/data/suraksha.db"

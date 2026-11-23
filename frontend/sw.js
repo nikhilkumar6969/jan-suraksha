@@ -1,8 +1,12 @@
-// Suraksha Service Worker - Offline Caching Strategy
-const CACHE_NAME = 'suraksha-v2.6';
-const ASSETS_TO_CACHE = [
+// Jan Suraksha Service Worker - Production PWA Offline Engine
+const CACHE_NAME = 'suraksha-pwa-v3.0';
+
+// Essential Shell & Offline Application Assets
+const PRECACHE_ASSETS = [
   '/',
   '/index.html',
+  '/offline.html',
+  '/manifest.json',
   '/css/tokens.css',
   '/css/app.css',
   '/js/app.js',
@@ -10,6 +14,8 @@ const ASSETS_TO_CACHE = [
   '/js/i18n.js',
   '/js/detector.js',
   '/js/qr.js',
+  '/js/whisper_stt.js',
+  '/js/trai_header_ui.js',
   '/js/call.js',
   '/js/pcm-recorder-processor.js',
   '/js/learn.js',
@@ -26,105 +32,159 @@ const ASSETS_TO_CACHE = [
   '/content/quiz_en.json',
   '/content/quiz_hi.json',
   '/content/quiz_chg.json',
-  '/manifest.json',
+  '/content/headers.json',
+  '/assets/icons/favicon.png',
+  '/assets/icons/icon-192.png',
+  '/assets/icons/icon-512.png',
+  '/assets/icons/logo.png',
   '/assets/bg.jpg',
   '/assets/banner.jpg',
-  '/assets/backgrounds/media_1795408750990_34d08dd7.jpg',
-  '/assets/backgrounds/media_1795408780895_a44d0d97.jpg',
-  '/assets/backgrounds/media_1795408792868_3844933b.jpg',
-  '/assets/backgrounds/media_1795408807123_f835ec6f.jpg',
-  '/assets/backgrounds/media_1795408866473_e3ecd55a.jpg',
-  '/assets/backgrounds/rural_chhattisgarh_village.jpg',
-  '/assets/backgrounds/indian_farmers.jpg',
-  '/assets/backgrounds/rural_women_digital_awareness.jpg',
-  '/assets/backgrounds/rural_community_cyber_safety.jpg',
-  '/assets/backgrounds/elderly_villagers_technology.jpg',
-  '/assets/alerts/alert_chime.wav',
-  '/assets/alerts/alert_upi_pin_hi.wav',
-  '/assets/alerts/alert_upi_pin_chg.wav',
-  '/assets/alerts/alert_upi_pin_en.wav',
-  '/assets/alerts/alert_otp_hi.wav',
-  '/assets/alerts/alert_otp_chg.wav',
-  '/assets/alerts/alert_otp_en.wav',
-  '/assets/alerts/alert_police_hi.wav',
-  '/assets/alerts/alert_police_chg.wav',
-  '/assets/alerts/alert_police_en.wav',
-  '/assets/alerts/alert_remote_access_hi.wav',
-  '/assets/alerts/alert_remote_access_chg.wav',
-  '/assets/alerts/alert_remote_access_en.wav',
-  '/assets/alerts/alert_extortion_hi.wav',
-  '/assets/alerts/alert_extortion_chg.wav',
-  '/assets/alerts/alert_extortion_en.wav',
-  '/assets/alerts/alert_bank_kyc_hi.wav',
-  '/assets/alerts/alert_bank_kyc_chg.wav',
-  '/assets/alerts/alert_bank_kyc_en.wav',
-  '/assets/lessons/lesson_otp_hi.wav',
-  '/assets/lessons/lesson_otp_chg.wav',
-  '/assets/lessons/lesson_otp_en.wav',
-  '/assets/lessons/lesson_atm_pin_hi.wav',
-  '/assets/lessons/lesson_atm_pin_chg.wav',
-  '/assets/lessons/lesson_atm_pin_en.wav',
-  '/assets/lessons/lesson_upi_pin_hi.wav',
-  '/assets/lessons/lesson_upi_pin_chg.wav',
-  '/assets/lessons/lesson_upi_pin_en.wav',
-  '/assets/lessons/lesson_qr_code_hi.wav',
-  '/assets/lessons/lesson_qr_code_chg.wav',
-  '/assets/lessons/lesson_qr_code_en.wav',
-  '/assets/lessons/lesson_fake_bank_call_hi.wav',
-  '/assets/lessons/lesson_fake_bank_call_chg.wav',
-  '/assets/lessons/lesson_fake_bank_call_en.wav'
+  '/assets/alerts/alert_chime.wav'
 ];
 
+// Install Event: Robust pre-caching with individual error resilience
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      console.log('[ServiceWorker] Pre-caching offline assets');
-      return cache.addAll(ASSETS_TO_CACHE);
+    caches.open(CACHE_NAME).then(async (cache) => {
+      console.log('[ServiceWorker] Pre-caching core application shell...');
+      // Use map + Promise.allSettled so an optional missing asset doesn't abort worker installation
+      const promises = PRECACHE_ASSETS.map((url) =>
+        fetch(url)
+          .then((response) => {
+            if (response.ok) {
+              return cache.put(url, response);
+            }
+            console.warn('[ServiceWorker] Pre-cache skipped non-ok asset:', url, response.status);
+            return Promise.resolve();
+          })
+          .catch((err) => {
+            console.warn('[ServiceWorker] Pre-cache fetch error for asset:', url, err);
+            return Promise.resolve();
+          })
+      );
+      await Promise.all(promises);
+      console.log('[ServiceWorker] Core assets pre-cached successfully.');
     }).then(() => self.skipWaiting())
   );
 });
 
+// Activate Event: Clean up stale caches and claim clients immediately
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keyList) => {
       return Promise.all(
         keyList.map((key) => {
           if (key !== CACHE_NAME) {
-            console.log('[ServiceWorker] Removing old cache', key);
+            console.log('[ServiceWorker] Purging legacy cache:', key);
             return caches.delete(key);
           }
         })
       );
-    }).then(() => self.clients.claim())
+    }).then(() => {
+      console.log('[ServiceWorker] Active & Claimed Clients.');
+      return self.clients.claim();
+    })
   );
 });
 
+// Fetch Event: Stratified Caching Logic
 self.addEventListener('fetch', (event) => {
-  // Offline-first for static assets, network-first with cache fallback for dynamic API endpoints
-  if (event.request.url.includes('/api/')) {
-    event.respondWith(
-      fetch(event.request).catch(() => {
-        return new Response(JSON.stringify({ 
-          status: 'offline', 
-          message: 'Offline mode active. Using local engine and queued actions.' 
-        }), {
-          headers: { 'Content-Type': 'application/json' }
-        });
-      })
-    );
-  } else {
-    event.respondWith(
-      caches.match(event.request).then((cachedResponse) => {
-        if (cachedResponse) {
-          return cachedResponse;
-        }
-        return fetch(event.request).then((networkResponse) => {
-          return caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, networkResponse.clone());
-            return networkResponse;
-          });
-        });
-      }).catch(() => caches.match('/index.html'))
-    );
+  const request = event.request;
+  const url = new URL(request.url);
+
+  // 1. Disallow non-GET requests from caching
+  if (request.method !== 'GET') {
+    // For POST/PUT requests (like report submissions or audio analysis)
+    // Network first, return honest 503 if unreachable so client queues or falls back locally
+    return;
   }
+
+  // 2. API Endpoints: Network-First with honest status code fallback
+  if (url.pathname.startsWith('/api/')) {
+    event.respondWith(
+      fetch(request)
+        .then((networkResponse) => {
+          return networkResponse;
+        })
+        .catch(() => {
+          // Return honest 503 Service Unavailable so client code knows backend is offline
+          return new Response(
+            JSON.stringify({
+              status: 'offline',
+              error: 'Backend API unreachable. Operating in offline mode.',
+              is_offline: true
+            }),
+            {
+              status: 503,
+              statusText: 'Service Unavailable (Offline)',
+              headers: { 'Content-Type': 'application/json' }
+            }
+          );
+        })
+    );
+    return;
+  }
+
+  // 3. Navigation Requests: Network-First with Cache fallback to index.html or offline.html
+  if (request.mode === 'navigate') {
+    event.respondWith(
+      fetch(request)
+        .then((networkResponse) => {
+          if (networkResponse.ok) {
+            const responseClone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
+          }
+          return networkResponse;
+        })
+        .catch(async () => {
+          const cachedIndex = await caches.match('/index.html');
+          if (cachedIndex) return cachedIndex;
+          const cachedOffline = await caches.match('/offline.html');
+          if (cachedOffline) return cachedOffline;
+          return new Response('Jan Suraksha Offline. Please connect to the internet to load.', {
+            status: 503,
+            headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+          });
+        })
+    );
+    return;
+  }
+
+  // 4. Static Shell Assets (HTML/CSS/JS/Icons/Locales/Content): Cache-First with Network Stale-While-Revalidate
+  event.respondWith(
+    caches.match(request).then((cachedResponse) => {
+      if (cachedResponse) {
+        // Fetch in background to update cache for next load (stale-while-revalidate)
+        fetch(request)
+          .then((networkResponse) => {
+            if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+              caches.open(CACHE_NAME).then((cache) => cache.put(request, networkResponse));
+            }
+          })
+          .catch(() => {});
+        return cachedResponse;
+      }
+
+      // If not in cache, fetch from network and store in cache
+      return fetch(request)
+        .then((networkResponse) => {
+          if (!networkResponse || networkResponse.status !== 200 || (networkResponse.type !== 'basic' && networkResponse.type !== 'cors')) {
+            return networkResponse;
+          }
+          const responseClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(request, responseClone);
+          });
+          return networkResponse;
+        })
+        .catch(async () => {
+          // If image fails, could return placeholder or empty response
+          if (request.destination === 'image') {
+            const fallbackIcon = await caches.match('/assets/icons/icon-192.png');
+            if (fallbackIcon) return fallbackIcon;
+          }
+          return new Response('Resource unavailable offline', { status: 404 });
+        });
+    })
+  );
 });
