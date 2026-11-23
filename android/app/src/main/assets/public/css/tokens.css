@@ -1,0 +1,274 @@
+/* ==========================================================================
+   Suraksha Design Tokens
+   Strict 4/8px spacing, 10-step neutral scale, single civic accent, WCAG AA
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  /* --- 1. Color Palette: Light Mode --- */
+  /* Neutral Scale (Slate / Zinc 10-step) */
+  --neutral-50:  #f8fafc;
+  --neutral-100: #f1f5f9;
+  --neutral-200: #e2e8f0;
+  --neutral-300: #cbd5e1;
+  --neutral-400: #94a3b8;
+  --neutral-500: #64748b;
+  --neutral-600: #475569;
+  --neutral-700: #334155;
+  --neutral-800: #1e293b;
+  --neutral-900: #0f172a;
+  --neutral-950: #020617;
+
+  /* Single Accent: Deep Civic Navy */
+  --accent:       #1e40af;
+  --accent-hover: #1d4ed8;
+  --accent-subtle:#eff6ff;
+  --accent-border:#bfdbfe;
+  --accent-text:  #1e40af;
+
+  /* Semantic Status (Checked for WCAG AA 4.5:1+ contrast) */
+  --danger:       #b91c1c;
+  --danger-hover: #991b1b;
+  --danger-subtle:#fef2f2;
+  --danger-border:#fecaca;
+  --danger-text:  #991b1b;
+
+  --warning:       #b45309;
+  --warning-hover: #92400e;
+  --warning-subtle:#fffbeb;
+  --warning-border:#fde68a;
+  --warning-text:  #78350f;
+
+  --success:       #15803d;
+  --success-hover: #166534;
+  --success-subtle:#f0fdf4;
+  --success-border:#bbf7d0;
+  --success-text:  #14532d;
+
+  /* MyGov Official Civic Palette */
+  --gov-navy:         #0b2948;
+  --gov-navy-light:   #153d6b;
+  --gov-saffron:      #e65100;
+  --gov-saffron-light:#f97316;
+  --gov-saffron-subtle:#fff7ed;
+  --gov-saffron-border:#ffedd5;
+  --gov-green:        #166534;
+  --gov-green-subtle: #f0fdf4;
+  --gov-card-radius:  16px;
+
+  /* Surfaces & Canvas */
+  --bg-canvas:     var(--neutral-50);
+  --bg-surface:    #ffffff;
+  --bg-subtle:     var(--neutral-100);
+  --bg-muted:      var(--neutral-200);
+
+  /* Borders */
+  --border-subtle: var(--neutral-200);
+  --border-strong: var(--neutral-300);
+  --border-focus:  var(--accent);
+
+  /* Typography Colors */
+  --text-primary:   var(--neutral-900);
+  --text-secondary: var(--neutral-600);
+  --text-tertiary:  var(--neutral-500);
+  --text-inverse:   #ffffff;
+
+  /* Legacy variable mapping to keep JS compatibility */
+  --primary:        var(--accent);
+  --primary-dark:   var(--accent-hover);
+  --primary-light:  var(--accent);
+  --primary-soft:   var(--accent-subtle);
+  --bg-app:         var(--bg-canvas);
+  --bg-card:        var(--bg-surface);
+  --bg-card-subtle: var(--bg-subtle);
+  --border-color:   var(--border-subtle);
+  --border-light:   var(--border-subtle);
+  --text-main:      var(--text-primary);
+  --text-muted:     var(--text-secondary);
+  --text-subtle:    var(--text-tertiary);
+  --text-on-primary:var(--text-inverse);
+  --status-danger:  var(--danger);
+  --status-danger-bg: var(--danger-subtle);
+  --status-danger-border: var(--danger-border);
+  --status-warning: var(--warning);
+  --status-warning-bg: var(--warning-subtle);
+  --status-warning-border: var(--warning-border);
+  --status-safe:    var(--success);
+  --status-safe-bg: var(--success-subtle);
+  --status-safe-border: var(--success-border);
+
+  /* --- 2. Typography Scale (12/14/16/20/24/32/48) --- */
+  --font-display: 'Outfit', 'Noto Sans Devanagari', -apple-system, sans-serif;
+  --font-body:    'Plus Jakarta Sans', 'Noto Sans Devanagari', -apple-system, sans-serif;
+  --font-mono:    ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  --font-family:  var(--font-body);
+
+  --text-xs:   0.75rem;    /* 12px */
+  --leading-xs: 1rem;      /* 16px */
+
+  --text-sm:   0.875rem;   /* 14px */
+  --leading-sm: 1.25rem;   /* 20px */
+
+  --text-base: 1rem;       /* 16px */
+  --leading-base: 1.5rem;  /* 24px */
+
+  --text-lg:   1.25rem;    /* 20px */
+  --leading-lg: 1.625rem;  /* 26px */
+
+  --text-xl:   1.5rem;     /* 24px */
+  --leading-xl: 1.875rem;  /* 30px */
+
+  --text-2xl:  2rem;       /* 32px */
+  --leading-2xl: 2.375rem; /* 38px */
+
+  --text-3xl:  3rem;       /* 48px */
+  --leading-3xl: 3.25rem;  /* 52px */
+
+  /* Legacy font sizes */
+  --font-size-xs:   var(--text-xs);
+  --font-size-sm:   var(--text-sm);
+  --font-size-base: var(--text-base);
+  --font-size-lg:   var(--text-lg);
+  --font-size-xl:   var(--text-xl);
+  --font-size-2xl:  var(--text-2xl);
+
+  /* --- 3. Strict 4/8px Spacing Scale --- */
+  --space-0: 0px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* Legacy space mappings */
+  --space-2xs: var(--space-1);
+  --space-xs:  var(--space-2);
+  --space-sm:  var(--space-3);
+  --space-md:  var(--space-4);
+  --space-lg:  var(--space-5);
+  --space-xl:  var(--space-6);
+  --space-2xl: var(--space-7);
+
+  /* --- 4. Elevation, Radius, Borders (Classic Refined) --- */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* Classic Restrained Shadows */
+  --shadow-none: none;
+  --shadow-xs:   0 1px 2px 0 rgba(15, 23, 42, 0.04);
+  --shadow-sm:   0 1px 3px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
+  --shadow-md:   0 4px 12px -2px rgba(15, 23, 42, 0.06), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
+  --shadow-lg:   0 10px 24px -4px rgba(15, 23, 42, 0.08), 0 4px 8px -2px rgba(15, 23, 42, 0.04);
+  --shadow-card: 0 2px 8px -1px rgba(15, 23, 42, 0.05), 0 1px 2px 0 rgba(15, 23, 42, 0.03);
+  --shadow-card-hover: 0 8px 20px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+  --shadow-float: 0 14px 30px -4px rgba(15, 23, 42, 0.1), 0 4px 10px -2px rgba(15, 23, 42, 0.05);
+
+  /* Classic Elevation & Lighting Tokens */
+  --shadow-3d-card: 0 1px 3px rgba(15, 23, 42, 0.06), 0 4px 12px rgba(15, 23, 42, 0.04);
+  --shadow-3d-card-hover: 0 4px 16px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.04);
+  --shadow-3d-banner: 0 12px 30px -4px rgba(11, 30, 54, 0.35);
+  --btn-3d-primary: 0 1px 2px rgba(15, 23, 42, 0.08);
+  --btn-3d-accent: 0 1px 2px rgba(30, 64, 175, 0.15);
+  --btn-3d-danger: 0 1px 2px rgba(185, 28, 28, 0.15);
+  --btn-3d-secondary: 0 1px 2px rgba(15, 23, 42, 0.05);
+
+  /* Glassmorphism Surface Tokens */
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(226, 232, 240, 0.9);
+  --glass-blur: blur(12px);
+
+  /* --- 5. Transitions & Interactive --- */
+  --duration-fast:   150ms;
+  --duration-normal: 200ms;
+  --ease-out:        cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-bounce:     cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-fast: var(--duration-fast) var(--ease-out);
+  --transition-normal: var(--duration-normal) var(--ease-out);
+  --transition-bounce: var(--duration-normal) var(--ease-out);
+
+  --focus-ring: 0 0 0 2px var(--bg-surface), 0 0 0 4px var(--accent);
+  --touch-target: 44px;
+}
+
+/* --- 6. Dark Theme Tokens --- */
+[data-theme="dark"] {
+  /* Neutral Scale inverted */
+  --bg-canvas:     #080c14;
+  --bg-surface:    #0f172a;
+  --bg-subtle:     #162035;
+  --bg-muted:      #1e293b;
+
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --border-focus:  #3b82f6;
+
+  --accent:        #3b82f6;
+  --accent-hover:  #60a5fa;
+  --accent-subtle: #172554;
+  --accent-border: #1e3a8a;
+  --accent-text:   #93c5fd;
+
+  --danger:        #ef4444;
+  --danger-hover:  #f87171;
+  --danger-subtle: #450a0a;
+  --danger-border: #7f1d1d;
+  --danger-text:   #fca5a5;
+
+  --warning:       #f59e0b;
+  --warning-hover: #fbbf24;
+  --warning-subtle:#451a03;
+  --warning-border:#78350f;
+  --warning-text:  #fcd34d;
+
+  --success:       #22c55e;
+  --success-hover: #4ade80;
+  --success-subtle:#052e16;
+  --success-border:#14532d;
+  --success-text:  #86efac;
+
+  --text-primary:   #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-tertiary:  #64748b;
+  --text-inverse:   #0f172a;
+
+  --shadow-xs:   0 1px 2px 0 rgba(0, 0, 0, 0.4);
+  --shadow-sm:   0 1px 3px 0 rgba(0, 0, 0, 0.4);
+  --shadow-md:   0 4px 10px -1px rgba(0, 0, 0, 0.5);
+  --shadow-lg:   0 10px 20px -3px rgba(0, 0, 0, 0.6);
+  --shadow-card: 0 2px 8px -1px rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-card-hover: 0 8px 20px -2px rgba(0, 0, 0, 0.6), 0 2px 6px -1px rgba(0, 0, 0, 0.4);
+  --shadow-float: 0 14px 30px -4px rgba(0, 0, 0, 0.7);
+
+  --shadow-3d-card: 0 1px 3px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-3d-card-hover: 0 4px 16px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-3d-banner: 0 12px 30px -4px rgba(0, 0, 0, 0.6);
+  --btn-3d-primary: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --btn-3d-accent: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --btn-3d-danger: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --btn-3d-secondary: 0 1px 2px rgba(0, 0, 0, 0.3);
+
+  --glass-bg: rgba(15, 23, 42, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-blur: blur(12px);
+
+  --glass-bg: rgba(12, 20, 36, 0.82);
+  --glass-border: rgba(255, 255, 255, 0.09);
+  --glass-blur: blur(14px);
+
+  --focus-ring: 0 0 0 2px var(--bg-surface), 0 0 0 4px var(--accent);
+
+  /* MyGov Civic Dark Mode Tokens */
+  --gov-navy:         #071626;
+  --gov-navy-light:   #0f2842;
+  --gov-saffron-subtle:#2d1502;
+  --gov-saffron-border:#431407;
+  --gov-green-subtle: #052e16;
+}

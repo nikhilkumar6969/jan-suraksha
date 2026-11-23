@@ -277,6 +277,12 @@ const CallDetector = {
     }
 
     this.isListening = true;
+
+    // Notify native Android CallGuardianService foreground service if running inside APK
+    if (window.SurakshaNative && window.SurakshaNative.startCallGuardian) {
+      const curAudioLang = (document.getElementById('callAudioLang')?.value) || 'auto';
+      window.SurakshaNative.startCallGuardian(curAudioLang);
+    }
     this.streamSessionId = `call_${Date.now()}`;
     this.secondsElapsed = 0;
 
@@ -712,11 +718,19 @@ const CallDetector = {
   handleWarningInterventions(data) {
     const level = data.risk_level || 'LOW';
 
-    // 1. Silent Warning: Device Vibration
+    // 1. Silent Warning: Device Vibration (Native Android Bridge or Web API)
     if (level === 'CRITICAL') {
-      if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 300]);
+      if (window.SurakshaNative && window.SurakshaNative.vibrate) {
+        window.SurakshaNative.vibrate(JSON.stringify([200, 100, 200, 100, 300]));
+      } else if (navigator.vibrate) {
+        navigator.vibrate([200, 100, 200, 100, 300]);
+      }
     } else if (level === 'HIGH') {
-      if (navigator.vibrate) navigator.vibrate([150, 100, 150]);
+      if (window.SurakshaNative && window.SurakshaNative.vibrate) {
+        window.SurakshaNative.vibrate(JSON.stringify([150, 100, 150]));
+      } else if (navigator.vibrate) {
+        navigator.vibrate([150, 100, 150]);
+      }
     }
 
     // 2. Audio Spoken Warning (Offline Pre-synthesised Audio with TTS Fallback)
@@ -848,6 +862,11 @@ const CallDetector = {
 
   stopLiveListening() {
     this.isListening = false;
+
+    // Stop native Android CallGuardianService foreground service if running inside APK
+    if (window.SurakshaNative && window.SurakshaNative.stopCallGuardian) {
+      window.SurakshaNative.stopCallGuardian();
+    }
 
     // Stop any playing alert audio
     if (this.currentAudioPlayer) {

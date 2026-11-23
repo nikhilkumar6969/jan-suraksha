@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "topic": "OTP",
+    "question": "A caller says they are calling from SBI Bank and your ATM card is blocked. They ask for the 6-digit OTP just sent to your phone to unblock it. What should you do?",
+    "options": [
+      "Share the OTP immediately so card is not permanently blocked",
+      "Cut the call immediately and never share the OTP",
+      "Ask them to confirm your name first, then share"
+    ],
+    "correct": 1,
+    "explanation": "Banks NEVER ask for OTP over the phone. Legitimate bank SMS explicitly states 'DO NOT SHARE WITH ANYONE'."
+  },
+  {
+    "id": 2,
+    "topic": "UPI PIN",
+    "question": "A buyer on OLX agrees to buy your old bicycle for ₹3,000. He sends a UPI QR code and says 'Scan this and enter your UPI PIN to receive ₹3,000 in your account'. What will happen?",
+    "options": [
+      "You will receive ₹3,000 instantly in your bank account",
+      "₹3,000 will be deducted from your account and sent to the scammer",
+      "A confirmation receipt will be downloaded"
+    ],
+    "correct": 1,
+    "explanation": "Entering your UPI PIN ALWAYS transfers money out of your bank. You never enter a PIN to receive funds."
+  },
+  {
+    "id": 3,
+    "topic": "Digital Arrest",
+    "question": "You receive a video call from a man in police uniform claiming a parcel sent to Taiwan with drugs and passports has your Aadhaar number. He orders you to stay on video in 'Digital Arrest' and transfer 'bail security money'.",
+    "options": [
+      "Transfer money quickly to prove your innocence to the officer",
+      "Stay in the room on video call until he gives clearance",
+      "Disconnect immediately. 'Digital Arrest' is a fake scam. Dial 1930."
+    ],
+    "correct": 2,
+    "explanation": "There is no legal provision for 'Digital Arrest' in India. Police and court officials never conduct trials or bail demands over Skype/WhatsApp."
+  },
+  {
+    "id": 4,
+    "topic": "Fake KYC",
+    "question": "You receive an SMS: 'Dear Customer, your electricity bill is unpaid. Power supply will be disconnected at 9:30 PM tonight. Call electricity officer at 9876543210 immediately.'",
+    "options": [
+      "Call the number in the SMS and follow their payment instructions",
+      "Do not call. Official electricity boards never use personal 10-digit mobile numbers for disconnections",
+      "Forward the SMS to all family members to warn them"
+    ],
+    "correct": 1,
+    "explanation": "Electricity boards (CSPDCL in Chhattisgarh) send notices via official alphanumeric sender IDs (e.g., CSPDCL), never personal 10-digit mobile numbers."
+  },
+  {
+    "id": 5,
+    "topic": "Screen Sharing Apps",
+    "question": "A customer care executive asks you to download 'AnyDesk' or 'RustDesk' on your mobile so he can fix your phone banking error.",
+    "options": [
+      "Download it, as customer care needs to see your screen",
+      "Refuse and delete the app immediately. Screen sharing apps let scammers view your passwords and OTPs live",
+      "Share only the 9-digit code and keep the screen turned off"
+    ],
+    "correct": 1,
+    "explanation": "Screen sharing apps give complete live visibility and remote control of your phone, allowing scammers to steal OTPs as they arrive."
+  },
+  {
+    "id": 6,
+    "topic": "ATM PIN",
+    "question": "At an ATM counter in your town, a helpful stranger offers to help you insert your card when the machine is slow.",
+    "options": [
+      "Hand over the card and tell him the PIN so he can withdraw faster",
+      "Politely decline, never let anyone see your card or keypad, and report faulty machines to the bank",
+      "Let him help if he is wearing a security uniform"
+    ],
+    "correct": 1,
+    "explanation": "Card swapping and PIN shoulder surfing are widespread. Never allow strangers near the machine while entering your PIN."
+  },
+  {
+    "id": 7,
+    "topic": "QR Codes",
+    "question": "You scan a shop QR code that says 'Pay Chhattisgarh State Power Distribution'. But when scanned, the UPI ID shows 'rohitkumar982@okaxis'. What should you do?",
+    "options": [
+      "Pay immediately because the shopkeeper said it works",
+      "Stop and do not pay. The name and handle indicate a personal account, not the official CSPDCL utility",
+      "Pay a test amount of ₹100 first"
+    ],
+    "correct": 1,
+    "explanation": "Always inspect the payee name and handle (pa). Utility billers and genuine businesses use verified business merchant handles."
+  },
+  {
+    "id": 8,
+    "topic": "Fake Courier",
+    "question": "You get a call from 'FedEx Courier' saying a customs duty of ₹1,450 must be paid via an SMS link to release an unexpected gift parcel from London.",
+    "options": [
+      "Click the link and pay ₹1,450 to receive the surprise gift",
+      "Ignore or report. If you didn't order an international parcel, it is a custom duty parcel scam",
+      "Reply with your home address and Aadhaar card photo"
+    ],
+    "correct": 1,
+    "explanation": "Customs parcel scam lures victims with fake luxury gifts or illegal goods. Official customs never solicit payments to random UPI links."
+  },
+  {
+    "id": 9,
+    "topic": "Instant Loans",
+    "question": "An instant loan app offers ₹50,000 with zero documentation within 5 minutes, but requires access to your complete Contacts, Photos, and Media files.",
+    "options": [
+      "Accept all permissions because the loan is fast",
+      "Never install predatory loan apps that demand contacts and photo permissions. They use them for blackmail",
+      "Upload only 10 contacts to test the app"
+    ],
+    "correct": 1,
+    "explanation": "Illegal lending apps harvest your contact book and private photos to harass and blackmail victims and family members."
+  },
+  {
+    "id": 10,
+    "topic": "Reporting Fraud",
+    "question": "If you or a neighbor accidentally sends money to a cyber fraudster, what is the single most critical immediate step?",
+    "options": [
+      "Call the National Cyber Crime Helpline at 1930 within the 'Golden Hour' to freeze the funds",
+      "Wait 48 hours to see if the money returns automatically",
+      "Post on social media and wait for customer support reply"
+    ],
+    "correct": 0,
+    "explanation": "Calling 1930 within the first 1-2 hours allows cyber police to freeze the scammer's bank accounts before the money is withdrawn at an ATM."
+  }
+]

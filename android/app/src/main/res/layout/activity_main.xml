@@ -41,6 +41,16 @@
                     android:textStyle="bold" />
 
                 <ImageButton
+                    android:id="@+id/btnToggleView"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginEnd="4dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Toggle Dashboard / SMS History"
+                    android:src="@drawable/ic_shield"
+                    app:tint="@android:color/white" />
+
+                <ImageButton
                     android:id="@+id/btnClearHistory"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
@@ -54,11 +64,25 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.core.widget.NestedScrollView
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <!-- Offline Jan Suraksha Cyber Defense Dashboard -->
+        <WebView
+            android:id="@+id/webViewDashboard"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible" />
+
+        <!-- Native SMS History and Diagnostic Scanner -->
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/viewSmsHistory"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:visibility="gone">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -355,5 +379,7 @@
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
+
+    </FrameLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

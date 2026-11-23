@@ -1,0 +1,50 @@
+[
+  {
+    "id": "otp",
+    "topic": "OTP Safety",
+    "title": "Never Share Your OTP",
+    "summary": "Bank staff, police, and lottery agents will NEVER ask for your OTP. Sharing an OTP gives complete access to empty your bank account.",
+    "rule": "Rule: If someone asks for OTP on phone or SMS, immediately disconnect and report.",
+    "icon": "shield-lock"
+  },
+  {
+    "id": "atm_pin",
+    "topic": "ATM PIN Safety",
+    "title": "Keep ATM PIN Secret",
+    "summary": "Never write your ATM PIN on the back of your card or tell it to shopkeepers. Cover the keypad with your hand when withdrawing cash.",
+    "rule": "Rule: Only enter ATM PIN on official bank cash machines.",
+    "icon": "credit-card"
+  },
+  {
+    "id": "upi_pin",
+    "topic": "UPI PIN Safety",
+    "title": "PIN is Only for Sending Money",
+    "summary": "You NEVER need to enter your UPI PIN to RECEIVE money or claim cashbacks/lotteries. Entering your PIN always deducts money from your account.",
+    "rule": "Golden Rule: Enter PIN = Money OUT. Receiving money requires NO PIN.",
+    "icon": "arrow-up-right"
+  },
+  {
+    "id": "qr_safety",
+    "topic": "QR Code Safety",
+    "title": "Scanning QR Does Not Credit Money",
+    "summary": "Scammers send QR codes claiming 'Scan this to receive prize/government subsidy'. Scanning a QR code only pays out money.",
+    "rule": "Rule: Never scan a QR code sent by an unknown person to receive funds.",
+    "icon": "qr-code"
+  },
+  {
+    "id": "digital_arrest",
+    "topic": "Digital Arrest Scam",
+    "title": "No Police or CBI Conducts Video Arrests",
+    "summary": "Fraudsters pose as CBI, Police, or Customs over Skype/WhatsApp video calls, claiming illegal parcels were found in your name and threatening 'digital arrest'.",
+    "rule": "Truth: Indian Law has NO provision for 'Digital Arrest'. Real police never demand online fines or secret settlements.",
+    "icon": "phone-alert"
+  },
+  {
+    "id": "fake_kyc",
+    "topic": "Fake Bank/SIM KYC Calls",
+    "title": "Beware of 'SIM/Bank Blocking' Alerts",
+    "summary": "Fraudulent SMS or callers say 'Your SIM/Bank account will be blocked in 2 hours. Install QuickSupport or AnyDesk app for instant KYC'.",
+    "rule": "Rule: Never install screen-sharing apps on caller instructions. Always visit your bank branch directly.",
+    "icon": "alert-triangle"
+  }
+]

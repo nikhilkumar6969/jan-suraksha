@@ -117,7 +117,11 @@ POLICE_GOVT_PATTERNS = [
     r"महतारी\s+वंदन\s+(?:सत्यापन|पंजीकरण\s+शुल्क)",
     r"योजना\s+के\s+राशि\s+पाए\s+बर.*(?:प[ईइ]सा|शुल्क|फीस)\s+(?:पटाव|जमा\s+करव)",
     r"प्रधानमंत्री\s+आवास\s+(?:योजना\s+)?(?:के\s+प[ईइ]सा|स्वीकृति\s+शुल्क)",
-    r"किसान\s+न्याय\s+योजना\s+बोनस\s+सत्यापन\s+शुल्क"
+    r"किसान\s+न्याय\s+योजना\s+बोनस\s+सत्यापन\s+शुल्क",
+    r"(?:पीएम\s+किसान|pm\s+kisan|किसान\s+सम्मान\s+निधि).*(?:किस्त\s+रुके\s+हे|केवाईसी|अटके\s+हे|प[ईइ]सा\s+आही)",
+    r"(?:सौर\s+सुजला|सोलर\s+पंप|सौर\s+पंप).*(?:सब्सिडी|पंजीकरण\s+शुल्क|स्वीकृति|प[ईइ]सा\s+पटाव)",
+    r"(?:धान\s+बोनस|धान\s+खरीदी).*(?:प[ईइ]सा\s+अटका\s+हे|अटके\s+हे|भुगतान\s+बर|खाता\s+वेरिफाई)",
+    r"(?:केबीसी|kbc|लाटरी|लॉटरी|इनाम).*(?:25\s*लाख|जीते\s+हस|लगे\s+हे|पाए\s+बर.*प[ईइ]सा)"
 ]
 
 # 5. Financial Fraud & Extortion
@@ -465,25 +469,35 @@ def detect_scam_in_transcript(
             active_categories.append(cat_name)
             suspicious_phrases.extend(phrase_list)
 
-    # Audio warning text generation (Hindi & English)
+    # Audio warning text generation (Hindi, Chhattisgarhi & English)
     audio_warning_hi = ""
     audio_warning_en = ""
+    audio_warning_chg = ""
     if risk_level == "CRITICAL":
         if "upi_pin_fraud" in active_categories:
             audio_warning_hi = "सावधान! किसी को भी अपना UPI पिन न बताएं और न ही दर्ज करें। पैसे पाने के लिए पिन की जरूरत नहीं होती।"
+            audio_warning_chg = "भारी खतरा! कॉलर तोर से UPI पिन मांगे के चाल चलत हे। कभू पिन झन डारव।"
             audio_warning_en = "Warning! Never enter or disclose your UPI PIN. UPI PIN is never needed to receive money."
         else:
             audio_warning_hi = "सावधान! किसी को भी अपना OTP या बैंक कोड न बताएं। कॉल तुरंत काटें।"
+            audio_warning_chg = "सावधान! तोर गुप्त OTP ककरो ले झन बतावव। फोन ल तुरते काटव।"
             audio_warning_en = "Alert! Never share your OTP or bank codes. Hang up the call immediately."
     elif risk_level == "HIGH":
         if "remote_access" in active_categories:
             audio_warning_hi = "सतर्क रहें! कोई भी ऐप या APK डाउनलोड न करें। यह ठगी का प्रयास हो सकता है।"
+            audio_warning_chg = "सतर्क रहव! कोनो अनजान ऐप डाउनलोड झन करव अउ स्क्रीन शेयर झन करव।"
             audio_warning_en = "Caution! Do not install any app or APK. This may be a fraudulent attempt."
+        elif "financial_extortion" in active_categories:
+            audio_warning_hi = "चेतावनी! किसी अनजान को पैसे या ऑनलाइन ट्रांसफर न करें। कॉल तुरंत काटें।"
+            audio_warning_chg = "चेतावनी! ककरो बहकावे म आके पईसा ट्रांसफर झन करव। कॉल तुरते काटव।"
+            audio_warning_en = "Warning! Do not transfer money or pay any caller. Disconnect immediately."
         else:
             audio_warning_hi = "सतर्क रहें! पुलिस या बैंक कभी फोन पर पैसे या गिरफ्तारी की धमकी नहीं देते।"
+            audio_warning_chg = "झन डरवाव! फर्जी पुलिस या डिजिटल अरेस्ट के धमकी म झन आवव। फोन काटव।"
             audio_warning_en = "Be cautious! Official authorities never threaten arrest or demand money over the phone."
     elif risk_level == "MODERATE":
         audio_warning_hi = "ध्यान दें! बातचीत संदिग्ध लग रही है। कोई भी गोपनीय जानकारी न दें।"
+        audio_warning_chg = "सचेत रहव! गोठ-बात संदेहास्पद लगत हे। कोनो गुप्त जानकारी झन देवव।"
         audio_warning_en = "Notice! Conversation seems suspicious. Do not share confidential information."
 
     return {
@@ -502,6 +516,7 @@ def detect_scam_in_transcript(
         "recommended_action_chg": ACTION_MAP[eval_key]["chg"],
         "recommended_action_en": ACTION_MAP[eval_key]["en"],
         "audio_warning_hi": audio_warning_hi,
+        "audio_warning_chg": audio_warning_chg,
         "audio_warning_en": audio_warning_en,
         "suspicious_phrases": list(set(suspicious_phrases)),
         "matched_categories": active_categories,

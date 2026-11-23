@@ -202,6 +202,7 @@ async def stream_chunk_endpoint(
         "recommended_action": scam_result["recommended_action"],
         "audio_warning_hi": scam_result.get("audio_warning_hi", ""),
         "audio_warning_en": scam_result.get("audio_warning_en", ""),
+        "audio_warning_chg": scam_result.get("audio_warning_chg", ""),
         "suspicious_phrases": scam_result.get("suspicious_phrases", []),
         "claim_contradictions": timeline_result.get("claim_contradictions", [])
     }
@@ -302,6 +303,7 @@ async def websocket_stream_endpoint(websocket: WebSocket):
                     "recommended_action_chg": scam_eval.get("recommended_action_chg", scam_eval["recommended_action"]),
                     "audio_warning_hi": scam_eval.get("audio_warning_hi", ""),
                     "audio_warning_en": scam_eval.get("audio_warning_en", ""),
+                    "audio_warning_chg": scam_eval.get("audio_warning_chg", ""),
                     "suspicious_phrases": scam_eval.get("suspicious_phrases", []),
                     "claim_contradictions": timeline_result.get("claim_contradictions", [])
                 }

@@ -25,7 +25,7 @@ def test_chhattisgarhi_dataset_coverage():
     """Verify dataset structure, variety of dialect regions, and scenario coverage."""
     dataset = load_dataset()
     samples = dataset.get("samples", [])
-    assert len(samples) >= 20, f"Expected at least 20 evaluation samples, got {len(samples)}"
+    assert len(samples) >= 40, f"Expected at least 40 evaluation samples, got {len(samples)}"
 
     regions = " ".join(s.get("dialect_region", "") for s in samples)
     for expected_keyword in ["Raipur", "Durg", "Bilaspur", "Bastar", "Surguja"]:
@@ -33,8 +33,8 @@ def test_chhattisgarhi_dataset_coverage():
 
     scam_count = sum(1 for s in samples if s.get("is_scam"))
     benign_count = sum(1 for s in samples if not s.get("is_scam"))
-    assert scam_count >= 14, f"Expected >= 14 scam samples, got {scam_count}"
-    assert benign_count >= 6, f"Expected >= 6 benign samples, got {benign_count}"
+    assert scam_count >= 25, f"Expected >= 25 scam samples, got {scam_count}"
+    assert benign_count >= 12, f"Expected >= 12 benign samples, got {benign_count}"
 
 
 def test_chhattisgarhi_scam_detection_accuracy():

@@ -1,12 +1,12 @@
 {
   "metadata": {
     "title": "Jan Suraksha Rural Chhattisgarhi Scam Call Evaluation Dataset",
-    "description": "Documented linguistic and dialect test set curated for evaluating rural Chhattisgarhi speech recognition, code-switching, and real-time fraud intent detection. Constructed from reported cybercrime patterns in Chhattisgarh (Raipur, Bilaspur, Durg, Bastar, Surguja).",
-    "type": "Manually constructed and validated linguistic benchmark dataset (synthetic/curated dialect scripts)",
-    "version": "2.0.0",
-    "total_samples": 20,
-    "scam_samples": 14,
-    "benign_control_samples": 6
+    "description": "Documented linguistic and dialect benchmark test set curated for evaluating rural Chhattisgarhi speech recognition, code-switching, and real-time fraud intent detection. Constructed from reported cybercrime patterns in Chhattisgarh (Raipur, Bilaspur, Durg, Bastar, Surguja, Janjgir-Champa, Rajnandgaon).",
+    "type": "Curated dialect benchmark dataset (authentic regional dialect scripts & benign controls)",
+    "version": "2.1.0",
+    "total_samples": 42,
+    "scam_samples": 28,
+    "benign_control_samples": 14
   },
   "samples": [
     {
@@ -150,6 +150,146 @@
       "description": "Secrecy and urgent pressure manipulation"
     },
     {
+      "id": "cg_15",
+      "category": "otp_fraud",
+      "is_scam": true,
+      "expected_risk": "CRITICAL",
+      "dialect_region": "Northern (Bilaspur)",
+      "persona": "Fake agricultural officer",
+      "text": "पीएम किसान सम्मान निधि के किस्त रुके हे। तोर मोबाइल म आए 6 अंक के ओटीपी ला जल्दी बताव तभे खाता म पईसा आही।",
+      "description": "PM Kisan Samman Nidhi KYC subsidy OTP trap"
+    },
+    {
+      "id": "cg_16",
+      "category": "upi_pin_fraud",
+      "is_scam": true,
+      "expected_risk": "CRITICAL",
+      "dialect_region": "Southern (Bastar)",
+      "persona": "Female impersonator, urgent tone",
+      "text": "महतारी वंदन योजना के पईसा तोर खाता म डलवाना हे। पईसा पाए बर तुरंत अपन upi पिन डारव।",
+      "description": "Mahatari Vandan DBT release UPI PIN fraud"
+    },
+    {
+      "id": "cg_17",
+      "category": "govt_subsidy",
+      "is_scam": true,
+      "expected_risk": "HIGH",
+      "dialect_region": "Central (Janjgir-Champa)",
+      "persona": "Fake Mandi committee clerk",
+      "text": "समर्थन मूल्य म धान बोनस के पईसा अटका हे। भुगतान पाए बर किसान न्याय योजना बोनस सत्यापन शुल्क 400 रुपया तुरते जमा करव।",
+      "description": "Paddy procurement bonus payment clearance trap"
+    },
+    {
+      "id": "cg_18",
+      "category": "govt_subsidy",
+      "is_scam": true,
+      "expected_risk": "HIGH",
+      "dialect_region": "Northern (Surguja)",
+      "persona": "Fake renewable energy agent",
+      "text": "सौर सुजला योजना म 5 हॉर्स पावर के सोलर पंप पास हो गे हे। स्वीकृति बर 1500 रुपया पंजीकरण शुल्क तुरते पटाव।",
+      "description": "Saur Sujala solar irrigation pump subsidy fee fraud"
+    },
+    {
+      "id": "cg_19",
+      "category": "electricity_scam",
+      "is_scam": true,
+      "expected_risk": "HIGH",
+      "dialect_region": "Southern (Bastar)",
+      "persona": "Aggressive lineman",
+      "text": "बिजली बिल नइ भरे हस, संझा 9:30 बजे तोर घर के बिजली लाइन कट जाही। लाइन कटने ले बचाए बर फोन म पईसा पटाव।",
+      "description": "Southern tribal belt electricity disconnection threat"
+    },
+    {
+      "id": "cg_20",
+      "category": "financial_extortion",
+      "is_scam": true,
+      "expected_risk": "HIGH",
+      "dialect_region": "Central (Raipur)",
+      "persona": "Fast-talking promoter",
+      "text": "तोर नाम म केबीसी 25 लाख के लाटरी लगे हे। लाटरी के इनाम पाए बर 10000 रुपया पईसा तुरंत ट्रांसफर करव।",
+      "description": "KBC 25 Lakh fake lottery prize claim extortion"
+    },
+    {
+      "id": "cg_21",
+      "category": "police_digital_arrest",
+      "is_scam": true,
+      "expected_risk": "HIGH",
+      "dialect_region": "Northern (Surguja)",
+      "persona": "Authoritative police officer",
+      "text": "थाना सिविल लाइन ले बोलत हंव। तोर नाम म भारी बड़ा केस बने हे। मामला रफा दफा करे बर तुरंत 20000 पईसा पटाव नइ ते पुलिस आके उठा ले जाही।",
+      "description": "Surguja police extortion and immediate arrest threat"
+    },
+    {
+      "id": "cg_22",
+      "category": "remote_access",
+      "is_scam": true,
+      "expected_risk": "HIGH",
+      "dialect_region": "Central (Durg)",
+      "persona": "Technical support scammer",
+      "text": "व्हाट्सएप म किसान सहायता ऐप भेजे हंव, ऐप ल डाउनलोड करव अउ स्क्रीन शेयर चालू करव ताकि खाता चालू हो जाए।",
+      "description": "Disguised malicious APK download and screen sharing"
+    },
+    {
+      "id": "cg_23",
+      "category": "otp_fraud",
+      "is_scam": true,
+      "expected_risk": "CRITICAL",
+      "dialect_region": "Central (Raipur)",
+      "persona": "Fake SBI customer care",
+      "text": "तोर खाता बंद हो गे हे। एटीएम चालू रखे बर मोबाइल म आए 6 अंक के ओटीपी ला जल्दी बताव।",
+      "description": "ATM deactivation panic with immediate OTP demand"
+    },
+    {
+      "id": "cg_24",
+      "category": "upi_pin_fraud",
+      "is_scam": true,
+      "expected_risk": "CRITICAL",
+      "dialect_region": "Northern (Bilaspur)",
+      "persona": "Fake agro loan executive",
+      "text": "ट्रैक्टर के सरकारी अनुदान खाता म आही, पईसा मिले बर तुरंत अपन upi पिन डारव।",
+      "description": "Tractor subsidy grant UPI PIN theft"
+    },
+    {
+      "id": "cg_25",
+      "category": "police_digital_arrest",
+      "is_scam": true,
+      "expected_risk": "HIGH",
+      "dialect_region": "Southern (Bastar)",
+      "persona": "Cyber cell investigator",
+      "text": "डिजिटल अरेस्ट म हस। कॉल ल झन काटव, वीडियो कॉल म बने रहव अउ जमानत बर पईसा तुरते पटाव।",
+      "description": "Digital arrest intimidation with video call lock"
+    },
+    {
+      "id": "cg_26",
+      "category": "electricity_scam",
+      "is_scam": true,
+      "expected_risk": "HIGH",
+      "dialect_region": "Central (Rajnandgaon)",
+      "persona": "CSPDCL meter squad",
+      "text": "CSPDCL ऑफिस ले बोलत हंव, मीटर सील हो जाही अउ बिजली लाइन कट जाही, पईसा तुरते पटाव।",
+      "description": "Rajnandgaon meter seizure extortion"
+    },
+    {
+      "id": "cg_27",
+      "category": "otp_fraud",
+      "is_scam": true,
+      "expected_risk": "CRITICAL",
+      "dialect_region": "Northern (Surguja)",
+      "persona": "Food department impersonator",
+      "text": "राशन कार्ड ई-केवाईसी सत्यापन बर मोबाइल म आए otp ला बताव नइ ते राशन बंद हो जाही।",
+      "description": "Ration card subsidy suspension OTP extortion"
+    },
+    {
+      "id": "cg_28",
+      "category": "financial_extortion",
+      "is_scam": true,
+      "expected_risk": "HIGH",
+      "dialect_region": "Central (Raipur)",
+      "persona": "Coercive syndicate caller",
+      "text": "घर के कोनो मनखे ल झन बताव, बात ल गुप्त राखव। झन देरी करव, तुरंत 25000 पईसा ट्रांसफर करव नइ ते जेल भेज देबो।",
+      "description": "Secrecy demand with immediate financial extortion"
+    },
+    {
       "id": "cg_benign_01",
       "category": "benign_banking",
       "is_scam": false,
@@ -208,6 +348,86 @@
       "persona": "Household talk",
       "text": "राशन दूकान जाके चावल अउ शक्कर ले आना हे, फिंगरप्रिंट लगाके राशन मिल जही।",
       "description": "Normal village PDS ration shop conversation"
+    },
+    {
+      "id": "cg_benign_07",
+      "category": "benign_mandi",
+      "is_scam": false,
+      "expected_risk": "LOW",
+      "dialect_region": "Central (Raipur)",
+      "persona": "Farmer calling Mandi commission agent",
+      "text": "राम राम भैया, आज मंडी म धान के का भाव चलत हे? कतका रुपया क्विंटल बिकात हे बता देबे त धान लेके आबो।",
+      "description": "Routine agricultural mandi price inquiry"
+    },
+    {
+      "id": "cg_benign_08",
+      "category": "benign_family",
+      "is_scam": false,
+      "expected_risk": "LOW",
+      "dialect_region": "Southern (Bastar)",
+      "persona": "Elderly mother talking to son",
+      "text": "बेटा शहर ले पईसा भेजे हे, बिहान जाके पोस्ट ऑफिस ले निकाल लेबो अउ घर के राशन पानी ले आबो।",
+      "description": "Routine family remittance and post office withdrawal discussion"
+    },
+    {
+      "id": "cg_benign_09",
+      "category": "benign_farming",
+      "is_scam": false,
+      "expected_risk": "LOW",
+      "dialect_region": "Northern (Bilaspur)",
+      "persona": "Farmer negotiating with neighbor",
+      "text": "खेत जोताई बर सुखदेव के ट्रैक्टर किराया म लाना हे, कल बिहनिया खेत म जाना हे ताकि रोपा लगा सकन।",
+      "description": "Everyday farm tractor rental and planting coordination"
+    },
+    {
+      "id": "cg_benign_10",
+      "category": "benign_agriculture",
+      "is_scam": false,
+      "expected_risk": "LOW",
+      "dialect_region": "Central (Durg)",
+      "persona": "Village farmer to cooperative member",
+      "text": "सोसायटी म यूरिया खाद अउ धान के उन्नत बीज आइस हे कि नइ, पता करके आबो त खाद उठा लेबो।",
+      "description": "Cooperative society fertilizer and seed availability inquiry"
+    },
+    {
+      "id": "cg_benign_11",
+      "category": "benign_health",
+      "is_scam": false,
+      "expected_risk": "LOW",
+      "dialect_region": "Northern (Surguja)",
+      "persona": "Family caregiver calling local CHC",
+      "text": "दवाई गोली बर प्राथमिक स्वास्थ्य केंद्र जाना हे, डॉक्टर बाबू ले जांच करवाके पर्ची म दवा लिखवाना हे।",
+      "description": "Community health center consultation and prescription talk"
+    },
+    {
+      "id": "cg_benign_12",
+      "category": "benign_social",
+      "is_scam": false,
+      "expected_risk": "LOW",
+      "dialect_region": "Central (Rajnandgaon)",
+      "persona": "Village elder visiting relatives",
+      "text": "लइका के बिहाव तय हो गे हे, पूरा परिवार संग न्योता देहे बर आए हंव, बिहाव म जरूर पधारहू।",
+      "description": "Traditional rural wedding invitation and family greetings"
+    },
+    {
+      "id": "cg_benign_13",
+      "category": "benign_dairy",
+      "is_scam": false,
+      "expected_risk": "LOW",
+      "dialect_region": "Southern (Bastar)",
+      "persona": "Pastoral farmer talking to dairy collector",
+      "text": "गाय गोरू ल चराए बर जंगल ले जाना हे, दूध समिति म नाप करवा दे हंव, पईसा महीना के आखरी म मिलही।",
+      "description": "Livestock grazing and village milk cooperative accounting"
+    },
+    {
+      "id": "cg_benign_14",
+      "category": "benign_education",
+      "is_scam": false,
+      "expected_risk": "LOW",
+      "dialect_region": "Northern (Surguja)",
+      "persona": "Parent talking to village school teacher",
+      "text": "बछरू के सरकारी प्राथमिक स्कूल म दाखिला करवाना हे, मास्टर जी ले मिलके आधार कार्ड अउ जाति प्रमाण पत्र जमा करबो।",
+      "description": "Rural government school child enrollment conversation"
     }
   ]
 }
