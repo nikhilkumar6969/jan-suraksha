@@ -1,0 +1,186 @@
+{
+  "version": 1,
+  "description": "Offline database of registered TRAI DLT 6-character sender headers and official domains for top 30 impersonated Indian brands",
+  "brands": [
+    {
+      "brand": "State Bank of India (SBI)",
+      "type": "bank",
+      "headers": ["SBIINB", "SBIPSG", "SBIUPI", "SBIRTN", "SBICRD", "ATMSBI"],
+      "domains": ["sbi.co.in", "onlinesbi.sbi", "onlinesbi.com", "sbicard.com"]
+    },
+    {
+      "brand": "HDFC Bank",
+      "type": "bank",
+      "headers": ["HDFCBK", "HDFCBN", "HDFCCC", "HDFCLO", "HDFCAR"],
+      "domains": ["hdfcbank.com", "hdfc.com"]
+    },
+    {
+      "brand": "ICICI Bank",
+      "type": "bank",
+      "headers": ["ICICIB", "ICICIP", "ICICIA", "ICICIT"],
+      "domains": ["icicibank.com", "icicidirect.com"]
+    },
+    {
+      "brand": "Axis Bank",
+      "type": "bank",
+      "headers": ["AXISBK", "AXISBN", "AXISCC", "AXISCR"],
+      "domains": ["axisbank.com"]
+    },
+    {
+      "brand": "Punjab National Bank (PNB)",
+      "type": "bank",
+      "headers": ["PNBSMS", "PNBBNK", "PNBOTP", "PNBCRD"],
+      "domains": ["pnbindia.in", "netpnb.com"]
+    },
+    {
+      "brand": "Bank of Baroda",
+      "type": "bank",
+      "headers": ["BOBSMS", "BOBTXN", "BOBCRD", "BOBATC"],
+      "domains": ["bankofbaroda.in", "bobibanking.com"]
+    },
+    {
+      "brand": "Kotak Mahindra Bank",
+      "type": "bank",
+      "headers": ["KOTAKB", "KOTAKN", "KOTAKC", "KMBLTX"],
+      "domains": ["kotak.com"]
+    },
+    {
+      "brand": "Canara Bank",
+      "type": "bank",
+      "headers": ["CANBNK", "CANOTP", "CANSMS"],
+      "domains": ["canarabank.com"]
+    },
+    {
+      "brand": "IndusInd Bank",
+      "type": "bank",
+      "headers": ["INDBNK", "INDUSI", "INDUSN", "INDBTX"],
+      "domains": ["indusind.com"]
+    },
+    {
+      "brand": "Union Bank of India",
+      "type": "bank",
+      "headers": ["UNIONB", "UBISMS", "UBIOTP"],
+      "domains": ["unionbankofindia.co.in"]
+    },
+    {
+      "brand": "PhonePe",
+      "type": "upi",
+      "headers": ["PHONEP", "PHNPAY", "PHONPE"],
+      "domains": ["phonepe.com"]
+    },
+    {
+      "brand": "Google Pay",
+      "type": "upi",
+      "headers": ["GPAYIN", "GOOGPL", "GPAYTX"],
+      "domains": ["pay.google.com", "google.com"]
+    },
+    {
+      "brand": "Paytm",
+      "type": "upi",
+      "headers": ["PAYTMB", "PAYTMM", "PYTMPS", "PAYTMN"],
+      "domains": ["paytm.com", "paytmbank.com"]
+    },
+    {
+      "brand": "BHIM UPI (NPCI)",
+      "type": "upi",
+      "headers": ["BHIMTX", "BHIMNP", "NPCIBH"],
+      "domains": ["npci.org.in", "bhimupi.org.in"]
+    },
+    {
+      "brand": "CRED",
+      "type": "upi",
+      "headers": ["CREDIN", "CREDAP", "CREDTX"],
+      "domains": ["cred.club"]
+    },
+    {
+      "brand": "Bharti Airtel",
+      "type": "telecom",
+      "headers": ["AIRTEL", "AIRTLB", "ATLPAY", "AIRBNK"],
+      "domains": ["airtel.in", "airtelbank.com"]
+    },
+    {
+      "brand": "Reliance Jio",
+      "type": "telecom",
+      "headers": ["JIONET", "JIOFIB", "JIOMOB", "JIOPAY"],
+      "domains": ["jio.com"]
+    },
+    {
+      "brand": "Vi (Vodafone Idea)",
+      "type": "telecom",
+      "headers": ["VILINF", "VILOTP", "VILPAY", "VILSRV"],
+      "domains": ["myvi.in"]
+    },
+    {
+      "brand": "BSNL",
+      "type": "telecom",
+      "headers": ["BSNLIN", "BSNLUP", "BSNLPR", "BSNLSV"],
+      "domains": ["bsnl.co.in"]
+    },
+    {
+      "brand": "Income Tax Department",
+      "type": "government",
+      "headers": ["ITDEPT", "ITREFD", "CPCITD", "ITAXIN"],
+      "domains": ["incometax.gov.in", "incometaxindia.gov.in"]
+    },
+    {
+      "brand": "EPFO (Provident Fund)",
+      "type": "government",
+      "headers": ["EPFOHO", "EPFOIN", "EPFOTP"],
+      "domains": ["epfindia.gov.in"]
+    },
+    {
+      "brand": "UIDAI (Aadhaar)",
+      "type": "government",
+      "headers": ["AADHAR", "UIDAIB", "UIDAIH", "MYADHR"],
+      "domains": ["uidai.gov.in", "myaadhaar.uidai.gov.in"]
+    },
+    {
+      "brand": "DigiLocker",
+      "type": "government",
+      "headers": ["DGLCKR", "DIGILK"],
+      "domains": ["digilocker.gov.in"]
+    },
+    {
+      "brand": "CSPDCL (Chhattisgarh State Electricity)",
+      "type": "utility",
+      "headers": ["CSPDCL", "CSPHCL", "CSEBON"],
+      "domains": ["cspdcl.co.in", "cspc.co.in"]
+    },
+    {
+      "brand": "India Post",
+      "type": "courier",
+      "headers": ["DOPIND", "INPOST", "IPPBIN", "POSTAL"],
+      "domains": ["indiapost.gov.in", "ippbonline.com"]
+    },
+    {
+      "brand": "Blue Dart Express",
+      "type": "courier",
+      "headers": ["BLDART", "BLDTRK"],
+      "domains": ["bluedart.com"]
+    },
+    {
+      "brand": "DTDC Courier",
+      "type": "courier",
+      "headers": ["DTDCTR", "DTDCSM", "DTDCIN"],
+      "domains": ["dtdc.in", "dtdc.com"]
+    },
+    {
+      "brand": "Delhivery",
+      "type": "courier",
+      "headers": ["DELHVY", "DLHVRY", "DLHVTR"],
+      "domains": ["delhivery.com"]
+    },
+    {
+      "brand": "Amazon India",
+      "type": "ecommerce",
+      "headers": ["AMAZON", "AMZNIN", "AMZPAY", "AMZOTP"],
+      "domains": ["amazon.in", "amazon.com"]
+    },
+    {
+      "brand": "Flipkart",
+      "type": "ecommerce",
+      "headers": ["FKPRTI", "FLPKRT", "FKPAYS", "FKPODR"],
+      "domains": ["flipkart.com"]
+    }
+  ]
+}

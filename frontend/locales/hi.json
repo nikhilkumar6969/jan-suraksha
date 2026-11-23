@@ -46,6 +46,7 @@
   "tab_sms": "संदेश / SMS",
   "tab_call": "फ़ोन कॉल / आवाज़",
   "tab_qr": "UPI क्यूआर कोड",
+  "tab_trai": "TRAI हेडर जांच (Sender Guard)",
   "paste_msg_placeholder": "यहाँ संदिग्ध SMS, व्हाट्सएप संदेश या लिंक पेस्ट करें...",
   "btn_analyze": "अभी जांचें",
   "btn_clear": "हटाएं",

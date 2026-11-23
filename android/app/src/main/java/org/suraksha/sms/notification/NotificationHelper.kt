@@ -69,34 +69,47 @@ object NotificationHelper {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        // Action 2: Confirm as Spam
-        val markSpamIntent = Intent(context, MainActivity::class.java).apply {
-            action = ACTION_MARK_SPAM
-            putExtra(EXTRA_SMS_ID, entity.id)
+        // Action 2: 1930 Helpline Call Action
+        val dial1930Intent = Intent(Intent.ACTION_DIAL).apply {
+            data = android.net.Uri.parse("tel:1930")
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
         }
-        val markSpamPending = PendingIntent.getActivity(
+        val dial1930Pending = PendingIntent.getActivity(
             context,
             (entity.id * 10 + 2).toInt(),
-            markSpamIntent,
+            dial1930Intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        // Action 3: Alert Family / Share warning
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_SUBJECT, "⚠️ साइबर फ्रॉड चेतावनी (Cyber Scam Alert)")
+            putExtra(Intent.EXTRA_TEXT, "सावधान! मुझे इस नंबर (${entity.senderNumber}) से संदेहास्पद फ्रॉड संदेश मिला है: '${safePreview}'. किसी लिंक पर क्लिक न करें। जन सुरक्षा ऐप द्वारा सतर्कता संदेश।")
+        }
+        val sharePending = PendingIntent.getActivity(
+            context,
+            (entity.id * 10 + 3).toInt(),
+            Intent.createChooser(shareIntent, "परिवार को सचेत करें"),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_spam_warning)
-            .setContentTitle("🚨 Suspected Scam SMS ($confidencePercent% Risk)")
-            .setContentText("From: ${entity.senderNumber}\n$safePreview")
+            .setContentTitle("🚨 संदेहास्पद SMS चेतावनी (${entity.senderNumber})")
+            .setContentText(safePreview)
             .setStyle(
                 NotificationCompat.BigTextStyle()
-                    .setBigContentTitle("🚨 Fraud Warning: ${entity.senderNumber}")
-                    .bigText("Message Preview:\n\"$safePreview\"\n\n⚠️ Caution: Do NOT call unknown phone numbers or open web links.")
+                    .setBigContentTitle("🚨 ठगी की चेतावनी: ${entity.senderNumber}")
+                    .bigText("संदेश:\n\"$safePreview\"\n\nकारण: TRAI हेडर असंगति या अनधिकृत वित्तीय दावा। किसी लिंक पर क्लिक न करें।")
             )
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setColor(ContextCompat.getColor(context, R.color.color_danger))
             .setContentIntent(openPendingIntent)
             .setAutoCancel(true)
-            .addAction(0, "Mark as Safe", markSafePending)
-            .addAction(0, "Report Spam", markSpamPending)
+            .addAction(0, "📞 1930 कॉल करें", dial1930Pending)
+            .addAction(0, "👨‍👩‍👧 परिवार को बताएं", sharePending)
             .build()
 
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

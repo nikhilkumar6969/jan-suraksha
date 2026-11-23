@@ -200,6 +200,62 @@ pytest -v
 
 ---
 
+## 🛡️ Real-Time Offline TRAI SMS Sender Header Check (Jan Suraksha Smishing Guard)
+
+Suraksha integrates an on-device **TRAI (Telecom Regulatory Authority of India) SMS Sender Header Guard** that validates commercial DLT headers, exposes 10-digit mobile number smishing, flags typosquatting lookalike headers, and verifies enclosed web links against brand domains—**100% offline with zero cloud lookups**.
+
+### How TRAI SMS Header Verification Works
+1. **Header Parsing**: Deconstructs incoming sender IDs (e.g. `AX-HDFCBK-T`):
+   - **Operator & Circle Prefix (2 Letters)**: e.g. `AX` (Airtel), `VM` (Vi), `BZ` (BSNL), `JZ` (Jio).
+   - **Header Body (Max 6 Alphanumeric Characters)**: e.g. `HDFCBK`, `SBIINB`, `CSPDCL`.
+   - **Category Suffix**: `-T` (Transactional), `-S` (Service Implicit), `-P` (Promotional), `-G` (Government).
+2. **10-Digit Mobile Number Smishing Trap (RED Alert)**:
+   - Official banks, electricity utilities, and government departments **never** send transactional alerts or KYC requests from personal 10-digit mobile numbers (`+91-9xxxxxxxxx`).
+   - If a personal number sends messages claiming banking or utility actions, it is immediately flagged as **CRITICAL / RED**.
+3. **Typosquatting & Lookalike Header Detection (Levenshtein Distance 1–2)**:
+   - Scammers craft headers closely resembling genuine ones (e.g. `HDFCBNK` vs `HDFCBK`, `AIRTEL1` vs `AIRTEL`).
+   - The engine computes Levenshtein distance against all known registered headers in `headers.json` and flags lookalikes in RED.
+4. **Brand-Domain Alignment & Phishing Link Verification**:
+   - Compares URLs inside the message against the brand's verified domains (e.g. `sbi.co.in`, `hdfcbank.com`).
+   - Flags public link shorteners (`bit.ly`, `tinyurl.com`, `is.gd`) and `.apk` downloads as high-risk.
+5. **Decision Score Fusion**:
+   - Combines the TRAI header risk score with the on-device ML text classifier (`combined_score = 0.45 * header_score + 0.55 * ml_score`), prioritizing critical header violations.
+
+### Top 30 Impersonated Indian Brands in `headers.json`
+`backend/models/headers.json` & `android/app/src/main/assets/headers.json`:
+- **Banks (10)**: State Bank of India (SBI), HDFC Bank, ICICI Bank, Axis Bank, Punjab National Bank (PNB), Bank of Baroda (BOB), Kotak Mahindra Bank, Canara Bank, IndusInd Bank, Union Bank of India.
+- **UPI & Wallets (5)**: PhonePe, Google Pay, Paytm, BHIM UPI (NPCI), CRED.
+- **Telecom (4)**: Bharti Airtel, Reliance Jio, Vi (Vodafone Idea), BSNL.
+- **Government & Utilities (5)**: Income Tax Department, EPFO, UIDAI (Aadhaar), DigiLocker, CSPDCL (Chhattisgarh Electricity).
+- **Couriers & Logistics (4)**: India Post, Blue Dart, DTDC, Delhivery.
+- **E-Commerce (2)**: Amazon India, Flipkart.
+
+### How to Add or Verify New Headers
+Refer to [TODO_VERIFY.md](file:///c:/project/hackasol/TODO_VERIFY.md) for headers requiring manual telecom verification. To add a new verified entity:
+```json
+{
+  "brand": "New Entity Name",
+  "type": "bank|upi|telecom|government|utility|courier|ecommerce",
+  "headers": ["6CHAR1", "6CHAR2"],
+  "domains": ["officialdomain.gov.in"]
+}
+```
+Run `pytest tests/test_trai_header_checker.py` to ensure complete schema and detection validation.
+
+### Battery Optimization Guide (Xiaomi, Oppo, Realme, Vivo, Samsung)
+To ensure uninterrupted background SMS checking when the screen is locked:
+1. **Xiaomi / Redmi / POCO (MIUI / HyperOS)**:
+   - `Settings -> Apps -> Manage Apps -> Jan Suraksha -> Battery Saver -> Select 'No Restrictions'`.
+   - Enable `Autostart` toggle.
+2. **Oppo / Realme (ColorOS / Realme UI)**:
+   - `Settings -> Battery -> More Battery Settings -> App Battery Management -> Jan Suraksha -> Allow background activity & Allow auto-launch`.
+3. **Vivo / iQOO (Funtouch OS)**:
+   - `Settings -> Battery -> Background Power Consumption Management -> Jan Suraksha -> High Background Power Usage`.
+4. **Samsung (One UI)**:
+   - `Settings -> Apps -> Jan Suraksha -> Battery -> Unrestricted`.
+
+---
+
 ## 📱 Native Android Application: Offline Automatic SMS Spam Detection
 
 Suraksha includes an idiomatic native Android application in `android/` providing background SMS interception, on-device ML classification, Room database storage, and high-priority fraud alerts.

@@ -11,6 +11,7 @@ from app.detect.stage_tracker import track_stages
 from app.detect.classifier import classify_text
 from app.detect.lookalike import detect_lookalikes_in_text
 from app.detect.reputation import check_reputation
+from app.detect.trai_header import check_sender, combine_header_and_content_verdict
 
 EXPLANATIONS = {
     "en": {
@@ -133,7 +134,7 @@ def calculate_calibrated_confidence(
         calibrated = base_conf * absence_of_risk * stage_factor
         return round(min(0.94, max(0.68, calibrated)), 4)
 
-def run_detection_pipeline(text: str, user_lang: str = "hi") -> dict:
+def run_detection_pipeline(text: str, user_lang: str = "hi", sender: str = None) -> dict:
     if user_lang not in EXPLANATIONS:
         user_lang = "hi"
 
@@ -183,6 +184,12 @@ def run_detection_pipeline(text: str, user_lang: str = "hi") -> dict:
     reputation_match = check_reputation(clean_text)
     if not reputation_match and clean_text != text:
         reputation_match = check_reputation(text)
+
+    # Check 6: Offline TRAI SMS Sender Header Analysis
+    trai_res = None
+    custom_explanation = None
+    if sender:
+        trai_res = check_sender(sender, text, user_lang=user_lang)
 
     # Step 3: Combine into Final Verdict
     # Weighting: 0.50 ML Classifier + 0.50 Rule Score
@@ -236,6 +243,20 @@ def run_detection_pipeline(text: str, user_lang: str = "hi") -> dict:
         score = combined_score
         explanation_key = "genuine"
 
+    # TRAI SMS Header Decision Fusion
+    if trai_res:
+        if trai_res.get("level") == "RED":
+            rule_flags["trai_header_scam"] = True
+            verdict = "likely_scam"
+            score = max(score, trai_res["score"])
+            custom_explanation = trai_res["explanation"]
+        elif trai_res.get("level") == "AMBER" and verdict == "genuine":
+            verdict = "unsure"
+            score = max(score, trai_res["score"])
+            custom_explanation = trai_res["explanation"]
+        elif trai_res.get("level") == "GREEN" and verdict == "genuine":
+            custom_explanation = trai_res["explanation"]
+
     # Compute defensible calibrated confidence
     confidence = calculate_calibrated_confidence(
         verdict=verdict,
@@ -267,7 +288,7 @@ def run_detection_pipeline(text: str, user_lang: str = "hi") -> dict:
 
     highlighted_html = highlight_risky_phrases(text, risky_phrases, safe_phrases)
 
-    explanation = EXPLANATIONS[user_lang].get(explanation_key, EXPLANATIONS[user_lang]["likely_scam_generic"])
+    explanation = custom_explanation or EXPLANATIONS[user_lang].get(explanation_key, EXPLANATIONS[user_lang]["likely_scam_generic"])
 
     return {
         "verdict": verdict,  # "likely_scam" | "unsure" | "genuine"
@@ -288,5 +309,6 @@ def run_detection_pipeline(text: str, user_lang: str = "hi") -> dict:
         "rule_flags": rule_flags,
         "lookalike_findings": lookalike_findings,
         "reputation_match": reputation_match,
+        "trai_header": trai_res,
         "input_language": norm_res["language"]
     }

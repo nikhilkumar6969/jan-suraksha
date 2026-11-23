@@ -88,6 +88,12 @@ app.add_middleware(
 class MessageCheckRequest(BaseModel):
     text: str
     language: Optional[str] = "hi"
+    sender: Optional[str] = None
+
+class SmsHeaderCheckRequest(BaseModel):
+    sender: str
+    body: str
+    language: Optional[str] = "hi"
 
 class UpiCheckRequest(BaseModel):
     upi_string: str
@@ -99,13 +105,40 @@ class ReportRequest(BaseModel):
     indicator: str
     device_id: str
 
-# 1. Message Detection Endpoint
+# 1. Message Detection Endpoint (supports optional TRAI sender)
 @app.post("/api/detect/message")
 def detect_message_endpoint(req: MessageCheckRequest):
     if not req.text.strip():
         raise HTTPException(status_code=400, detail="Text cannot be empty")
-    result = run_detection_pipeline(req.text, user_lang=req.language or "hi")
+    result = run_detection_pipeline(req.text, user_lang=req.language or "hi", sender=req.sender)
     return result
+
+# 1b. TRAI SMS Sender Header & Smishing Inspector Endpoint
+@app.post("/api/detect/sms-header")
+def detect_sms_header_endpoint(req: SmsHeaderCheckRequest):
+    from app.detect.trai_header import check_sender
+    sender_clean = req.sender.strip() if req.sender else ""
+    body_clean = req.body.strip() if req.body else ""
+    if not sender_clean and not body_clean:
+        raise HTTPException(status_code=400, detail="Sender ID and message body cannot both be empty")
+
+    header_eval = check_sender(sender_clean, body_clean, user_lang=req.language or "hi")
+    pipeline_eval = run_detection_pipeline(body_clean or sender_clean, user_lang=req.language or "hi", sender=sender_clean)
+
+    return {
+        "header_evaluation": header_eval,
+        "content_evaluation": pipeline_eval,
+        "final_verdict": pipeline_eval.get("verdict", header_eval.get("verdict")),
+        "final_level": header_eval.get("level"),
+        "confidence_percent": pipeline_eval.get("confidence_percent", 90),
+        "explanation": pipeline_eval.get("explanation", header_eval.get("explanation"))
+    }
+
+# 1c. Offline Headers Registry List Endpoint
+@app.get("/api/detect/sms-headers-db")
+def get_sms_headers_db_endpoint():
+    from app.detect.trai_header import load_headers_registry
+    return load_headers_registry()
 
 # 2. Call Detection Endpoint (Audio or Transcript)
 @app.post("/api/detect/call")

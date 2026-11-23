@@ -47,6 +47,7 @@
   "tab_sms": "संदेश / SMS",
   "tab_call": "फोन कॉल / गोठ-बात",
   "tab_qr": "UPI क्यूआर कोड",
+  "tab_trai": "TRAI हेडर जांच (Sender Guard)",
   "paste_msg_placeholder": "इहां संदेश, व्हाट्सएप या लिंक चिपकाव (पेस्ट करव)...",
   "btn_analyze": "अभी जांचव",
   "btn_clear": "हटाव",

@@ -46,6 +46,7 @@
   "tab_sms": "Message / SMS",
   "tab_call": "Voice Call / Audio",
   "tab_qr": "UPI QR Code",
+  "tab_trai": "TRAI Header Guard",
   "paste_msg_placeholder": "Paste suspicious SMS, WhatsApp message, loan offer or link here...",
   "btn_analyze": "Analyze Now",
   "btn_clear": "Clear",
