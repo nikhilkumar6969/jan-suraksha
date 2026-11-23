@@ -14,11 +14,6 @@ backend/models/sherpa-onnx-*
 backend/models/*.onnx
 backend/models/*.tar.bz2
 backend/models/whisper-medium*
-backend/models/xlm_roberta_spam/checkpoints/
-backend/models/xlm_roberta_spam/*.safetensors
-backend/models/xlm_roberta_spam/*.bin
-backend/models/xlm_roberta_spam/sentencepiece.bpe.model
-backend/models/xlm_roberta_spam/tokenizer.json
 backend/models/ed25519_signing_key.bin
 /models/
 *.bin

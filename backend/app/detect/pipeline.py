@@ -167,8 +167,8 @@ def run_detection_pipeline(text: str, user_lang: str = "hi", sender: str = None)
         }
 
     # Step 2: Three Parallel Checks
-    # Check 1: ML Classifier (feeds raw text to XLM-R to preserve Hindi, Chhattisgarhi, Hinglish & dialect cues)
-    clf_res = classify_text(text)
+    # Check 1: ML Classifier
+    clf_res = classify_text(clean_text)
     p_scam = clf_res["p_scam"]
     p_genuine = clf_res.get("p_genuine", 1.0 - p_scam)
     top_ngrams = clf_res.get("top_contributing_ngrams", clf_res.get("top_ngrams", []))
@@ -303,9 +303,6 @@ def run_detection_pipeline(text: str, user_lang: str = "hi", sender: str = None)
         "verdict": verdict,  # "likely_scam" | "unsure" | "genuine"
         "confidence_percent": int(round(confidence * 100)),
         "calibrated_confidence": confidence,
-        "model_name": clf_res.get("model_name", "XLM-RoBERTa"),
-        "ml_spam_probability": round(p_scam, 4),
-        "ml_genuine_probability": round(p_genuine, 4),
         "model_probability": {
             "p_scam": round(p_scam, 4),
             "p_genuine": round(p_genuine, 4)
