@@ -10,6 +10,7 @@ import json
 # Ensure backend is in python path
 backend_dir = Path(__file__).resolve().parent.parent
 workspace_dir = backend_dir.parent
+frontend_dir = workspace_dir / "frontend"
 if str(backend_dir) not in sys.path:
     sys.path.insert(0, str(backend_dir))
 if str(workspace_dir) not in sys.path:
