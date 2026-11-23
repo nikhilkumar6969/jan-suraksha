@@ -17,6 +17,7 @@ if str(workspace_dir) not in sys.path:
 
 from fastapi import FastAPI, UploadFile, File, Form, Request, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.responses import JSONResponse, FileResponse
+from contextlib import asynccontextmanager
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -37,22 +38,6 @@ from app.dashboard.service import get_dashboard_metrics
 from app.dashboard.alerts import get_latest_alerts
 from app.updates.pack_signer import generate_signed_update_pack, verify_update_pack
 
-app = FastAPI(
-    title="Suraksha API",
-    description="Offline-First Scam & Cyber Fraud Detection API for Chhattisgarh",
-    version="1.0.0"
-)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-frontend_dir = workspace_dir / "frontend"
-
 MAX_AUDIO_UPLOAD_BYTES = 25 * 1024 * 1024  # 25 MB max upload
 MAX_IMAGE_UPLOAD_BYTES = 10 * 1024 * 1024  # 10 MB max upload
 
@@ -66,8 +51,8 @@ def cleanup_orphaned_temp_files():
             except Exception as e:
                 logger.warning(f"Could not clean up temp file {f.name}: {e}")
 
-@app.on_event("startup")
-def startup_event():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     init_db()
     cleanup_orphaned_temp_files()
     try:
@@ -80,6 +65,22 @@ def startup_event():
         prewarm_all_speech_models()
     except Exception as e:
         logger.warning(f"Sherpa-ONNX speech model prewarm notice: {e}")
+    yield
+
+app = FastAPI(
+    title="Suraksha API",
+    description="Offline-First Scam & Cyber Fraud Detection API for Chhattisgarh",
+    version="1.0.0",
+    lifespan=lifespan
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Models
 class MessageCheckRequest(BaseModel):
@@ -431,6 +432,7 @@ def get_sw():
     return FileResponse(frontend_dir / "sw.js", media_type="application/javascript")
 
 @app.get("/")
+@app.get("/index.html")
 def get_index():
     return FileResponse(frontend_dir / "index.html")
 

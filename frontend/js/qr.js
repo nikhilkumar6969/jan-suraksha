@@ -206,11 +206,11 @@ const QrChecker = {
         <p style="font-size: var(--font-size-base); font-weight: 600; margin-top: 8px;">${data.explanation}</p>
 
         <div class="btn-row" style="margin-top: 14px;">
-          <button class="btn btn-secondary" onclick="window.speechSynthesis.speak(new SpeechSynthesisUtterance('${data.explanation}'))">
+          <button class="btn btn-secondary" id="btnQrTtsSpeech">
             <svg viewBox="0 0 24 24"><use href="#icon-volume"/></svg>
             बोलकर सुनाएं
           </button>
-          <button class="btn btn-accent" onclick="window.ReportsManager.openModal('${pa}')">
+          <button class="btn btn-accent" id="btnQrReportModal">
             <svg viewBox="0 0 24 24"><use href="#icon-alert-triangle"/></svg>
             इस UPI को रिपोर्ट करें
           </button>
@@ -218,7 +218,29 @@ const QrChecker = {
       </div>
     `;
 
+    const btnTts = box.querySelector('#btnQrTtsSpeech');
+    if (btnTts) {
+      btnTts.addEventListener('click', () => {
+        if (!window.speechSynthesis) return;
+        const utterance = new SpeechSynthesisUtterance(data.explanation || '');
+        utterance.lang = (window.I18n && window.I18n.currentLang === 'en') ? 'en-IN' : 'hi-IN';
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(utterance);
+      });
+    }
+
+    const btnRep = box.querySelector('#btnQrReportModal');
+    if (btnRep) {
+      btnRep.addEventListener('click', () => {
+        if (window.ReportsManager) {
+          window.ReportsManager.openModal(pa || '');
+        }
+      });
+    }
+
     box.classList.add('show');
     box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 };
+
+window.QrChecker = QrChecker;
