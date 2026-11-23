@@ -114,14 +114,14 @@ def run_detection_pipeline(text: str, user_lang: str = "hi") -> dict:
         confidence = max(p_scam, combined_score)
         score = combined_score
         explanation_key = "likely_scam_generic"
-    elif combined_score >= 0.30 or rule_risk >= 0.30 or p_scam >= 0.35:
+    elif rule_risk >= 0.30 or (combined_score >= 0.38 and len(stage_res["stages"]) > 0):
         verdict = "unsure"
         confidence = combined_score
         score = combined_score
         explanation_key = "unsure"
     else:
         verdict = "genuine"
-        confidence = clf_res["p_genuine"]
+        confidence = max(0.92, clf_res["p_genuine"])
         score = combined_score
         explanation_key = "genuine"
 
