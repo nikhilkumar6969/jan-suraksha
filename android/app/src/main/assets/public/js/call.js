@@ -154,10 +154,48 @@ const CallDetector = {
   },
 
   bindButtons() {
+    // Mode Switcher: Live Call Shield vs Check Recording
+    const btnModeLive = document.getElementById('btnModeLiveCall');
+    const btnModeUpload = document.getElementById('btnModeUploadAudio');
+    const liveSection = document.getElementById('callLiveControlsSection');
+    const uploadSection = document.getElementById('callUploadSection');
+
+    if (btnModeLive && btnModeUpload && liveSection && uploadSection) {
+      btnModeLive.addEventListener('click', () => {
+        btnModeLive.classList.add('active');
+        btnModeLive.setAttribute('aria-selected', 'true');
+        btnModeUpload.classList.remove('active');
+        btnModeUpload.setAttribute('aria-selected', 'false');
+        liveSection.style.display = 'block';
+        uploadSection.style.display = 'none';
+      });
+
+      btnModeUpload.addEventListener('click', () => {
+        btnModeUpload.classList.add('active');
+        btnModeUpload.setAttribute('aria-selected', 'true');
+        btnModeLive.classList.remove('active');
+        btnModeLive.setAttribute('aria-selected', 'false');
+        uploadSection.style.display = 'block';
+        liveSection.style.display = 'none';
+      });
+    }
+
     // Primary Live Call Listen Toggle
     const btnListen = document.getElementById('btnLiveCallListen');
     if (btnListen) {
       btnListen.addEventListener('click', () => this.toggleLiveListening());
+    }
+
+    // Speak Call Verdict Action
+    const btnSpeakVerdict = document.getElementById('btnSpeakCallVerdict');
+    if (btnSpeakVerdict) {
+      btnSpeakVerdict.addEventListener('click', () => {
+        const expl = document.getElementById('callExplanationText');
+        const currentLang = (window.I18n && window.I18n.currentLang) || 'hi';
+        if (expl && expl.textContent) {
+          this.speakWarning(expl.textContent, currentLang === 'en' ? 'en' : 'hi');
+        }
+      });
     }
 
     // Legacy File & Manual Analyze buttons
@@ -562,35 +600,56 @@ const CallDetector = {
     this.handleWarningInterventions(data);
   },
 
+  cleanRepeatedTokens(text) {
+    if (!text || typeof text !== 'string') return '';
+    let cleaned = text;
+
+    // 1. Collapse duplicate consecutive sentences: "Sentence. Sentence." -> "Sentence."
+    cleaned = cleaned.replace(/([^.?!]+[.?!])(?:\s*\1)+/gi, (match, p1) => p1);
+
+    // 2. Collapse 3 or more repeated single tokens / words: "Good. Good. Good. Good." -> "Good."
+    cleaned = cleaned.replace(/\b([A-Za-z\u0900-\u097F]+)(?:[.,!?])?(?:\s+\1(?:[.,!?])?){2,}/gi, (match, word) => {
+      const lastChar = match.trim().slice(-1);
+      return /[.,!?]/.test(lastChar) ? (word + lastChar) : word;
+    });
+
+    return cleaned.replace(/\s{2,}/g, ' ').trim();
+  },
+
   renderLiveTranscriptInterim(interim) {
     const termArea = document.getElementById('liveStreamingTextArea');
     if (!termArea) return;
 
+    const cleanInterim = this.cleanRepeatedTokens(interim);
     // Retain cumulative text and append colored interim
     const existingFinal = termArea.getAttribute('data-final-text') || '';
-    termArea.innerHTML = `${this.escapeHtml(existingFinal)} <span class="streaming-interim">${this.escapeHtml(interim)}</span>`;
+    termArea.innerHTML = `${this.escapeHtml(existingFinal)} <span class="streaming-interim">${this.escapeHtml(cleanInterim)}</span>`;
     termArea.scrollTop = termArea.scrollHeight;
   },
 
   renderLiveTranscriptCumulative(fullText, interim) {
     const termArea = document.getElementById('liveStreamingTextArea');
     const inputArea = document.getElementById('callTranscriptInput');
-    const displayText = fullText || interim || '';
+
+    const cleanFull = this.cleanRepeatedTokens(fullText);
+    const cleanInterim = this.cleanRepeatedTokens(interim);
+    const displayText = cleanFull || cleanInterim || '';
+
     if (inputArea && displayText) {
-      inputArea.value = fullText || (inputArea.value ? `${inputArea.value} ${interim}` : interim);
+      inputArea.value = cleanFull || (inputArea.value ? `${inputArea.value} ${cleanInterim}` : cleanInterim);
     }
 
     if (!termArea) return;
-    if (fullText) {
-      termArea.setAttribute('data-final-text', fullText);
+    if (cleanFull) {
+      termArea.setAttribute('data-final-text', cleanFull);
     }
 
-    let baseText = fullText || termArea.getAttribute('data-final-text') || '';
+    let baseText = cleanFull || termArea.getAttribute('data-final-text') || '';
     let html = this.escapeHtml(baseText);
-    if (interim && interim !== baseText) {
-      html += ` <span class="streaming-interim" style="color: #38bdf8; font-weight: 600;">${this.escapeHtml(interim)}</span>`;
+    if (cleanInterim && cleanInterim !== baseText) {
+      html += ` <span class="streaming-interim" style="color: var(--gov-navy, #0284c7); font-weight: 600;">${this.escapeHtml(cleanInterim)}</span>`;
     }
-    termArea.innerHTML = html || '<span style="color: #38bdf8;">[Sherpa-ONNX Engine] आवाज़ सुनी जा रही है...</span>';
+    termArea.innerHTML = html || '<span style="color: var(--text-secondary);">[On-Device AI] आवाज़ सुनी जा रही है...</span>';
     termArea.scrollTop = termArea.scrollHeight;
   },
 
@@ -1114,7 +1173,8 @@ const CallDetector = {
         this.lastStageData = data.stages || data.timeline;
       }
 
-      const extractedText = data.text || data.transcript || '';
+      const rawExtracted = data.text || data.transcript || '';
+      const extractedText = this.cleanRepeatedTokens(rawExtracted);
       data.text = extractedText;
       data.transcript = extractedText;
 
@@ -1215,33 +1275,20 @@ const CallDetector = {
 
     const ttsText = (currentLang === 'en') ? (data.audio_warning_en || explanationText) : (data.audio_warning_hi || explanationText);
 
-    vBox.innerHTML = `
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-2);">
-        <span class="badge ${isDanger ? 'badge-danger' : (isSafe ? 'badge-success' : 'badge-warning')}">
-          ${badgeText}
-        </span>
-        <span style="font-size: var(--text-xs); font-weight: 700;">${accuracyLabel} ${data.confidence_percent || 95}%</span>
-      </div>
+    // Synchronize the single unified explanation and action elements
+    const explEl = document.getElementById('callExplanationText');
+    const actEl = document.getElementById('callActionText');
+    if (explEl) explEl.textContent = explanationText;
+    if (actEl) actEl.textContent = actionText;
 
-      ${scriptHtml}
+    const certLabel = document.getElementById('riskCertaintyLabel');
+    if (certLabel) {
+      certLabel.textContent = `${accuracyLabel} ${data.confidence_percent || 95}% • 100% On-Device`;
+    }
 
-      <div style="font-size: var(--text-xs); font-weight: 700; color: var(--text-secondary); margin-bottom: 2px;">${explanationHeader}</div>
-      <p style="font-size: var(--text-sm); line-height: 1.5; margin: 0 0 var(--space-2) 0;">${this.escapeHtml(explanationText)}</p>
-
-      <div style="font-size: var(--text-xs); font-weight: 700; color: var(--text-secondary); margin-bottom: 2px;">${actionHeader}</div>
-      <p style="font-size: var(--text-sm); font-weight: 600; margin: 0 0 var(--space-3) 0;">${this.escapeHtml(actionText)}</p>
-
-      <div class="btn-row">
-        <a href="tel:1930" class="btn btn-danger" style="text-decoration: none;">
-          <svg viewBox="0 0 24 24"><use href="#icon-phone"/></svg>
-          <span>${call1930BtnText}</span>
-        </a>
-        <button class="btn btn-secondary" onclick="CallDetector.speakWarning('${this.escapeHtml(ttsText).replace(/'/g, "\\'")}', '${currentLang === 'en' ? 'en' : 'hi'}')">
-          <svg viewBox="0 0 24 24"><use href="#icon-volume"/></svg>
-          <span>${speakBtnText}</span>
-        </button>
-      </div>
-    `;
+    // Keep legacy callVerdictBox hidden to avoid duplicate card rendering
+    vBox.style.display = 'none';
+    vBox.innerHTML = '';
   },
 
   onLanguageChanged(newLang) {

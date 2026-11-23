@@ -2636,15 +2636,16 @@ html[data-a11y-size="large"] {
   100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
 }
 
-/* Live Streaming Terminal */
+/* Live Speech Transcript Card */
 .streaming-terminal-box {
-  background: #0f172a;
-  color: #f8fafc;
-  border-radius: var(--radius-md);
-  padding: var(--space-3) var(--space-4);
-  margin-bottom: var(--space-3);
-  border: 1px solid #1e293b;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  background: var(--bg-surface, #ffffff);
+  color: var(--text-primary, #0f172a);
+  border-radius: var(--radius-lg, 12px);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+  border: 1px solid var(--border-subtle, #e2e8f0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  font-family: inherit;
   position: relative;
 }
 
@@ -2652,28 +2653,33 @@ html[data-a11y-size="large"] {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--border-subtle, #f1f5f9);
   padding-bottom: var(--space-2);
-  margin-bottom: var(--space-2);
-  font-size: 0.72rem;
-  color: #94a3b8;
+  margin-bottom: var(--space-3);
+  font-size: 0.8rem;
+  color: var(--text-secondary, #64748b);
+  font-weight: 600;
 }
 
 .streaming-text-area {
-  min-height: 80px;
-  max-height: 140px;
+  min-height: 85px;
+  max-height: 180px;
   overflow-y: auto;
-  font-size: 0.88rem;
-  line-height: 1.5;
+  font-size: 0.95rem;
+  line-height: 1.6;
   white-space: pre-wrap;
   word-break: break-word;
-  color: #e2e8f0;
+  color: var(--text-primary, #1e293b);
+  background: rgba(2, 132, 199, 0.03);
+  border: 1px solid rgba(2, 132, 199, 0.12);
+  border-radius: var(--radius-md, 8px);
+  padding: var(--space-3) var(--space-4);
 }
 
 .streaming-interim {
-  color: #38bdf8;
+  color: var(--gov-navy, #0284c7);
   font-style: italic;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 /* 4-Tier Real-Time Risk Banner */
@@ -2866,3 +2872,103 @@ html[data-a11y-size="large"] {
     grid-template-columns: 1fr;
   }
 }
+
+/* ==========================================================================
+   Simplified, Citizen-Friendly Call Shield & Check Interface Styles
+   ========================================================================== */
+
+/* Segmented Mode Switcher for Call Guardian */
+.call-mode-nav {
+  display: flex;
+  background: var(--bg-subtle, #f1f5f9);
+  padding: 4px;
+  border-radius: var(--radius-md, 8px);
+  gap: 4px;
+  margin-bottom: var(--space-3);
+  border: 1px solid var(--border-subtle, #e2e8f0);
+}
+
+.call-mode-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary, #64748b);
+  font-weight: 600;
+  font-size: var(--text-xs, 0.78rem);
+  border-radius: var(--radius-sm, 6px);
+  cursor: pointer;
+  transition: all var(--transition-fast, 0.2s ease);
+}
+
+.call-mode-tab:hover {
+  color: var(--text-primary, #0f172a);
+}
+
+.call-mode-tab.active {
+  background: #ffffff;
+  color: var(--gov-navy, #0284c7);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  font-weight: 700;
+}
+
+/* Collapsible Demo Samples & Scenarios Drawer */
+.demo-samples-drawer {
+  background: var(--bg-subtle, #f8fafc);
+  border: 1px solid var(--border-subtle, #e2e8f0);
+  border-radius: var(--radius-md, 8px);
+  overflow: hidden;
+  margin-top: var(--space-3);
+  transition: all 0.2s ease;
+}
+
+.demo-drawer-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  font-size: var(--text-xs, 0.78rem);
+  font-weight: 700;
+  color: var(--text-primary, #1e293b);
+  cursor: pointer;
+  user-select: none;
+  background: var(--bg-surface, #ffffff);
+}
+
+.demo-drawer-summary:hover {
+  background: rgba(2, 132, 199, 0.04);
+}
+
+.drawer-badge {
+  background: rgba(2, 132, 199, 0.1);
+  color: var(--gov-navy, #0284c7);
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: var(--radius-full, 9999px);
+  font-weight: 600;
+}
+
+.demo-drawer-content {
+  padding: var(--space-3) 14px;
+  border-top: 1px solid var(--border-subtle, #e2e8f0);
+}
+
+.live-pulse-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #ef4444;
+  border-radius: 50%;
+  display: inline-block;
+  animation: liveDotPulse 1.5s infinite;
+}
+
+@keyframes liveDotPulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+  70% { transform: scale(1.15); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
