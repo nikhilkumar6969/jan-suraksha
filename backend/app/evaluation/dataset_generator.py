@@ -161,7 +161,8 @@ def generate_synthetic_dataset(output_path: Path = None, target_count: int = 360
         "आवश्यक बैंक सूचना: भारतीय रिजर्व बैंक के नियमानुसार अपनी शाखा में जाकर समय पर KYC पूर्ण करवाएं।",
         "बिजली विभाग सूचना: सबस्टेशन संधारण कार्य के कारण रायपुर में कल 2 घंटे बिजली बंद रहेगी।",
         "नमस्ते भैया, मैं कोतवाली थाने के सामने चाय दुकान पर खड़ा हूं, जल्दी आ जाओ साथ चलेंगे।",
-        "अंतिम अवसर: महा डिस्काउंट सेल आज रात 11:59 बजे समाप्त हो रही है।"
+        "अंतिम अवसर: महा डिस्काउंट सेल आज रात 11:59 बजे समाप्त हो रही है।",
+        "अंतिम चेतावनी: आपके बच्चे की स्कूल बस फीस रु {amt} का भुगतान आज 2 बजे तक करें अथवा बस सेवा स्थगित हो जाएगी। भुगतान लिंक: https://fees.dpsraipur.edu.in"
     ]
 
     hinglish_test_scams = [
@@ -170,7 +171,9 @@ def generate_synthetic_dataset(output_path: Path = None, target_count: int = 360
         "Crime branch alert: Drugs found in your courier parcel. You are in DIGITAL ARREST. Pay clearance bond of Rs {amt}.",
         "KBC lottery winner: Rs {amt_high} ready to claim. Send 6 digit OTP to manager {phone}.",
         "Fast loan approved: Download APK from {link} and get instant cash.",
-        # Subtle Scam
+        # Subtle Scams (Realistic False Negatives on ambiguous phishing)
+        "Hello, this is regarding your resume submitted for data entry operator role. Please confirm if you are still looking for part-time work.",
+        "Namaste, Gramin Vikas Vibhag se bol raha hoon. Aapke yojana form me kuch vivaran adhura hai. Please reply kare.",
         "Hello, aapke electricity meter me reading problem aayi hai. Form verify karwane ke liye turant call kare {phone}."
     ]
 
@@ -194,8 +197,9 @@ def generate_synthetic_dataset(output_path: Path = None, target_count: int = 360
         "तोर बैंक खाता बंद होवत हे। चालू रखे बर मोबाइल म आए 6 अंक के OTP ल तुरंत बताव नइ ते खाता सील हो जही।",
         "बधाई हो! तोर मोबाइल नंबर म 25 लाख के लॉटरी निकले हे। पईसा पाए बर तुरंत {phone} म फोन लगाके OTP बताव।",
         "5 मिनट म 50000 रुपया के तुरंत लोन लेवव बिना कोनो कागज के। अभी ये ऐप डाउनलोड करव: {link}",
-        # Subtle Scam
-        "जोहार, बिजली ऑफिस ले बोलत हंव। तोर मीटर के जांच करे बर तुरंत ए नंबर {phone} म बात करव।",
+        # Subtle Scams (ambiguous conversational outreach)
+        "जोहार, तोर घर के पता के सत्यापन बर फोन करे रिहिसंव। फ्री हो के बात करबे।",
+        "नमस्ते, प्रधानमंत्री आवास योजना के फार्म के जांच करे बर फोन लगाए हंव। तोर जानकारी मिलाना हे।",
         "तोर बिजली मीटर म रीडिंग के समस्या हे, तुरते सुधार बर ए नंबर {phone} म फोन लगावव।"
     ]
 
@@ -205,8 +209,9 @@ def generate_synthetic_dataset(output_path: Path = None, target_count: int = 360
         "बिजली बिल के रु {amt} जमा हो गे हे। रसीद नंबर {rcpt}। धन्यवाद CSPDCL बिजली विभाग।",
         "{otp} तोर बैंक के गुप्त OTP आय। ककरो ले शेयर झन करव। बैंक कभू फोन म OTP नइ मांगय।",
         "संझा के बाजार ले आलू अउ प्याज ले लेबे, धान कटाई बर ट्रैक्टर वाले ले बात हो गे हे।",
-        # Hard Negatives
-        "अति आवश्यक सूचना: पंचायत भवन म कल संझा 4 बजे ग्राम सभा के जरूरी बैठक हे, सबो झन जरूर आवव।",
+        # Hard Negatives (Urgent dial reminders)
+        "अति आवश्यक चेतावनी: राशन दुकान म आज संझा 4 बजे तक चांउर नइ लेबे त ये महीना के राशन कट जाही। तुरते सोसाइटी म संपर्क करव।",
+        "अंतिम सूचना: धान परिवहन बर टोकन आज संझा 5 बजे तक ही कटाव, नइ ते टोकन रद्द हो जही।",
         "बिजली विभाग सूचना: ट्रांसफार्मर मरम्मत बर कल 2 घंटा लाइन बंद रही। असुविधा बर खेद हे।",
         "भैया थाना चौक म भारी जाम लगे हे, दूसर डहर ले जल्दी आव।",
         "तोर बैंक खाता के केवाईसी शाखा म जाके अपडेट करवा लेबे, बैंक अधिकारी कभू फोन म जानकारी नइ मांगय।",
