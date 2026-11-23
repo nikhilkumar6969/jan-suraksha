@@ -130,7 +130,13 @@ const CallDetector = {
     }, 30000);
   },
 
+  initialized: false,
+  isToggling: false,
+
   init() {
+    if (this.initialized) return;
+    this.initialized = true;
+
     this.bindButtons();
     this.bindScenarios();
     this.bindAudioSamples();
@@ -371,10 +377,16 @@ const CallDetector = {
   },
 
   async toggleLiveListening() {
-    if (this.isListening) {
-      this.stopLiveListening();
-    } else {
-      await this.startLiveListening();
+    if (this.isToggling) return;
+    this.isToggling = true;
+    try {
+      if (this.isListening) {
+        this.stopLiveListening();
+      } else {
+        await this.startLiveListening();
+      }
+    } finally {
+      setTimeout(() => { this.isToggling = false; }, 350);
     }
   },
 
@@ -1063,9 +1075,22 @@ const CallDetector = {
     this.isListening = false;
     this.updateMicPermissionPill();
 
+    const btn = document.getElementById('btnLiveCallListen');
+    const btnText = document.getElementById('liveListenBtnText');
+    const vadPill = document.getElementById('vadStatusPill');
     const pulseDot = document.getElementById('livePulseDot');
-    if (pulseDot) pulseDot.classList.remove('active');
     const statusText = document.getElementById('liveStatusText');
+
+    if (btn) {
+      btn.classList.remove('listening');
+      btn.classList.add('idle');
+    }
+    if (btnText) btnText.textContent = 'कॉल सुनना शुरू करें (Start Listening)';
+    if (vadPill) {
+      vadPill.textContent = '⚪ VAD: माइक बंद (Inactive)';
+      vadPill.classList.remove('active');
+    }
+    if (pulseDot) pulseDot.classList.remove('active');
     if (statusText) statusText.textContent = 'लाइव बातचीत (माइक बंद)';
 
     if (this.silenceTimer) {
@@ -1148,20 +1173,6 @@ const CallDetector = {
     if (this.durationTimer) {
       clearInterval(this.durationTimer);
       this.durationTimer = null;
-    }
-
-    const btn = document.getElementById('btnLiveCallListen');
-    const btnText = document.getElementById('liveListenBtnText');
-    const vadPill = document.getElementById('vadStatusPill');
-
-    if (btn) {
-      btn.classList.remove('listening');
-      btn.classList.add('idle');
-    }
-    if (btnText) btnText.textContent = 'कॉल सुनना शुरू करें (Start Listening)';
-    if (vadPill) {
-      vadPill.textContent = '⚪ VAD: माइक बंद (Inactive)';
-      vadPill.classList.remove('active');
     }
 
     // Call backend session stop HTTP as final sync
@@ -1553,10 +1564,12 @@ const CallDetector = {
 
 window.CallDetector = CallDetector;
 
-// Auto-initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
+// Auto-initialize fallback if loaded standalone
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
   CallDetector.init();
-});
+} else {
+  document.addEventListener('DOMContentLoaded', () => CallDetector.init());
+}
 
 // Resume AudioContext if browser tab is foregrounded after suspension
 document.addEventListener('visibilitychange', () => {
