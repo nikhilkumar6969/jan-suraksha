@@ -11,18 +11,19 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.pipeline import FeatureUnion, Pipeline
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
+from app.detect.normalizer import normalize_text
 
 def train_scam_model(dataset: list, models_dir: Path = None, random_state: int = 42):
     has_explicit_split = any("split" in item for item in dataset)
     if has_explicit_split:
         train_items = [item for item in dataset if item.get("split") == "train"]
         test_items = [item for item in dataset if item.get("split") == "test"]
-        train_texts = [item["text"] for item in train_items]
+        train_texts = [normalize_text(item["text"])["clean"] for item in train_items]
         train_labels = [item["label"] for item in train_items]
         test_data = test_items
-        test_texts = [item["text"] for item in test_items]
+        test_texts = [normalize_text(item["text"])["clean"] for item in test_items]
     else:
-        texts = [item["text"] for item in dataset]
+        texts = [normalize_text(item["text"])["clean"] for item in dataset]
         labels = [item["label"] for item in dataset]
         languages = [item["language"] for item in dataset]
 
@@ -32,23 +33,25 @@ def train_scam_model(dataset: list, models_dir: Path = None, random_state: int =
             texts, labels, list(range(len(texts))), test_size=0.20, random_state=random_state, stratify=stratify_col
         )
         test_data = [{
-            "text": texts[i],
+            "text": dataset[i]["text"],
             "label": labels[i],
             "language": languages[i]
         } for i in test_idx]
 
-    # Combined word (1-2) and character (2-5) n-grams feature extractor
+    # Robust word (1-2) and character (3-5) n-grams with min_df to eliminate overfitting & noise
     feature_union = FeatureUnion([
         ("word_tfidf", TfidfVectorizer(
             analyzer="word",
             ngram_range=(1, 2),
-            max_features=12000,
+            min_df=2,
+            max_features=8000,
             sublinear_tf=True
         )),
         ("char_tfidf", TfidfVectorizer(
             analyzer="char",
-            ngram_range=(2, 5),
-            max_features=25000,
+            ngram_range=(3, 5),
+            min_df=3,
+            max_features=12000,
             sublinear_tf=True
         ))
     ])
@@ -56,7 +59,7 @@ def train_scam_model(dataset: list, models_dir: Path = None, random_state: int =
     pipeline = Pipeline([
         ("features", feature_union),
         ("clf", LogisticRegression(
-            C=1.5,
+            C=0.8,
             max_iter=1000,
             solver="liblinear",
             random_state=random_state,

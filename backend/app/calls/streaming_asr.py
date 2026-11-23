@@ -7,6 +7,7 @@ noise suppression, and multi-lingual recognition (Hindi, English, Hinglish, Chha
 import os
 import io
 import time
+import json
 import wave
 import logging
 from pathlib import Path
@@ -178,20 +179,22 @@ class StreamingSession:
         self.zipformer = get_streaming_zipformer()
         self.stream = self.zipformer.create_stream() if self.zipformer else None
 
-        # Vosk Streaming Recognizers for Hindi and Indian English
+        # Vosk Streaming Recognizers for Hindi and Indian English (lazily loaded on demand)
         self.vosk_rec_hi = None
         self.vosk_rec_en = None
         try:
             import vosk
             from app.calls.transcribe import find_vosk_model, get_or_load_vosk_model
-            m_hi = get_or_load_vosk_model(find_vosk_model("hi"))
-            if m_hi:
-                self.vosk_rec_hi = vosk.KaldiRecognizer(m_hi, 16000)
-                self.vosk_rec_hi.SetWords(True)
-            m_en = get_or_load_vosk_model(find_vosk_model("en"))
-            if m_en:
-                self.vosk_rec_en = vosk.KaldiRecognizer(m_en, 16000)
-                self.vosk_rec_en.SetWords(True)
+            if language in ("hi", "chg"):
+                m_hi = get_or_load_vosk_model(find_vosk_model("hi"))
+                if m_hi:
+                    self.vosk_rec_hi = vosk.KaldiRecognizer(m_hi, 16000)
+                    self.vosk_rec_hi.SetWords(True)
+            elif language == "en":
+                m_en = get_or_load_vosk_model(find_vosk_model("en"))
+                if m_en:
+                    self.vosk_rec_en = vosk.KaldiRecognizer(m_en, 16000)
+                    self.vosk_rec_en.SetWords(True)
         except Exception as ex:
             logger.debug(f"Vosk streaming init notice: {ex}")
 

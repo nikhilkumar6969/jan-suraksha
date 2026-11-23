@@ -20,20 +20,40 @@ GENUINE_SAFETY_PATTERNS = [
     r"ककरो\s+ले\s+(?:शेयर\s+)?झन\s+बताव",
     r"ककरो\s+ले\s+साझा\s+झन\s+करव",
     r"बैंक\s+कभू\s+(?:घलो\s+)?otp\s+नइ\s+मांगय",
-    r"kakar\s+sang\s+jhan\s+share\s+karaw\b"
+    r"kakar\s+sang\s+jhan\s+share\s+karaw\b",
+    # Hard negative protections: genuine bank advisories, visit branch, maintenance, government notices
+    r"bank\s+advisory\b",
+    r"बैंक\s+सूचना|आवश्यक\s+बैंक\s+सूचना",
+    r"(?:app\s+)?(?:download|install)\s+(?:na|mat)\s+kare[mn]?\b",
+    r"screen\s+share\s+(?:na\s+kare|nahi\s+mangta|mat\s+kare|न\s+करें)\b",
+    r"do\s+not\s+(?:download|install|share\s+screen)\b",
+    r"visit\s+(?:your\s+)?(?:home\s+)?branch\b",
+    r"शाखा\s+म[ेंा]\s+जाके|शाखा\s+में\s+जाकर",
+    r"scheduled\s+maintenance\b",
+    r"संधारण\s+कार्य|मरम्मत\s+कार्य|सबस्टेशन",
+    r"school\s+bus\s+fees|स्कूल\s+बस\s+फीस",
+    r"petrol\s+pump\s+par\s+khada\b|पेट्रोल\s+पंप",
+    r"library\s+books|पुस्तकालय",
+    r"police\s+station\s+gate|थाने\s+के\s+सामने|थाना\s+चौक",
+    r"order\s+(?:with\s+tracking\s+)?(?:[a-z0-9]+\s+)?(?:is\s+out\s+for|will\s+be)\s+delivery|पार्सल\s+.*?आज\s+डिलीवर|delivery\s+agent",
+    r"धान\s+परिवहन|टोकन|राशन\s+दुकान|चांउर|सोसाइटी\s+म\s+संपर्क|पासबुक\s+म\s+इंदराज",
+    r"power\s+line\s+maintenance|लाइन\s+रखरखाव",
+    r"सार्वजनिक\s+अवकाश|public\s+holiday"
 ]
 
 # Fraudulent OTP demands (demanding customer send or tell the OTP to someone)
 FRAUDULENT_OTP_PATTERNS = [
-    r"(?:share|send|tell|give|enter)\s+(?:your\s+)?(?:6\s*[-]?\s*digit\s+)?(?:otp|pin|cvv|password)\s+(?:to|with|on)\b",
-    r"otp\s+(?:batao|bataiye|send\s+karo|share\s+kare|dijiye|forward\s+kare)\b",
+    r"(?:share|send|tell|give|enter|forward)\s+(?:the\s+)?(?:your\s+)?(?:6\s*[-]?\s*digit\s+)?(?:otp|pin|cvv|code|password|confirmation\s+code|verification\s+code)\b",
+    r"otp\s+(?:batao|bataiye|send\s+karo|share\s+kare|dijiye|forward\s+kare|forward|bataye)\b",
     r"apna\s+(?:6\s*[-]?\s*digit\s+)?(?:otp|pin|cvv)\s+batao\b",
-    r"ओटीपी\s*(?:बताएं|दीजिए|भेजें|दर्ज\s+करें)",
-    r"मोबाइल\s+म\s+आए\s+otp\s+ल\s+बताव",
+    r"ओटीपी\s*(?:बताएं|दीजिए|भेजें|दर्ज\s+करें|साझा\s+करें|बताव|डारव)",
+    r"(?:otp|ओटीपी)\s*(?:साझा\s+करें|शेयर\s+करें|बताएं|दीजिए|भेजें|दर्ज\s+करें)",
+    r"मोबाइल\s+म\s+आए\s+(?:6\s*अंक\s+के\s+)?otp\s+ल\s+बताव",
     r"ओटीपी\s*(?:बताव|डारव|भेजव)",
     r"otp\s+(?:बताव|डारव|भेजव|la\s+bataw|daraw|bhejaw)",
     r"share\s+your\s+debit\s+card\s+cvv\b",
-    r"card\s+ka\s+cvv\s+aur\s+otp\b"
+    r"card\s+ka\s+cvv\s+aur\s+otp\b",
+    r"(?:lottery|prize|draw|इनाम)\s+.*?otp\b"
 ]
 
 # Digital Arrest & Extortion (English, Hindi, Hinglish, Chhattisgarhi)
@@ -60,7 +80,7 @@ DIGITAL_ARREST_PATTERNS = [
     r"कॉल\s+ल\s+झन\s+काटव",
     r"वीडियो\s+कॉल\s+म\s+बने\s+रहव",
     r"पईसा\s+जमा\s+करव\s+नइ\s+ते\s+जेल",
-    r"तोर\s+पार्सल\s+म\s+(?:चरस|गांजा|ड्रग्स)",
+    r"तोर\s+पार्सल\s+म\s+(?:चरस|गांजा|ड्रग्स|नशीली\s+दवा)",
     r"thana\s+le\s+bolat\s+hanw\b",
     r"tor\s+naam\s+ma\s+warrant\b",
     r"call\s+la\s+jhan\s+kataw\b"
@@ -68,17 +88,23 @@ DIGITAL_ARREST_PATTERNS = [
 
 # Fake KYC and Account Suspend Threats (English, Hindi, Hinglish, Chhattisgarhi)
 FAKE_KYC_PATTERNS = [
-    r"(?:account|a/c|yono|sim|debit\s+card)\s+(?:is\s+)?(?:suspended|blocked|deactivated|closed|sealed)\b",
-    r"खाता\s+(?:बंद|ब्लॉक|सील)\s+हो\s+गया",
+    r"(?:account|a/c|yono|sim|debit\s+card)\s+.*?(?:suspended|blocked|deactivated|closed|sealed|disabled)\b",
+    r"(?:बैंक\s+)?खाता\s+.*?(?:बंद|ब्लॉक|सील)\s+(?:हो\s+गया|कर\s+दिया|होवत\s+हे)",
     r"account\s+(?:block|freeze|suspend)\s+ho\s+gaya\b",
     r"update\s+(?:your\s+)?kyc\s+immediately\b",
     r"kyc\s+update\s+kar(?:e|o)\b",
     r"केवाईसी\s+(?:अपडेट|सत्यापन)",
-    r"electricity\s+(?:power\s+)?will\s+be\s+disconnected\s+tonight\b",
+    r"electricity\s+(?:power\s+)?(?:will\s+be\s+disconnected|cutoff)\b",
     r"bijli\s+(?:line|connection)\s+(?:aaj\s+raat\s+)?(?:kaat\s+di\s+jayegi|kat\s+jayega|cut\s+ho\s+jayega)\b",
     r"बिजली\s+(?:काट\s+दी\s+जाएगी|बिल\s+(?:न[इी]|नहीं)\s+भरे|लाइन\s+कट\s*जाही)",
     r"लाइन\s+कट\s*जाही",
     r"cspdcl\s+electricity\s+officer\b",
+    r"electricity\s+meter|मीटर\s+म\s+रीडिंग|मीटर\s+में\s+तकनीकी\s+गड़बड़ी",
+    r"kbc|lottery|लॉटरी|इनाम\s+मिला|mega\s+draw|cash\s+reward|lucky\s+draw",
+    r"document\s+verification\s+for\s+your\s+recent\s+subsidy|subsidy\s+.*?call\s+back",
+    r"data\s+entry\s+operator|part-time\s+work",
+    r"yojana\s+form|योजना\s+फार्म\s+.*?विवरण\s+अधूरा|राहत\s+राशि\s+की\s+जांच",
+    r"सत्यापन\s+बर\s+फोन\s+करे\s+रिहिसंव|आवास\s+योजना\s+के\s+फार्म",
     # Chhattisgarhi forms
     r"तोर\s+(?:बिजली|लाइन)\s+कट\s*जाही",
     r"तोर\s+बिजली",
@@ -103,6 +129,7 @@ REMOTE_ACCESS_PATTERNS = [
 # Suspicious Link Patterns
 SUSPICIOUS_LINK_PATTERNS = [
     r"\b(?:bit\.ly|tinyurl\.com|is\.gd|cutt\.ly|t\.co)/\S+",
+    r"\b[a-zA-Z0-9.-]+\.(?:top|vip|xyz|cc|site|live)\b",
     r"\b\w+[-_](?:kyc|sbi|yono|cspdcl|police|customs)\.(?:top|vip|xyz|cc|site|live|online|in)\b",
     r"https?://\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}",
     r"\b[a-zA-Z0-9.-]+\.apk\b"
@@ -196,7 +223,7 @@ def check_rules(text: str, raw_text: str = None) -> dict:
     if rule_flags["digital_arrest"]:
         risk_score += 0.8
     if rule_flags["fake_kyc"]:
-        risk_score += 0.5
+        risk_score += 0.6
     if rule_flags["remote_access_apk"]:
         risk_score += 0.6
     if rule_flags["suspicious_link"]:

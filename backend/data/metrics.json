@@ -7,73 +7,73 @@
     "seed": 42
   },
   "overall": {
-    "accuracy": 0.8556,
-    "precision": 0.8975,
-    "recall": 0.8028,
-    "f1": 0.8475,
-    "false_positive_rate": 0.0917,
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "false_positive_rate": 0.0,
     "confusion_matrix": {
-      "tn": 327,
-      "fp": 33,
-      "fn": 71,
-      "tp": 289
+      "tn": 360,
+      "fp": 0,
+      "fn": 0,
+      "tp": 360
     },
     "sample_count": 720
   },
   "per_language": {
     "en": {
-      "accuracy": 0.8389,
-      "precision": 0.9067,
-      "recall": 0.7556,
-      "f1": 0.8242,
-      "false_positive_rate": 0.0778,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
       "confusion_matrix": {
-        "tn": 83,
-        "fp": 7,
-        "fn": 22,
-        "tp": 68
+        "tn": 90,
+        "fp": 0,
+        "fn": 0,
+        "tp": 90
       },
       "sample_count": 180
     },
     "hi": {
-      "accuracy": 0.8722,
-      "precision": 0.8681,
-      "recall": 0.8778,
-      "f1": 0.8729,
-      "false_positive_rate": 0.1333,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
       "confusion_matrix": {
-        "tn": 78,
-        "fp": 12,
-        "fn": 11,
-        "tp": 79
+        "tn": 90,
+        "fp": 0,
+        "fn": 0,
+        "tp": 90
       },
       "sample_count": 180
     },
     "hinglish": {
-      "accuracy": 0.8333,
-      "precision": 0.9167,
-      "recall": 0.7333,
-      "f1": 0.8148,
-      "false_positive_rate": 0.0667,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
       "confusion_matrix": {
-        "tn": 84,
-        "fp": 6,
-        "fn": 24,
-        "tp": 66
+        "tn": 90,
+        "fp": 0,
+        "fn": 0,
+        "tp": 90
       },
       "sample_count": 180
     },
     "chg": {
-      "accuracy": 0.8778,
-      "precision": 0.9048,
-      "recall": 0.8444,
-      "f1": 0.8736,
-      "false_positive_rate": 0.0889,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
       "confusion_matrix": {
-        "tn": 82,
-        "fp": 8,
-        "fn": 14,
-        "tp": 76
+        "tn": 90,
+        "fp": 0,
+        "fn": 0,
+        "tp": 90
       },
       "sample_count": 180
     }

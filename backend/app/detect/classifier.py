@@ -8,9 +8,11 @@ import joblib
 import numpy as np
 
 _MODEL_CACHE = None
+_FEATURE_NAMES_CACHE = None
+_COEFS_CACHE = None
 
 def get_model(model_path: Path = None):
-    global _MODEL_CACHE
+    global _MODEL_CACHE, _FEATURE_NAMES_CACHE, _COEFS_CACHE
     if _MODEL_CACHE is not None:
         return _MODEL_CACHE
 
@@ -23,6 +25,15 @@ def get_model(model_path: Path = None):
         run_pipeline()
 
     _MODEL_CACHE = joblib.load(model_path)
+    try:
+        features_union = _MODEL_CACHE.named_steps["features"]
+        clf = _MODEL_CACHE.named_steps["clf"]
+        _FEATURE_NAMES_CACHE = [fn.split("__")[-1] for fn in features_union.get_feature_names_out()]
+        _COEFS_CACHE = clf.coef_[0]
+    except Exception:
+        _FEATURE_NAMES_CACHE = None
+        _COEFS_CACHE = None
+
     return _MODEL_CACHE
 
 def classify_text(text: str) -> dict:
@@ -35,25 +46,18 @@ def classify_text(text: str) -> dict:
     # Top contributing features
     top_ngrams = []
     try:
-        features_union = pipeline.named_steps["features"]
-        clf = pipeline.named_steps["clf"]
-        
-        # Transform single input text
-        X_feat = features_union.transform([text])
-        feature_names = features_union.get_feature_names_out()
-        coefs = clf.coef_[0]
+        if _FEATURE_NAMES_CACHE is not None and _COEFS_CACHE is not None:
+            features_union = pipeline.named_steps["features"]
+            X_feat = features_union.transform([text])
+            contributions = X_feat.toarray()[0] * _COEFS_CACHE
+            pos_indices = np.argsort(contributions)[::-1]
 
-        # Element-wise contribution = value * weight
-        contributions = X_feat.toarray()[0] * coefs
-        pos_indices = np.argsort(contributions)[::-1]
-
-        for idx in pos_indices:
-            if contributions[idx] > 0.05 and len(top_ngrams) < 6:
-                clean_name = feature_names[idx].split("__")[-1]
-                top_ngrams.append({
-                    "ngram": clean_name,
-                    "weight": round(float(contributions[idx]), 3)
-                })
+            for idx in pos_indices:
+                if contributions[idx] > 0.05 and len(top_ngrams) < 6:
+                    top_ngrams.append({
+                        "ngram": _FEATURE_NAMES_CACHE[idx],
+                        "weight": round(float(contributions[idx]), 3)
+                    })
     except Exception as e:
         top_ngrams = []
 

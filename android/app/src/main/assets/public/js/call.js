@@ -173,6 +173,24 @@ const CallDetector = {
       btnClear.addEventListener('click', () => this.resetAll());
     }
 
+    const btnCopy = document.getElementById('btnCopyCallTranscript');
+    if (btnCopy) {
+      btnCopy.addEventListener('click', () => {
+        const input = document.getElementById('callTranscriptInput');
+        if (input && input.value) {
+          navigator.clipboard.writeText(input.value).then(() => {
+            btnCopy.textContent = '✅ कॉपी हुआ!';
+            setTimeout(() => { btnCopy.textContent = '📋 कॉपी करें'; }, 2000);
+          }).catch(() => {
+            input.select();
+            document.execCommand('copy');
+            btnCopy.textContent = '✅ कॉपी हुआ!';
+            setTimeout(() => { btnCopy.textContent = '📋 कॉपी करें'; }, 2000);
+          });
+        }
+      });
+    }
+
     if (audioInput) {
       audioInput.addEventListener('change', async (e) => {
         const file = e.target.files ? e.target.files[0] : null;
@@ -510,8 +528,9 @@ const CallDetector = {
 
     // 1. Update Transcription Terminal & Input Field
     const recognizedText = data.text || data.transcript || '';
-    if (recognizedText) {
-      this.renderLiveTranscriptCumulative(recognizedText, data.interim);
+    const interimText = data.interim || '';
+    if (recognizedText || interimText) {
+      this.renderLiveTranscriptCumulative(recognizedText, interimText);
     }
 
     // 2. Update Latency and VAD pills
@@ -556,16 +575,22 @@ const CallDetector = {
   renderLiveTranscriptCumulative(fullText, interim) {
     const termArea = document.getElementById('liveStreamingTextArea');
     const inputArea = document.getElementById('callTranscriptInput');
-    if (inputArea && fullText) inputArea.value = fullText;
+    const displayText = fullText || interim || '';
+    if (inputArea && displayText) {
+      inputArea.value = fullText || (inputArea.value ? `${inputArea.value} ${interim}` : interim);
+    }
 
     if (!termArea) return;
-    termArea.setAttribute('data-final-text', fullText);
-
-    let html = this.escapeHtml(fullText);
-    if (interim) {
-      html += ` <span class="streaming-interim">${this.escapeHtml(interim)}</span>`;
+    if (fullText) {
+      termArea.setAttribute('data-final-text', fullText);
     }
-    termArea.innerHTML = html;
+
+    let baseText = fullText || termArea.getAttribute('data-final-text') || '';
+    let html = this.escapeHtml(baseText);
+    if (interim && interim !== baseText) {
+      html += ` <span class="streaming-interim" style="color: #38bdf8; font-weight: 600;">${this.escapeHtml(interim)}</span>`;
+    }
+    termArea.innerHTML = html || '<span style="color: #38bdf8;">[Sherpa-ONNX Engine] आवाज़ सुनी जा रही है...</span>';
     termArea.scrollTop = termArea.scrollHeight;
   },
 
@@ -1096,14 +1121,27 @@ const CallDetector = {
       const transcriptInput = document.getElementById('callTranscriptInput');
       if (transcriptInput && extractedText) {
         transcriptInput.value = extractedText;
+        transcriptInput.style.border = '2px solid #059669';
+        transcriptInput.style.boxShadow = '0 0 10px rgba(5, 150, 105, 0.2)';
+        setTimeout(() => {
+          transcriptInput.style.border = '';
+          transcriptInput.style.boxShadow = '';
+        }, 4000);
       }
 
-      this.hideStatus();
       this.handleStreamingResponse(data);
       this.renderFullVerdictBox(data);
 
-      if (data.transcription_notice) {
-        this.showStatus(data.transcription_notice, 'success');
+      if (extractedText) {
+        const wordCount = extractedText.trim().split(/\s+/).length;
+        this.showStatus(`✅ आवाज़ से बातचीत सफलतापूर्वक निकाली गई (${wordCount} शब्द) • ${data.transcription_notice || 'Sherpa-ONNX 100% On-Device Engine'}`, 'success');
+      } else {
+        this.showStatus('⚠️ आवाज़ से कोई स्पष्ट बातचीत नहीं मिली। कृपया साफ़ आवाज़ की रिकॉर्डिंग अपलोड करें या बातचीत पेस्ट करें।', 'error');
+      }
+
+      // Smooth scroll to extracted transcript and verdict
+      if (transcriptInput) {
+        transcriptInput.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
     } catch (err) {
       console.error('Call analysis error:', err);
