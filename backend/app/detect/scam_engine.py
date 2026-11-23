@@ -139,10 +139,15 @@ FINANCIAL_EXTORTION_PATTERNS = [
     r"क्यूआर\s+कोड\s+स्कैन\s+करके\s+भुगतान\s+करें"
 ]
 
-# 6. Remote Access Fraud
+# 6. Remote Access Fraud & Computer Takeover
 REMOTE_ACCESS_PATTERNS = [
     r"\b(?:anydesk|quicksupport|teamviewer|rustdesk|zoho\s+assist|screenshare)\b",
     r"एनीडेस्क|क्विक\s*सपोर्ट|टीमव्यूअर",
+    r"\b(?:you\s+need|need\s+a|have\s+a|open|turn\s+on|switch\s+on|start|go\s+to|use)\s+(?:a\s+|your\s+)?(?:computer|pc|laptop|desktop)\b",
+    r"\b(?:computer|laptop|pc)\s+(?:on\s+karo|chalu\s+karo|start\s+karo|open\s+karo|me\s+connect)\b",
+    r"\b(?:need\s+a\s+computer|access\s+your\s+computer|connect\s+your\s+computer)\b",
+    r"कंप्यूटर\s*(?:चालू\s+करो|खोलो|ऑन\s+करो|पे\s+बैठो|में\s+देखो|चाहिए)",
+    r"लैपटॉप\s*(?:चालू\s+करो|खोलो|ऑन\s+करो)",
     r"\b(?:download|install|bheja\s+hai|bheje\s+hanw)\s+(?:the\s+)?(?:apk|support\s+app|security\s+app)\b",
     r"\binstall\s+(?:unknown\s+app|customer\s+support\s+apk)\b",
     r"\benable\s+accessibility\s+(?:permission|service)\b",

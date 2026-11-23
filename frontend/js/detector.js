@@ -196,8 +196,8 @@ const MessageDetector = {
     // 2. Fraudulent OTP / PIN demands (requesting customer to give/send/share secrets)
     const isFraudOtpDemand = /(?:(?:share|send|tell|give|enter)\s+(?:your\s+)?(?:6\s*[-]?\s*digit\s+)?(?:otp|pin|cvv|password)|otp\s+(?:batao|bataiye|send\s+karo|share\s+kare|dijiye|forward)|apna\s+otp\s+batao|ओटीपी\s*(?:बताएं|दीजिए|भेजें|दर्ज\s+करें|बताव|डारव|भेजव)|मोबाइल\s+म\s+आए\s+otp)/i.test(text);
 
-    // 3. Clear cyber fraud patterns (disconnection, arrest, fake KYC, apk malware)
-    const isScamThreat = /(?:digital\s+arrest|डिजिटल\s+अरेस्ट|police\s+notice|arrest\s+warrant|bijli.*(?:kaat|cut|disconnected|band)|बिजली.*(?:काट|कट|बिल)|(?:kyc|account|sim).*(?:suspended|blocked|update|deactivated)|केवाईसी.*अपडेट|\.apk\b)/i.test(text);
+    // 3. Clear cyber fraud patterns (disconnection, arrest, fake KYC, apk malware, remote access)
+    const isScamThreat = /(?:digital\s+arrest|डिजिटल\s+अरेस्ट|police\s+notice|arrest\s+warrant|bijli.*(?:kaat|cut|disconnected|band)|बिजली.*(?:काट|कट|बिल)|(?:kyc|account|sim).*(?:suspended|blocked|update|deactivated)|केवाईसी.*अपडेट|\.apk\b|anydesk|quicksupport|teamviewer|need\s+a\s+computer|you\s+need\s+a\s+computer|open\s+(?:your\s+)?computer|स्क्रीन\s+शेयर|रिमोट\s+एक्सेस)/i.test(text);
 
     // 4. Genuine transaction notifications (credit/debit, merchant purchase)
     const isGenuineTxn = /(?:credited|debited|txn\s+of|transaction\s+of|inr\s+\d+|rs\.?\s*\d+|spent\s+on\s+card|valid\s+for\s+\d+\s+mins?)/i.test(text);

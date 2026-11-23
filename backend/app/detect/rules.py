@@ -137,10 +137,15 @@ FAKE_KYC_PATTERNS = [
     r"tor\s+khata\s+band\s+howat\s+he\b"
 ]
 
-# Remote Access APKs
+# Remote Access APKs & Tech Support Computer Manipulation
 REMOTE_ACCESS_PATTERNS = [
     r"\b(?:anydesk|quicksupport|rustdesk|teamviewer|zoho\s+assist)\b",
     r"एनीडेस्क|क्विक\s*सपोर्ट\b",
+    r"\b(?:you\s+need|need\s+a|have\s+a|open|turn\s+on|switch\s+on|start|go\s+to|use)\s+(?:a\s+|your\s+)?(?:computer|pc|laptop|desktop)\b",
+    r"\b(?:computer|laptop|pc)\s+(?:on\s+karo|chalu\s+karo|start\s+karo|open\s+karo|me\s+connect)\b",
+    r"\b(?:need\s+a\s+computer|access\s+your\s+computer|connect\s+your\s+computer)\b",
+    r"कंप्यूटर\s*(?:चालू\s+करो|खोलो|ऑन\s+करो|पे\s+बैठो|में\s+देखो|चाहिए)",
+    r"लैपटॉप\s*(?:चालू\s+करो|खोलो|ऑन\s+करो)",
     r"install\s+apk|download\s+apk\b",
     r"apk\s+(?:download|install)\s+kar(?:e|o|aw)\b",
     r"screen\s+share\s+kar(?:e|o)\b"

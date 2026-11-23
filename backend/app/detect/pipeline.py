@@ -14,6 +14,7 @@ EXPLANATIONS = {
     "en": {
         "likely_scam_otp": "This message is attempting to steal your OTP or bank security codes. Banks and officers NEVER ask for OTPs.",
         "likely_scam_arrest": "Warning: 'Digital Arrest' is a total extortion scam. Genuine police or CBI never conduct trials or bail demands over phone/video calls.",
+        "likely_scam_remote": "Critical Alert: Technical support / Remote access manipulation detected (computer/AnyDesk/screen sharing). Genuine banks or companies NEVER ask to access your computer or install screen control apps.",
         "likely_scam_kyc": "Urgent threats to disconnect power or block bank accounts are fraudulent panic tactics. Never call unknown phone numbers or install APK apps.",
         "likely_scam_generic": "High scam indicators detected. The sender is using artificial urgency or pressure to extract payments or sensitive data.",
         "unsure": "The message contains suspicious keywords or links, but lacks explicit fraud demands. Please cross-verify directly with your bank or official provider.",
@@ -23,6 +24,7 @@ EXPLANATIONS = {
     "hi": {
         "likely_scam_otp": "सावधान! यह संदेश आपका गुप्त OTP या बैंक कोड चुराने की साजिश है। बैंक अधिकारी कभी फोन या मैसेज पर OTP नहीं मांगते।",
         "likely_scam_arrest": "खतरा! 'डिजिटल अरेस्ट' नाम की कोई कानूनी व्यवस्था नहीं है। असली पुलिस या CBI वीडियो कॉल पर पैसे या जमानत की मांग कभी नहीं करती।",
+        "likely_scam_remote": "खतरा! यह रिमोट एक्सेस और कंप्यूटर नियंत्रण का प्रयास है। कोई भी बैंक या कंपनी आपके कंप्यूटर का रिमोट कंट्रोल नहीं मांगती। किसी अनजान व्यक्ति के कहने पर कंप्यूटर या AnyDesk न खोलें।",
         "likely_scam_kyc": "बिजली काटने या बैंक खाता सील करने की धमकी सरासर फर्जी है। किसी अनजान नंबर पर कॉल न करें और न ही कोई ऐप डाउनलोड करें।",
         "likely_scam_generic": "भारी ठगी का खतरा! प्रेषक आपको डराकर या लालच देकर पैसे या गुप्त जानकारी हथियाने का प्रयास कर रहा है।",
         "unsure": "संदेश संदेहास्पद लग रहा है। किसी भी लिंक पर क्लिक करने से पहले सीधे अपनी बैंक शाखा से पुष्टि कर लें।",
@@ -32,6 +34,7 @@ EXPLANATIONS = {
     "chg": {
         "likely_scam_otp": "सचेत रहव! ये मैसेज तोर गुप्त OTP चुराए के चक्कर हे। बैंक वाले कभू फोन म OTP नइ मांगंय।",
         "likely_scam_arrest": "भारी खतरा! कानून म 'डिजिटल अरेस्ट' नइ होवय। असली पुलिस कभू फोन म पइसा या जमानत नइ मांगय।",
+        "likely_scam_remote": "भारी खतरा! ये कंप्यूटर या मोबाइल हैक करे के चाल हे। बैंक कभू तोर कंप्यूटर चालू करे या रिमोट ऐप डाउनलोड करे बर नइ कहय।",
         "likely_scam_kyc": "बिजली काटे या खाता बंद करे के धमकी ठगी आय। कोनो अनजान नंबर म फोन झन लगावव।",
         "likely_scam_generic": "ठगी के भारी खतरा हे! तोर से पइसा ऐंठने बर डरवाए जात हे।",
         "unsure": "संदेश कुछ संदेहास्पद दिखत हे। बैंक जाके एक बेर पूछ लेवव।",
@@ -178,6 +181,10 @@ def run_detection_pipeline(text: str, user_lang: str = "hi") -> dict:
         verdict = "likely_scam"
         score = 0.98
         explanation_key = "likely_scam_arrest"
+    elif rule_flags["remote_access_apk"]:
+        verdict = "likely_scam"
+        score = 0.96
+        explanation_key = "likely_scam_remote"
     elif rule_flags["fake_kyc"] and (rule_flags["remote_access_apk"] or rule_flags["suspicious_link"] or rule_flags["urgency_pressure"]):
         verdict = "likely_scam"
         score = 0.95
