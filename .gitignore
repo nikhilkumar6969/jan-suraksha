@@ -11,3 +11,7 @@ backend/data/*.db
 backend/models/vosk-*
 
 
+backend/models/sherpa-onnx-*
+backend/models/*.onnx
+backend/models/*.tar.bz2
+backend/data/*.db*

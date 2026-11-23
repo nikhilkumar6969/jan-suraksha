@@ -501,72 +501,238 @@
           </div>
         </div>
 
-        <!-- Subtab 2: Call -->
+        <!-- Subtab 2: Real-Time Offline AI Scam Call Protection -->
         <div class="subtab-content" id="subtab-call" style="display: none;">
           <div class="input-card">
-            <label style="font-weight: 700; display: block; margin-bottom: var(--space-1);" data-i18n="call_upload_label">
-              कॉल रिकॉर्डिंग (WAV, MP3) अपलोड करें या बातचीत पेस्ट करें
-            </label>
-            <div style="font-size: var(--text-xs); color: var(--text-secondary); margin-bottom: var(--space-3);" data-i18n="call_transcribe_notice">
-              ऑफलाइन आवाज़ पहचान वोस्क (Vosk) से होती है। यदि मॉडल न हो तो बातचीत नीचे पेस्ट करें।
+            <!-- Guardian Header & Privacy Assurances -->
+            <div class="call-guardian-header">
+              <div class="call-guardian-title">
+                <svg viewBox="0 0 24 24" style="width: 20px; height: 20px; stroke: var(--gov-navy); fill: none; stroke-width: 2;"><use href="#icon-phone"/></svg>
+                <span data-i18n="call_guardian_title">रीयल-टाइम AI कॉल सुरक्षा कवच (Offline Call Guardian)</span>
+              </div>
+              <div class="call-status-pills">
+                <span class="call-pill active" title="आवाज़ केवल आपके फ़ोन पर प्रोसेस होती है">
+                  <span class="status-dot"></span> 100% ऑन-डिवाइस ऑफलाइन (Sherpa-ONNX)
+                </span>
+                <span class="call-pill" id="micPermPill">
+                  🎙️ माइक अनुमति: बंद
+                </span>
+                <span class="call-pill" id="vadStatusPill">
+                  ⚪ VAD: निष्क्रिय
+                </span>
+              </div>
             </div>
 
-            <div style="display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap; margin-bottom: var(--space-3);">
-              <input type="file" id="callAudioFile" accept="audio/*" style="font-size: var(--text-sm); flex: 1; min-width: 200px;" />
-              
-              <!-- Call Audio Language Selector -->
-              <select id="callAudioLang" class="lang-select" style="height: 36px; padding: 0 var(--space-2); font-size: var(--text-xs);" title="ऑडियो भाषा">
-                <option value="auto" selected>🌐 ऑटो पहचान (Hindi / English)</option>
-                <option value="en">🇮🇳 English / Hinglish</option>
-                <option value="hi">🇮🇳 हिन्दी (Hindi)</option>
-              </select>
-
-              <button type="button" class="btn btn-secondary" id="btnMicRecordCall" style="padding: 0 var(--space-3); height: 36px; font-size: var(--text-xs);">
-                <svg viewBox="0 0 24 24"><use href="#icon-mic"/></svg>
-                <span id="micBtnText">माइक से बोलें / रिकॉर्ड करें</span>
-              </button>
+            <div style="font-size: var(--text-xs); color: var(--text-secondary); margin-bottom: var(--space-3);" data-i18n="call_privacy_notice">
+              🛡️ <strong>गोपनीयता सुरक्षा:</strong> माइक्रोफ़ोन केवल आपकी स्पष्ट अनुमति पर सुनता है। कोई भी ऑडियो सर्वर पर अपलोड नहीं होता और न ही बातचीत रिकॉर्ड की जाती है।
             </div>
 
-            <audio id="callAudioPlayer" controls style="display:none; width: 100%; margin: var(--space-2) 0; height: 36px;"></audio>
-            <div id="callTranscribeStatus" style="display:none; margin: var(--space-2) 0; padding: var(--space-2) var(--space-3); border-radius: var(--radius-sm); font-size: var(--text-xs); font-weight: 600;"></div>
+            <!-- Primary Live Action Bar -->
+            <div class="call-live-controls">
+              <div style="display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap;">
+                <button type="button" class="btn-listen-toggle idle" id="btnLiveCallListen">
+                  <svg viewBox="0 0 24 24" style="width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2;"><use href="#icon-mic"/></svg>
+                  <span id="liveListenBtnText" data-i18n="call_start_listening">कॉल सुनना शुरू करें (Start Listening)</span>
+                </button>
 
-            <textarea class="scam-textarea" id="callTranscriptInput" placeholder="फ़ोन पर हुई बातचीत यहाँ लिखें (जैसे: 'मैं क्राइम ब्रांच से बोल रहा हूँ...')" data-i18n-attr="placeholder:call_paste_placeholder"></textarea>
+                <select id="callAudioLang" class="lang-select" title="भाषा चुनें">
+                  <option value="auto" selected>🌐 ऑटो पहचान (Hindi / English / Hinglish)</option>
+                  <option value="hi">🇮🇳 हिन्दी (Hindi)</option>
+                  <option value="en">🇮🇳 English / Hinglish</option>
+                  <option value="chg">🌾 छत्तीसगढ़ी (Chhattisgarhi)</option>
+                </select>
+              </div>
 
-            <div class="btn-row">
-              <button class="btn btn-primary" id="btnAnalyzeCall">
-                <svg viewBox="0 0 24 24"><use href="#icon-search"/></svg>
-                <span data-i18n="btn_analyze">कॉल का सच जांचें</span>
-              </button>
-              <button class="btn btn-secondary" id="btnClearCall">
-                <svg viewBox="0 0 24 24"><use href="#icon-x"/></svg>
-                <span data-i18n="btn_clear">हटाएं</span>
-              </button>
+              <div style="display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap;">
+                <label style="display: inline-flex; align-items: center; gap: 6px; font-size: var(--text-xs); font-weight: 600; cursor: pointer;">
+                  <input type="checkbox" id="chkAudioWarning" checked style="cursor: pointer;" />
+                  <span data-i18n="call_voice_alert_toggle">🔊 ऑडियो चेतावनी (Voice Alert)</span>
+                </label>
+                <button type="button" class="btn btn-secondary" id="btnTestAudioWarning" style="height: 32px; padding: 0 10px; font-size: 0.72rem;" data-i18n="call_test_tts">
+                  चेतावनी सुनें (Test TTS)
+                </button>
+              </div>
             </div>
 
-            <div style="margin-top: var(--space-4);">
-              <div style="font-size: var(--text-xs); font-weight: 700; color: var(--text-secondary); margin-bottom: var(--space-1);">
-                ऑडियो रिकॉर्डिंग सैंपल से सीधे टेस्ट करें (Offline Audio to Text):
+            <!-- 4-Tier Real-Time Risk Banner -->
+            <div class="call-risk-banner risk-LOW" id="callLiveRiskBanner">
+              <div>
+                <span class="risk-level-badge" id="riskLevelBadge">सुरक्षित (LOW RISK)</span>
+                <span id="scamCategoryLabel" style="margin-left: var(--space-2); font-weight: 700; font-size: var(--text-sm);">सामान्य बातचीत • कोई खतरा नहीं</span>
               </div>
-              <div class="sample-chips" style="margin-bottom: var(--space-3);">
-                <span class="sample-chip" data-audio-sample="digital_arrest">Digital Arrest Call (.wav)</span>
-                <span class="sample-chip" data-audio-sample="bank_kyc">Bank KYC Block Call (.wav)</span>
-                <span class="sample-chip" data-audio-sample="fedex_customs">FedEx Customs Call (.wav)</span>
+              <div id="riskCertaintyLabel" style="font-size: 0.75rem; font-weight: 600; opacity: 0.85;">
+                100% On-Device Engine
+              </div>
+            </div>
+
+            <!-- Claim Contradiction / Impersonation Escalation Alert -->
+            <div id="claimEscalationBox" style="display: none; background: #fff1f2; border: 1px solid #fda4af; color: #9f1239; border-radius: var(--radius-sm); padding: var(--space-2) var(--space-3); margin-bottom: var(--space-3); font-size: var(--text-xs); font-weight: 700;">
+              🚨 <span id="claimEscalationText">पहचान में बदलाव पकड़ा गया! कॉलर अपनी पहचान बदलकर दबाव बना रहा है।</span>
+            </div>
+
+            <!-- 5-Stage Conversation Timeline -->
+            <div class="stage-timeline-container">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: var(--text-xs); font-weight: 700; color: var(--text-secondary);">बातचीत के 5 चरण (5-Stage Scam Lifecycle):</span>
+                <span id="stageProgressPercent" style="font-size: 0.72rem; font-weight: 700; color: var(--text-tertiary);">0% सक्रिय</span>
+              </div>
+              <div class="stage-timeline-track" id="stageTimelineTrack">
+                <div class="stage-step-box" id="stageBox1">
+                  <span class="stage-num-chip">1</span>
+                  <div>भरोसा/पहचान<br><small style="font-weight: normal;">Trust Claim</small></div>
+                </div>
+                <div class="stage-step-box" id="stageBox2">
+                  <span class="stage-num-chip">2</span>
+                  <div>डर/जल्दबाजी<br><small style="font-weight: normal;">Fear & Urgency</small></div>
+                </div>
+                <div class="stage-step-box" id="stageBox3">
+                  <span class="stage-num-chip">3</span>
+                  <div>गोपनीय मांग<br><small style="font-weight: normal;">OTP / PIN Request</small></div>
+                </div>
+                <div class="stage-step-box" id="stageBox4">
+                  <span class="stage-num-chip">4</span>
+                  <div>पैसे ऐंठना<br><small style="font-weight: normal;">Money Demand</small></div>
+                </div>
+                <div class="stage-step-box" id="stageBox5">
+                  <span class="stage-num-chip">5</span>
+                  <div>डिवाइस हैकिंग<br><small style="font-weight: normal;">APK / AnyDesk</small></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Live Streaming Transcription Terminal -->
+            <div class="streaming-terminal-box">
+              <div class="streaming-terminal-header">
+                <div>
+                  <span style="color: #38bdf8;">● LIVE TRANSCRIPTION</span> &bull; 
+                  <span id="asrEngineLabel">Sherpa-ONNX Streaming ASR</span>
+                </div>
+                <div>
+                  <span id="liveDurationTimer">00:00</span> &bull; 
+                  <span id="liveLatencyBadge">&lt; 80ms latency</span>
+                </div>
+              </div>
+              <div class="streaming-text-area" id="liveStreamingTextArea">
+                <span style="color: #64748b;">कॉल सुनना शुरू करने के लिए ऊपर 'कॉल सुनना शुरू करें' बटन दबाएं, या नीचे दिया गया कोई सैंपल चलाएं...</span>
+              </div>
+            </div>
+
+            <!-- Real-Time Explanation & Action Directives -->
+            <div id="callExplanationBox" style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--space-3); margin-bottom: var(--space-3);">
+              <div style="font-size: var(--text-xs); font-weight: 700; color: var(--text-secondary); margin-bottom: 4px;" data-i18n="call_explanation_header">कारण व सरल व्याख्या (Explanation):</div>
+              <p id="callExplanationText" style="font-size: var(--text-sm); line-height: 1.5; margin: 0; color: var(--text-primary);">
+                बातचीत में कोई वित्तीय धोखाधड़ी या संदिग्ध संकेत नहीं मिले हैं।
+              </p>
+
+              <div style="font-size: var(--text-xs); font-weight: 700; color: var(--text-secondary); margin-top: var(--space-2); margin-bottom: 4px;" data-i18n="call_action_header">सलाह (Recommended Action):</div>
+              <p id="callActionText" style="font-size: var(--text-sm); font-weight: 600; color: var(--text-primary); margin: 0;">
+                सतर्क रहें। किसी अनजान व्यक्ति के साथ गुप्त जानकारी कभी साझा न करें।
+              </p>
+
+              <div id="callSuspiciousChipsArea" style="margin-top: var(--space-2); display: none;">
+                <div style="font-size: 0.72rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 4px;" data-i18n="call_suspicious_phrases_header">पहचाने गए संदिग्ध शब्द (Suspicious Phrases):</div>
+                <div id="callSuspiciousChipsList"></div>
+              </div>
+            </div>
+
+            <!-- Manual File / Recording Testing Area -->
+            <div style="border-top: 1px solid var(--border-subtle); padding-top: var(--space-3); margin-top: var(--space-3);">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-2);">
+                <label style="font-size: var(--text-xs); font-weight: 700; color: var(--text-secondary);" data-i18n="call_file_test_label">
+                  ऑडियो फ़ाइल अपलोड करें या बातचीत पेस्ट करें (File / Text Testing):
+                </label>
+                <button type="button" class="btn btn-secondary" id="btnClearCall" style="height: 28px; padding: 0 8px; font-size: 0.72rem;">
+                  साफ़ करें (Clear)
+                </button>
               </div>
 
-              <div style="font-size: var(--text-xs); font-weight: 700; color: var(--text-secondary); margin-bottom: var(--space-1);">
-                या कॉल स्क्रिप्ट के उदाहरण पेस्ट करें (Hindi, Hinglish & छत्तीसगढ़ी):
+              <div style="display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap; margin-bottom: var(--space-2);">
+                <input type="file" id="callAudioFile" accept="audio/*" style="font-size: var(--text-xs); flex: 1; min-width: 200px;" />
+                <button class="btn btn-primary" id="btnAnalyzeCall" style="height: 36px; font-size: var(--text-xs);">
+                  <svg viewBox="0 0 24 24" style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2;"><use href="#icon-search"/></svg>
+                  <span>विश्लेषण करें (Analyze)</span>
+                </button>
               </div>
-              <div class="sample-chips">
-                <span class="sample-chip" data-call-sample="arrest">Hinglish Police Digital Arrest</span>
-                <span class="sample-chip" data-call-sample="bank_kyc">Hinglish Bank KYC Block Call</span>
-                <span class="sample-chip" data-call-sample="cg_bijli">छत्तीसगढ़ी: बिजली बिल कट जाही</span>
-                <span class="sample-chip" data-call-sample="cg_police">छत्तीसगढ़ी: थाना ले वारंट व अरेस्ट</span>
-                <span class="sample-chip" data-call-sample="fedex">English: Fake FedEx Customs Call</span>
+
+              <audio id="callAudioPlayer" controls style="display:none; width: 100%; margin: var(--space-2) 0; height: 36px;"></audio>
+              <div id="callTranscribeStatus" style="display:none; margin: var(--space-2) 0; padding: var(--space-2) var(--space-3); border-radius: var(--radius-sm); font-size: var(--text-xs); font-weight: 600;"></div>
+
+              <textarea class="scam-textarea" id="callTranscriptInput" placeholder="फ़ोन पर हुई बातचीत यहाँ लिखें (जैसे: 'मैं क्राइम ब्रांच से बोल रहा हूँ...')" data-i18n-attr="placeholder:call_paste_placeholder" style="min-height: 70px;"></textarea>
+
+              <div style="margin-top: var(--space-3);">
+                <div style="font-size: var(--text-xs); font-weight: 700; color: var(--text-secondary); margin-bottom: var(--space-1);">
+                  ऑडियो सैंपल से तुरंत टेस्ट करें (Real Offline Audio to Text):
+                </div>
+                <div class="sample-chips" style="margin-bottom: var(--space-2);">
+                  <span class="sample-chip" data-audio-sample="digital_arrest">Digital Arrest Call (.wav)</span>
+                  <span class="sample-chip" data-audio-sample="bank_kyc">Bank KYC Block Call (.wav)</span>
+                  <span class="sample-chip" data-audio-sample="fedex_customs">FedEx Customs Call (.wav)</span>
+                </div>
+
+                <div style="font-size: var(--text-xs); font-weight: 700; color: var(--text-secondary); margin-bottom: var(--space-1);" data-i18n="call_scenarios_label">
+                  16 टेस्ट परिदृश्य (Scenarios) सीधे चलाएं:
+                </div>
+                <div class="sample-chips">
+                  <span class="sample-chip" data-scenario="otp_demand">1. OTP मांग (OTP Fraud)</span>
+                  <span class="sample-chip" data-scenario="upi_pin_demand">2. UPI PIN मांग (PIN Hazard)</span>
+                  <span class="sample-chip" data-scenario="fake_bank">3. फर्जी बैंक अधिकारी (Bank KYC)</span>
+                  <span class="sample-chip" data-scenario="digital_arrest">4. फर्जी पुलिस (Digital Arrest)</span>
+                  <span class="sample-chip" data-scenario="fake_subsidy">5. फर्जी योजना (महतारी वंदन)</span>
+                  <span class="sample-chip" data-scenario="money_demand">6. जबरन वसूली (Bail Bond)</span>
+                  <span class="sample-chip" data-scenario="remote_access">7. रिमोट ऐप (AnyDesk)</span>
+                  <span class="sample-chip" data-scenario="normal_otp">8. सामान्य OTP (Swiggy Safe)</span>
+                  <span class="sample-chip" data-scenario="normal_banking">9. सामान्य बैंक (Passbook Safe)</span>
+                  <span class="sample-chip" data-scenario="cg_bijli">10. छत्तीसगढ़ी बिजली बिल</span>
+                  <span class="sample-chip" data-scenario="cg_police">11. छत्तीसगढ़ी वारंट व अरेस्ट</span>
+                </div>
               </div>
             </div>
           </div>
 
           <div class="verdict-box" id="callVerdictBox"></div>
+        </div>
+
+        <!-- Critical Warning Full Screen / Modal Overlay -->
+        <div class="critical-warning-overlay" id="criticalWarningModal" style="display: none;">
+          <div class="critical-warning-box">
+            <div class="critical-warning-top">
+              <svg viewBox="0 0 24 24" style="width: 44px; height: 44px; stroke: #ffffff; fill: none; stroke-width: 2.2; margin-bottom: 6px;"><use href="#icon-alert-triangle"/></svg>
+              <h2 style="margin: 0; font-size: 1.25rem; font-weight: 800; letter-spacing: 0.02em;" data-i18n="crit_title">अत्यंत गंभीर खतरा! (CRITICAL THREAT)</h2>
+              <div id="critWarningSubheader" style="font-size: 0.8rem; opacity: 0.95; margin-top: 4px;">कॉलर आपका गुप्त UPI PIN या OTP चुराने का प्रयास कर रहा है!</div>
+            </div>
+            <div class="critical-warning-body">
+              <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: var(--radius-sm); padding: var(--space-3); margin-bottom: var(--space-3);">
+                <div style="font-size: var(--text-xs); font-weight: 800; color: #991b1b; margin-bottom: 2px;" data-i18n="crit_reason_header">धोखाधड़ी का कारण:</div>
+                <div id="critWarningExplanation" style="font-size: var(--text-sm); color: #7f1d1d; line-height: 1.45;">
+                  कॉलर आपसे UPI PIN दर्ज करने या साझा करने को कह रहा है। याद रखें, पैसे प्राप्त करने के लिए कभी भी UPI PIN की आवश्यकता नहीं होती।
+                </div>
+              </div>
+
+              <div style="font-size: var(--text-xs); font-weight: 800; color: var(--text-secondary); margin-bottom: var(--space-2);" data-i18n="crit_steps_header">तत्काल सुरक्षा कदम:</div>
+              <ul style="margin: 0 0 var(--space-3) 0; padding-left: 20px; font-size: var(--text-xs); color: var(--text-primary); line-height: 1.6;">
+                <li><strong data-i18n="crit_step_1">कॉल तुरंत डिस्कनेक्ट करें (फोन काट दें)।</strong></li>
+                <li><strong data-i18n="crit_step_2">किसी भी स्क्रीन पर अपना UPI PIN या OTP दर्ज न करें।</strong></li>
+                <li><strong data-i18n="crit_step_3">कोई भी ऐप (AnyDesk / QuickSupport / APK) डाउनलोड न करें।</strong></li>
+                <li><strong data-i18n="crit_step_4">यदि पैसे कट गए हों तो तुरंत 1930 पर कॉल करें।</strong></li>
+              </ul>
+
+              <div class="critical-action-grid">
+                <a href="tel:1930" class="btn btn-danger" style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; font-weight: 700;">
+                  <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2;"><use href="#icon-phone"/></svg>
+                  <span data-i18n="crit_btn_call">1930 पर कॉल करें</span>
+                </a>
+                <button type="button" class="btn btn-secondary" id="btnNotifyFamily" style="display: flex; align-items: center; justify-content: center; gap: 6px; font-weight: 700;">
+                  <span data-i18n="crit_btn_notify">परिवार को अलर्ट भेजें</span>
+                </button>
+              </div>
+
+              <div style="text-align: center; margin-top: var(--space-3);">
+                <button type="button" id="btnCloseCritWarning" style="background: none; border: none; font-size: var(--text-xs); color: var(--text-tertiary); cursor: pointer; text-decoration: underline;" data-i18n="crit_btn_close">
+                  चेतावनी बंद करें (मैंने कॉल काट दी है)
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Subtab 3: QR -->

@@ -2177,3 +2177,339 @@ html[data-a11y-size="large"] {
   color: var(--color-danger, #dc2626);
   min-width: 18px;
 }
+
+/* ==========================================================================
+   Real-Time Offline Scam Call Guardian & Sherpa-ONNX Live Streaming Styles
+   ========================================================================== */
+
+.call-guardian-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: var(--space-3);
+}
+
+.call-guardian-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--gov-navy);
+}
+
+.call-status-pills {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.call-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 600;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-subtle);
+  color: var(--text-secondary);
+}
+
+.call-pill.active {
+  background: #ecfdf5;
+  color: #065f46;
+  border-color: #a7f3d0;
+}
+
+.call-pill.danger {
+  background: #fef2f2;
+  color: #991b1b;
+  border-color: #fecaca;
+}
+
+/* Primary Live Action Controls */
+.call-live-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  background: var(--bg-subtle);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  margin-bottom: var(--space-3);
+}
+
+.btn-listen-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.65rem 1.4rem;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.btn-listen-toggle.listening {
+  background: #dc2626;
+  color: #ffffff;
+  animation: pulseListen 1.5s infinite;
+}
+
+.btn-listen-toggle.idle {
+  background: var(--gov-navy, #0B2545);
+  color: #ffffff;
+}
+
+.btn-listen-toggle.idle:hover {
+  background: #133966;
+}
+
+@keyframes pulseListen {
+  0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.6); }
+  70% { box-shadow: 0 0 0 12px rgba(220, 38, 38, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+}
+
+/* Live Streaming Terminal */
+.streaming-terminal-box {
+  background: #0f172a;
+  color: #f8fafc;
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-3);
+  border: 1px solid #1e293b;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  position: relative;
+}
+
+.streaming-terminal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: var(--space-2);
+  margin-bottom: var(--space-2);
+  font-size: 0.72rem;
+  color: #94a3b8;
+}
+
+.streaming-text-area {
+  min-height: 80px;
+  max-height: 140px;
+  overflow-y: auto;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #e2e8f0;
+}
+
+.streaming-interim {
+  color: #38bdf8;
+  font-style: italic;
+  font-weight: 500;
+}
+
+/* 4-Tier Real-Time Risk Banner */
+.call-risk-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-3);
+  border: 1px solid var(--border-subtle);
+  transition: all var(--transition-fast);
+}
+
+.call-risk-banner.risk-LOW {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+  color: #166534;
+}
+
+.call-risk-banner.risk-MODERATE {
+  background: #fefce8;
+  border-color: #fef08a;
+  color: #854d0e;
+}
+
+.call-risk-banner.risk-HIGH {
+  background: #fff7ed;
+  border-color: #fed7aa;
+  color: #9a3412;
+}
+
+.call-risk-banner.risk-CRITICAL {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #991b1b;
+  box-shadow: 0 4px 12px rgba(185, 28, 28, 0.15);
+}
+
+.risk-level-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  letter-spacing: 0.03em;
+}
+
+.risk-LOW .risk-level-badge { background: #dcfce7; color: #15803d; }
+.risk-MODERATE .risk-level-badge { background: #fef08a; color: #a16207; }
+.risk-HIGH .risk-level-badge { background: #ffedd5; color: #c2410c; }
+.risk-CRITICAL .risk-level-badge { background: #fee2e2; color: #b91c1c; }
+
+/* 5-Stage Conversation Timeline Track */
+.stage-timeline-container {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.stage-timeline-track {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+}
+
+.stage-step-box {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2);
+  text-align: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  transition: all var(--transition-fast);
+}
+
+.stage-step-box.active {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1e40af;
+  font-weight: 700;
+}
+
+.stage-step-box.danger {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #991b1b;
+  font-weight: 700;
+}
+
+.stage-num-chip {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  line-height: 16px;
+  border-radius: var(--radius-full);
+  background: var(--border-strong);
+  color: #ffffff;
+  font-size: 0.6rem;
+  margin-bottom: 2px;
+}
+
+.stage-step-box.active .stage-num-chip {
+  background: #2563eb;
+}
+
+.stage-step-box.danger .stage-num-chip {
+  background: #dc2626;
+}
+
+/* Suspicious Phrases Chips */
+.suspicious-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 600;
+  margin-right: 4px;
+  margin-bottom: 4px;
+}
+
+/* Critical Warning Full Modal Overlay */
+.critical-warning-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  animation: fadeInModal 0.2s ease-out;
+}
+
+.critical-warning-box {
+  background: #ffffff;
+  border: 2px solid #dc2626;
+  border-radius: var(--radius-lg);
+  max-width: 520px;
+  width: 100%;
+  box-shadow: 0 20px 40px rgba(220, 38, 38, 0.35);
+  overflow: hidden;
+  animation: scaleInModal 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.critical-warning-top {
+  background: linear-gradient(135deg, #b91c1c 0%, #7f1d1d 100%);
+  color: #ffffff;
+  padding: var(--space-4) var(--space-5);
+  text-align: center;
+}
+
+.critical-warning-body {
+  padding: var(--space-4) var(--space-5);
+}
+
+.critical-action-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+@media (max-width: 640px) {
+  .stage-timeline-track {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .stage-step-box {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    text-align: left;
+    padding: 6px var(--space-2);
+  }
+  .critical-action-grid {
+    grid-template-columns: 1fr;
+  }
+}

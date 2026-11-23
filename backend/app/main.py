@@ -15,12 +15,17 @@ if str(backend_dir) not in sys.path:
 if str(workspace_dir) not in sys.path:
     sys.path.insert(0, str(workspace_dir))
 
-from fastapi import FastAPI, UploadFile, File, Form, Request, HTTPException
+from fastapi import FastAPI, UploadFile, File, Form, Request, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
+import time
+import wave
+import logging
+
+logger = logging.getLogger("suraksha.main")
 
 from app.detect.pipeline import run_detection_pipeline
 from app.calls.transcribe import transcribe_audio_file
@@ -55,7 +60,12 @@ def startup_event():
         from app.calls.transcribe import prewarm_models
         prewarm_models()
     except Exception as e:
-        logger.warning(f"Speech model prewarm notice: {e}")
+        logger.warning(f"Vosk speech model prewarm notice: {e}")
+    try:
+        from app.calls.streaming_asr import prewarm_all_speech_models
+        prewarm_all_speech_models()
+    except Exception as e:
+        logger.warning(f"Sherpa-ONNX speech model prewarm notice: {e}")
 
 # Models
 class MessageCheckRequest(BaseModel):
@@ -98,7 +108,14 @@ async def detect_call_endpoint(
         temp_path.write_bytes(content)
         try:
             target_lang = call_lang or "auto"
-            trans_res = transcribe_audio_file(temp_path, lang=target_lang)
+            # Primary: Sherpa-ONNX offline engine (Whisper or Zipformer), with Vosk fallback
+            try:
+                from app.calls.streaming_asr import offline_transcribe_audio
+                trans_res = offline_transcribe_audio(temp_path, lang=target_lang)
+            except Exception as ex:
+                logger.warning(f"Sherpa-ONNX transcribe fallback: {ex}")
+                trans_res = transcribe_audio_file(temp_path, lang=target_lang)
+
             final_transcript = trans_res.get("text", "")
             notice = trans_res.get("notice", "")
         finally:
@@ -128,6 +145,127 @@ async def detect_call_endpoint(
     if notice:
         analysis["transcription_notice"] = notice
     return analysis
+
+# Real-Time Streaming Audio Chunk Endpoint
+@app.post("/api/calls/stream-chunk")
+async def stream_chunk_endpoint(
+    audio_chunk: Optional[UploadFile] = File(None),
+    session_id: Optional[str] = Form("default_session"),
+    language: Optional[str] = Form("auto"),
+    sample_rate: Optional[int] = Form(16000)
+):
+    from app.calls.streaming_asr import process_streaming_chunk, prepare_16k_mono_wav
+    from app.detect.scam_engine import detect_scam_in_transcript
+    from app.calls.conversation_tracker import track_conversation_step
+
+    raw_bytes = b""
+    if audio_chunk:
+        content = await audio_chunk.read()
+        # Decode webm/ogg/wav container to 16kHz mono PCM if needed
+        fname = audio_chunk.filename or "chunk.wav"
+        if any(fname.endswith(ext) for ext in [".webm", ".ogg", ".wav", ".mp3", ".m4a"]):
+            temp_in = backend_dir / "data" / f"chunk_in_{session_id}_{fname}"
+            temp_out = backend_dir / "data" / f"chunk_out_{session_id}.wav"
+            temp_in.write_bytes(content)
+            try:
+                if prepare_16k_mono_wav(temp_in, temp_out) and temp_out.exists():
+                    with wave.open(str(temp_out), "rb") as wf:
+                        raw_bytes = wf.readframes(wf.getnframes())
+            finally:
+                if temp_in.exists():
+                    try: temp_in.unlink()
+                    except Exception: pass
+                if temp_out.exists():
+                    try: temp_out.unlink()
+                    except Exception: pass
+        else:
+            raw_bytes = content
+
+    asr_result = process_streaming_chunk(
+        session_id=session_id or "default_session",
+        pcm_bytes=raw_bytes,
+        sample_rate=sample_rate or 16000,
+        language=language or "auto"
+    )
+
+    current_text = asr_result.get("text", "")
+    scam_result = detect_scam_in_transcript(current_text, user_lang=language or "hi")
+    timeline_result = track_conversation_step(session_id or "default_session", current_text)
+
+    return {
+        **asr_result,
+        "scam_assessment": scam_result,
+        "timeline": timeline_result,
+        "risk_level": scam_result["risk_level"],
+        "scam_category": scam_result["scam_category"],
+        "reason": scam_result["reason"],
+        "recommended_action": scam_result["recommended_action"],
+        "audio_warning_hi": scam_result.get("audio_warning_hi", ""),
+        "audio_warning_en": scam_result.get("audio_warning_en", ""),
+        "suspicious_phrases": scam_result.get("suspicious_phrases", []),
+        "claim_contradictions": timeline_result.get("claim_contradictions", [])
+    }
+
+# Session Stop Endpoint
+@app.post("/api/calls/session-stop")
+def stop_session_endpoint(payload: dict):
+    from app.calls.streaming_asr import close_session
+    from app.calls.conversation_tracker import reset_tracker
+    sid = payload.get("session_id", "default_session")
+    sess_summary = close_session(sid)
+    reset_tracker(sid)
+    return sess_summary or {"status": "stopped", "session_id": sid}
+
+# Full-Duplex Real-Time Streaming WebSocket Endpoint
+@app.websocket("/api/calls/stream")
+async def websocket_stream_endpoint(websocket: WebSocket):
+    from app.calls.streaming_asr import process_streaming_chunk, close_session
+    from app.detect.scam_engine import detect_scam_in_transcript
+    from app.calls.conversation_tracker import track_conversation_step, reset_tracker
+    import base64
+
+    await websocket.accept()
+    session_id = f"ws_{int(time.time()*1000)}"
+    try:
+        while True:
+            data = await websocket.receive()
+            raw_pcm = b""
+            lang = "auto"
+
+            if "bytes" in data and data["bytes"]:
+                raw_pcm = data["bytes"]
+            elif "text" in data and data["text"]:
+                try:
+                    msg = json.loads(data["text"])
+                    if msg.get("type") == "stop":
+                        close_session(session_id)
+                        reset_tracker(session_id)
+                        await websocket.send_json({"status": "stopped", "session_id": session_id})
+                        break
+                    if "audio_base64" in msg:
+                        raw_pcm = base64.b64decode(msg["audio_base64"])
+                    lang = msg.get("language", "auto")
+                except Exception as ex:
+                    logger.debug(f"JSON decode note: {ex}")
+
+            if raw_pcm:
+                asr_res = process_streaming_chunk(session_id, raw_pcm, language=lang)
+                text = asr_res["text"]
+                scam_eval = detect_scam_in_transcript(text, user_lang=lang)
+                stages = track_conversation_step(session_id, text)
+                await websocket.send_json({
+                    **asr_res,
+                    "scam_assessment": scam_eval,
+                    "stages": stages,
+                    "risk_level": scam_eval["risk_level"]
+                })
+    except WebSocketDisconnect:
+        close_session(session_id)
+        reset_tracker(session_id)
+    except Exception as e:
+        logger.error(f"WebSocket streaming error: {e}")
+        close_session(session_id)
+        reset_tracker(session_id)
 
 # 3. QR Code Analysis Endpoint (Image upload or raw upi:// string)
 @app.post("/api/detect/qr")
