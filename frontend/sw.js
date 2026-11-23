@@ -1,5 +1,5 @@
 // Suraksha Service Worker - Offline Caching Strategy
-const CACHE_NAME = 'suraksha-v2.5';
+const CACHE_NAME = 'suraksha-v2.6';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',

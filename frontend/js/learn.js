@@ -65,6 +65,102 @@ const LearnManager = {
     this.renderCurrentLesson();
     this.renderCurrentQuiz();
     this.updateHomeScoreRing();
+    this.bindVideoCards();
+  },
+
+  bindVideoCards() {
+    const cards = document.querySelectorAll('.video-card');
+    const modal = document.getElementById('videoModalOverlay');
+    const closeBtn = document.getElementById('btnVideoModalClose');
+    const container = document.getElementById('videoPlayerContainer');
+    const modalTitle = document.getElementById('videoModalTitleText');
+    const extLink = document.getElementById('videoExternalLink');
+    const btnToggleLocal = document.getElementById('btnToggleLocalVideo');
+    const sourceCitation = document.getElementById('videoSourceCitation');
+
+    const closeModal = () => {
+      if (modal) modal.classList.remove('open');
+      if (container) container.innerHTML = '';
+      if (btnToggleLocal) btnToggleLocal.style.display = 'none';
+    };
+
+    if (closeBtn) closeBtn.onclick = closeModal;
+    if (modal) {
+      modal.onclick = (e) => {
+        if (e.target === modal) closeModal();
+      };
+    }
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal && modal.classList.contains('open')) {
+        closeModal();
+      }
+    });
+
+    cards.forEach((card) => {
+      const playBtn = card.querySelector('.video-watch-btn');
+      const thumb = card.querySelector('.video-thumb-container');
+      const titleEl = card.querySelector('.video-card-title');
+      const videoId = card.getAttribute('data-video-id');
+      const localSrc = card.getAttribute('data-local-src');
+      const sourceTag = card.querySelector('.video-source-tag')?.textContent || 'CyberDost / I4C / RBI';
+
+      const openVideo = () => {
+        const title = titleEl ? titleEl.textContent.trim() : 'Cyber Safety Video';
+        if (modalTitle) modalTitle.textContent = title;
+        if (sourceCitation) sourceCitation.textContent = `Source: ${sourceTag}`;
+        if (extLink) extLink.href = `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}`;
+
+        let isUsingLocal = false;
+
+        const renderYouTube = () => {
+          isUsingLocal = false;
+          container.innerHTML = `
+            <iframe 
+              class="video-player-iframe" 
+              src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}?autoplay=1&rel=0&modestbranding=1" 
+              title="${title.replace(/"/g, '&quot;')}" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+              allowfullscreen>
+            </iframe>
+          `;
+          if (localSrc && btnToggleLocal) {
+            btnToggleLocal.style.display = 'inline-block';
+            btnToggleLocal.textContent = '📁 ऑफलाइन वीडियो चलाएं (Play Offline MP4)';
+          }
+        };
+
+        const renderLocal = () => {
+          isUsingLocal = true;
+          container.innerHTML = `
+            <video class="video-player-element" controls autoplay controlslist="nodownload">
+              <source src="${encodeURI(localSrc)}" type="video/mp4">
+              Your browser does not support HTML5 video.
+            </video>
+          `;
+          if (btnToggleLocal) {
+            btnToggleLocal.style.display = 'inline-block';
+            btnToggleLocal.textContent = '🌐 यूट्यूब पर देखें (Play YouTube)';
+          }
+        };
+
+        if (btnToggleLocal) {
+          btnToggleLocal.onclick = (e) => {
+            e.preventDefault();
+            if (isUsingLocal) {
+              renderYouTube();
+            } else {
+              renderLocal();
+            }
+          };
+        }
+
+        renderYouTube();
+        if (modal) modal.classList.add('open');
+      };
+
+      if (thumb) thumb.onclick = openVideo;
+      if (playBtn) playBtn.onclick = openVideo;
+    });
   },
 
   async loadContent() {
