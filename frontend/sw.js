@@ -1,5 +1,5 @@
 // Suraksha Service Worker - Offline Caching Strategy
-const CACHE_NAME = 'suraksha-v1.0';
+const CACHE_NAME = 'suraksha-v2.0';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -10,6 +10,7 @@ const ASSETS_TO_CACHE = [
   '/js/detector.js',
   '/js/qr.js',
   '/js/call.js',
+  '/js/pcm-recorder-processor.js',
   '/js/learn.js',
   '/js/help.js',
   '/js/reports.js',
@@ -24,7 +25,26 @@ const ASSETS_TO_CACHE = [
   '/content/quiz_en.json',
   '/content/quiz_hi.json',
   '/content/quiz_chg.json',
-  '/manifest.json'
+  '/manifest.json',
+  '/assets/alerts/alert_chime.wav',
+  '/assets/alerts/alert_upi_pin_hi.wav',
+  '/assets/alerts/alert_upi_pin_chg.wav',
+  '/assets/alerts/alert_upi_pin_en.wav',
+  '/assets/alerts/alert_otp_hi.wav',
+  '/assets/alerts/alert_otp_chg.wav',
+  '/assets/alerts/alert_otp_en.wav',
+  '/assets/alerts/alert_police_hi.wav',
+  '/assets/alerts/alert_police_chg.wav',
+  '/assets/alerts/alert_police_en.wav',
+  '/assets/alerts/alert_remote_access_hi.wav',
+  '/assets/alerts/alert_remote_access_chg.wav',
+  '/assets/alerts/alert_remote_access_en.wav',
+  '/assets/alerts/alert_extortion_hi.wav',
+  '/assets/alerts/alert_extortion_chg.wav',
+  '/assets/alerts/alert_extortion_en.wav',
+  '/assets/alerts/alert_bank_kyc_hi.wav',
+  '/assets/alerts/alert_bank_kyc_chg.wav',
+  '/assets/alerts/alert_bank_kyc_en.wav'
 ];
 
 self.addEventListener('install', (event) => {
