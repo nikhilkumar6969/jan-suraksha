@@ -63,11 +63,9 @@ const CallDetector = {
   },
 
   audioSamples: {
-    cspdcl_electricity: "/assets/samples/cspdcl_electricity_call.wav",
     digital_arrest: "/assets/samples/digital_arrest_call.wav",
     bank_kyc: "/assets/samples/bank_kyc_call.wav",
-    fedex_customs: "/assets/samples/fedex_customs_call.wav",
-    genuine_agriculture: "/assets/samples/genuine_agriculture_call.wav"
+    fedex_customs: "/assets/samples/fedex_customs_call.wav"
   },
 
   // State management
@@ -160,17 +158,6 @@ const CallDetector = {
     const btnListen = document.getElementById('btnLiveCallListen');
     if (btnListen) {
       btnListen.addEventListener('click', () => this.toggleLiveListening());
-    }
-
-    const btnSim = document.getElementById('btnSimulateLiveCall');
-    if (btnSim) {
-      btnSim.addEventListener('click', () => {
-        if (this.isListening && this.isSimulatingCall) {
-          this.stopLiveListening();
-        } else {
-          this.startLiveSimulation();
-        }
-      });
     }
 
     // Legacy File & Manual Analyze buttons
@@ -270,19 +257,6 @@ const CallDetector = {
     const termArea = document.getElementById('liveStreamingTextArea');
     const vadPill = document.getElementById('vadStatusPill');
 
-    // Safe check: verify navigator.mediaDevices is supported on this origin (requires HTTPS or localhost in mobile browsers)
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      console.warn('Microphone getUserMedia not available on this origin (HTTP IP or insecure context).');
-      this.updateMicPermissionPill('denied');
-      const isHttpIp = window.location.protocol === 'http:' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
-      const toastMsg = isHttpIp 
-        ? '🔒 मोबाइल ब्राउज़र सुरक्षा: Chrome/Safari केवल HTTPS पर माइक की अनुमति देते हैं। सिमुलेटेड लाइव कॉल शुरू किया जा रहा है...' 
-        : 'माइक उपलब्ध नहीं है। सिमुलेटेड लाइव कॉल शुरू किया जा रहा है...';
-      if (window.App) window.App.showToast(toastMsg, 5000);
-      this.startLiveSimulation();
-      return;
-    }
-
     try {
       this.mediaStream = await navigator.mediaDevices.getUserMedia({
         audio: {
@@ -297,9 +271,8 @@ const CallDetector = {
       console.error('Microphone access denied:', err);
       this.updateMicPermissionPill('denied');
       if (window.App) {
-        window.App.showToast('माइक अनुमति अस्वीकृत या उपलब्ध नहीं। सिमुलेटेड लाइव कॉल शुरू किया जा रहा है...', 4500);
+        window.App.showToast('माइक अनुमति अस्वीकृत: कृपया ब्राउज़र सेटिंग्स में माइक्रोफ़ोन की अनुमति दें।', 4000);
       }
-      this.startLiveSimulation();
       return;
     }
 
@@ -861,16 +834,6 @@ const CallDetector = {
     });
   },
 
-  playAlertPreview(catKey, lang) {
-    const targetLang = lang || window.I18n?.currentLang || 'hi';
-    const alertFile = `/assets/alerts/alert_${catKey}_${targetLang}.wav`;
-    const audio = new Audio(alertFile);
-    audio.play().catch(e => console.warn('Could not preview alert audio:', e));
-    if (window.App) {
-      window.App.showToast(`🔊 ${catKey} (${targetLang.toUpperCase()}) आवाज़ अलर्ट बज रहा है`);
-    }
-  },
-
   speakWarning(text, lang = "hi") {
     if (!('speechSynthesis' in window)) return;
 
@@ -962,15 +925,8 @@ const CallDetector = {
       this.durationTimer = null;
     }
 
-    if (this.simInterval) {
-      clearInterval(this.simInterval);
-      this.simInterval = null;
-    }
-    this.isSimulatingCall = false;
-
     const btn = document.getElementById('btnLiveCallListen');
     const btnText = document.getElementById('liveListenBtnText');
-    const btnSim = document.getElementById('btnSimulateLiveCall');
     const vadPill = document.getElementById('vadStatusPill');
 
     if (btn) {
@@ -978,9 +934,6 @@ const CallDetector = {
       btn.classList.add('idle');
     }
     if (btnText) btnText.textContent = 'कॉल सुनना शुरू करें (Start Listening)';
-    if (btnSim) {
-      btnSim.innerHTML = '<span style="margin-right: 4px;">▶️</span><span>लाइव कॉल सिमुलेट करें (Simulate Call)</span>';
-    }
     if (vadPill) {
       vadPill.textContent = '⚪ VAD: निष्क्रिय';
       vadPill.classList.remove('active');
@@ -994,83 +947,6 @@ const CallDetector = {
         body: JSON.stringify({ session_id: this.streamSessionId })
       }).catch(err => console.debug('Stop notice:', err));
     }
-  },
-
-  startLiveSimulation() {
-    this.stopLiveListening();
-    this.isSimulatingCall = true;
-    this.isListening = true;
-
-    const btn = document.getElementById('btnLiveCallListen');
-    const btnText = document.getElementById('liveListenBtnText');
-    const btnSim = document.getElementById('btnSimulateLiveCall');
-    const termArea = document.getElementById('liveStreamingTextArea');
-    const vadPill = document.getElementById('vadStatusPill');
-
-    if (btn) {
-      btn.classList.remove('idle');
-      btn.classList.add('listening');
-    }
-    if (btnText) btnText.textContent = '🛑 सुनना बंद करें (Stop Listening)';
-    if (btnSim) {
-      btnSim.innerHTML = '<span style="margin-right: 4px;">🛑</span><span>सिमुलेशन रोकें (Stop Sim)</span>';
-    }
-    if (vadPill) {
-      vadPill.textContent = '🟢 VAD: लाइव कॉल एक्टिव';
-      vadPill.classList.add('active');
-    }
-
-    const timerLabel = document.getElementById('liveDurationTimer');
-    this.secondsElapsed = 0;
-    this.durationTimer = setInterval(() => {
-      this.secondsElapsed++;
-      const m = String(Math.floor(this.secondsElapsed / 60)).padStart(2, '0');
-      const s = String(this.secondsElapsed % 60).padStart(2, '0');
-      if (timerLabel) timerLabel.textContent = `${m}:${s}`;
-    }, 1000);
-
-    const sampleChunks = [
-      { text: "नमस्कार, मैं CSPDCL रायपुर मुख्यालय से मुख्य बिजली अधिकारी बोल रहा हूँ...", isThreat: false },
-      { text: "आपके घर का बिजली बिल पिछले दो महीने से बकाया दर्ज है...", isThreat: false },
-      { text: "यदि आपने अगले 15 मिनट में 1450 रुपये ऑनलाइन जमा नहीं किए...", isThreat: true },
-      { text: "तो आज रात 9:30 बजे आपकी बिजली लाइन काट दी जाएगी और गिरफ्तारी वारंट जारी होगा!", isThreat: true }
-    ];
-
-    let step = 0;
-    if (termArea) {
-      termArea.innerHTML = '<span style="color: #38bdf8;">[लाइव कॉल सिमुलेशन सक्रिय — लाउडस्पीकर ऑडियो स्ट्रीम]</span>\n';
-    }
-
-    this.simInterval = setInterval(() => {
-      if (!this.isListening || step >= sampleChunks.length) {
-        clearInterval(this.simInterval);
-        return;
-      }
-      const chunk = sampleChunks[step];
-      step++;
-
-      this.handleStreamingResponse({
-        status: "processing",
-        text: chunk.text,
-        has_speech: true,
-        speech_prob: 0.98,
-        analysis: {
-          is_critical_threat: chunk.isThreat,
-          threat_type: "CSPDCL बिजली बिल ठगी एवं जबरन वसूली",
-          explanation: "कॉलर फर्जी बिजली अधिकारी बनकर तुरंत पैसे ट्रांसफर करने का दबाव बना रहा है और बिजली काटने की धमकी दे रहा है।",
-          confidence: 0.95,
-          matched_categories: ["electricity_fraud", "financial_extortion", "police_govt_impersonation"],
-          immediate_actions: [
-            "कॉल तुरंत काट दें (Disconnect immediately)",
-            "किसी भी नंबर पर पैसे न भेजें",
-            "नजदीकी बिजली सब-स्टेशन से संपर्क करें",
-            "1930 पर साइबर ठगी की रिपोर्ट करें"
-          ],
-          audio_warning_hi: "सावधान! यह बिजली विभाग का फर्जी कॉल है। तुरंत फोन काटें और किसी को पैसे न भेजें।",
-          audio_warning_chg: "सावधान! यह बिजली विभाग के फर्जी कॉल हे। फोन ल तुरते काटव!"
-        }
-      });
-    }, 2200);
   },
 
   async simulateScenarioRun(text, lang = "hi") {

@@ -307,8 +307,8 @@ def test_pipeline_performance_comparison():
         old_latencies.append((time.perf_counter() - t0) * 1000)
     avg_old_ms = sum(old_latencies) / len(old_latencies)
 
-    # In-memory Int16 PCM must be fast and responsive (< 500ms for real-time streaming)
-    assert avg_new_ms < 500
+    # In-memory Int16 PCM must be fast (< 100ms)
+    assert avg_new_ms < 100
     print(f"\n[BENCHMARK] New In-Memory PCM Streaming: {avg_new_ms:.2f}ms | Old Container Pipeline: {avg_old_ms:.2f}ms")
 
 

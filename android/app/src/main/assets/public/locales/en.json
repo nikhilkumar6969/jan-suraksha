@@ -167,15 +167,5 @@
   "crit_btn_notify": "Alert Family Members",
   "crit_btn_close": "Dismiss Warning (I have disconnected the call)",
   "call_speakerphone_title": "Turn on Speakerphone:",
-  "call_speakerphone_desc": "Due to Android security restrictions, put incoming calls on loudspeaker so on-device AI can listen and warn in real time.",
-  "kiosk_mode_btn": "Kiosk Mode (CSC)",
-  "kiosk_mode_title": "CSC / Choice Center Assisted Mode",
-  "kiosk_active_sub": "Assisted screen and offline citizen safety receipt generator active for rural VLE operators",
-  "print_advisory_receipt": "Advisory Receipt (Print / PDF)",
-  "receipt_title": "Govt of Chhattisgarh • Citizen Cyber Safety Advisory Slip",
-  "receipt_ref_id": "Advisory Reference ID",
-  "receipt_date": "Date & Time",
-  "receipt_risk_level": "Risk Assessment",
-  "receipt_action_required": "Prescribed Citizen Safety Actions",
-  "receipt_helpline": "National Cyber Crime Helpline: 1930"
+  "call_speakerphone_desc": "Due to Android security restrictions, put incoming calls on loudspeaker so on-device AI can listen and warn in real time."
 }

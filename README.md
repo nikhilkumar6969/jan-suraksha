@@ -3,13 +3,6 @@
 **Hackasol 5.0 — Problem Statement GT-02 Option B**  
 *Target Users: First-time digital payment users in rural & semi-urban Chhattisgarh (Raipur, Durg, Bilaspur, Korba, Bastar, Raigarh, Rajnandgaon, Surguja)*
 
-> 📚 **Core Documentation & Field Guides:**
-> - [**`MASTER_RELEASE_SUMMARY.md`**](MASTER_RELEASE_SUMMARY.md) — Complete 10-Phase Project Milestone & Metrics Synthesis
-> - [**`DEMO_RUNBOOK.md`**](DEMO_RUNBOOK.md) — 3-Minute Live Hackathon Pitch & Demonstration Runbook
-> - [**`FIELD_OPERATOR_MANUAL.md`**](FIELD_OPERATOR_MANUAL.md) — Village Kiosk (CSC / Choice Centre) Operator Guide
-> - [**`PHASE8_DEPLOYMENT_AND_KIOSK_REPORT.md`**](PHASE8_DEPLOYMENT_AND_KIOSK_REPORT.md) — CI/CD Cloud Pipeline & Kiosk Mode Report
-> - [**`REAL_WORLD_VALIDATION_REPORT.md`**](REAL_WORLD_VALIDATION_REPORT.md) — 42-Scenario Chhattisgarhi Dialect Benchmark
-
 ---
 
 ## 🌟 Overview
@@ -130,35 +123,14 @@ Actual Scam               71                289       (False Negatives: 71, True
 ---
 
 ## 🧪 Running Automated Pytest Suite
-Run the 46 automated regression tests covering call transcription, 42-scenario Chhattisgarhi dialect benchmarks, fake-QR verification, abuse checks, indicator confirmation ($N=3$), DoS protections, and Ed25519 signature checks:
+Run the 13 automated tests covering detection, fake-QR verification, abuse checks, indicator confirmation ($N=3$), and Ed25519 signature checks:
 ```bash
 pytest -v
 ```
 
 ---
 
-## 🏛️ Village Kiosk & CSC Assisted Mode (चॉइस सेंटर / कियोस्क मोड)
-
-Designed specifically for Village Level Entrepreneurs (VLEs), Common Service Centres (CSCs), and Gram Panchayat volunteers assisting non-literate or elderly citizens:
-- **One-Click Kiosk Toggle:** Accessible in the civic header bar (`कियोस्क मोड (CSC)`) for large-display touch monitors.
-- **Citizen Cyber Safety Advisory Slip (नागरिक परामर्श पावती):** Generates an official Government of Chhattisgarh branded printable/downloadable slip (`JS-CG-YYYYMM-XXXXX`) detailing the risk level, detected indicators, and required emergency steps (e.g. Do NOT pay, Dial 1930).
-- **Print & Thermal Printer Ready:** Full `@media print` layout engineered for standard A4 and village thermal receipt printers.
-- **Offline Gram Panchayat Log:** Maintains a local, privacy-preserving inquiry register with one-click CSV export for local Thana or Cyber Crime reporting.
-
----
-
-## 🚀 Automated CI/CD Cloud Build Pipeline (GitHub Actions)
-
-Jan Suraksha includes a complete GitHub Actions CI/CD workflow at [`.github/workflows/ci.yml`](.github/workflows/ci.yml):
-- **Automated Backend Regression:** Executes Python 3.11 regression suite (46 tests) on every push and pull request.
-- **Automated Android APK Compilation:** Automatically checks out code, configures Temurin JDK 17, and runs `./gradlew assembleDebug` in the cloud on `ubuntu-latest`.
-- **Downloadable APK Artifacts:** Automatically attaches `JanSuraksha-Debug-APK` (`app-debug.apk`) directly to GitHub Workflow runs for one-click download without requiring local Android Studio.
-
----
-
 ## ⏱️ 3-Minute Hackathon Demo Script (Airplane-Mode Proof)
-
-> 💡 **For Presenters & Judges:** A complete second-by-second live presentation runbook is available at [**`DEMO_RUNBOOK.md`**](DEMO_RUNBOOK.md). You can also click the **`⚡ त्वरित डेमो (Quick Demo)`** pill in the top header to run 1-click test scenarios for CSPDCL electricity fraud, digital arrest calls, Chhattisgarhi dialect detection, and CSC advisory slip generation.
 
 ### Phase 1: Airplane Mode Offline Verification (0:00 - 1:15)
 1. **Turn OFF WiFi / Mobile Data** on the demonstration device or laptop.

@@ -135,36 +135,10 @@
             <span id="netStatusText" data-i18n="working_offline">ऑफलाइन</span>
           </span>
 
-          <!-- Village Kiosk / CSC Mode Toggle Pill -->
-          <button type="button" class="kiosk-toggle-btn" id="btnToggleKiosk" title="ग्राहक सेवा केंद्र / कियोस्क मोड (CSC Operator Mode)" aria-pressed="false">
-            <span class="kiosk-btn-icon" aria-hidden="true">🏛️</span>
-            <span class="kiosk-btn-label" data-i18n="kiosk_mode_btn">कियोस्क मोड (CSC)</span>
-          </button>
-
-          <!-- Quick Demo Mode Launcher -->
-          <button type="button" class="quick-demo-btn" id="btnQuickDemo" title="3-मिनट त्वरित लाइव डेमो (Quick Demo Launcher)">
-            <span class="quick-demo-icon" aria-hidden="true">⚡</span>
-            <span class="quick-demo-label">त्वरित डेमो</span>
-          </button>
-
           <!-- Theme Switcher -->
           <button class="icon-btn" id="themeToggleBtn" aria-label="Toggle Dark/Light Mode" title="डार्क / लाइट मोड">
             <svg viewBox="0 0 24 24"><use href="#icon-moon"/></svg>
           </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Village Kiosk / CSC Mode Active Top Banner -->
-    <div class="kiosk-top-banner" id="kioskTopBanner" style="display:none;" role="region" aria-label="CSC Operator Mode">
-      <div class="kiosk-banner-inner">
-        <div class="kiosk-banner-left">
-          <span class="kiosk-banner-badge">🏛️ चॉइस सेंटर / CSC ऑपरेटर मोड</span>
-          <span class="kiosk-banner-desc" data-i18n="kiosk_active_sub">ग्रामीण नागरिक सहायता एवं ऑफलाइन सुरक्षा पावती प्रणाली</span>
-        </div>
-        <div class="kiosk-banner-right">
-          <button type="button" class="kiosk-banner-action" id="btnKioskLogModal">📋 ग्राम पंचायत परामर्श लॉग (<span id="kioskIncidentCount">0</span>)</button>
-          <button type="button" class="kiosk-banner-action exit" id="btnKioskExit">✕ सामान्य नागरिक मोड</button>
         </div>
       </div>
     </div>
@@ -540,10 +514,6 @@
                   <svg viewBox="0 0 24 24"><use href="#icon-volume"/></svg>
                   <span data-i18n="btn_read_aloud">बोलकर सुनाएं</span>
                 </button>
-                <button class="btn btn-primary" id="btnReceiptFromVerdict" title="नागरिक परामर्श पावती (रसीद) तैयार करें">
-                  <svg viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="6" y="14" width="12" height="8" fill="none" stroke="currentColor" stroke-width="2"/></svg>
-                  <span data-i18n="print_advisory_receipt">परामर्श पावती (प्रिंट / PDF)</span>
-                </button>
                 <button class="btn btn-accent" id="btnReportFromVerdict">
                   <svg viewBox="0 0 24 24"><use href="#icon-alert-triangle"/></svg>
                   <span data-i18n="btn_report_scam">गुमनाम रिपोर्ट भेजें</span>
@@ -602,11 +572,6 @@
                 <button type="button" class="btn-listen-toggle idle" id="btnLiveCallListen">
                   <svg viewBox="0 0 24 24" style="width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2;"><use href="#icon-mic"/></svg>
                   <span id="liveListenBtnText" data-i18n="call_start_listening">कॉल सुनना शुरू करें (Start Listening)</span>
-                </button>
-
-                <button type="button" class="btn btn-secondary" id="btnSimulateLiveCall" style="height: 38px; border-color: rgba(245, 158, 11, 0.6); color: #d97706; font-weight: 700;">
-                  <span style="margin-right: 4px;">▶️</span>
-                  <span>लाइव कॉल सिमुलेट करें (Simulate Call)</span>
                 </button>
 
                 <select id="callAudioLang" class="lang-select" title="भाषा चुनें">
@@ -738,24 +703,9 @@
                   ऑडियो सैंपल से तुरंत टेस्ट करें (Real Offline Audio to Text):
                 </div>
                 <div class="sample-chips" style="margin-bottom: var(--space-2);">
-                  <span class="sample-chip" data-audio-sample="cspdcl_electricity">⚡ CSPDCL Bijli Cut Call (.wav)</span>
                   <span class="sample-chip" data-audio-sample="digital_arrest">Digital Arrest Call (.wav)</span>
                   <span class="sample-chip" data-audio-sample="bank_kyc">Bank KYC Block Call (.wav)</span>
                   <span class="sample-chip" data-audio-sample="fedex_customs">FedEx Customs Call (.wav)</span>
-                  <span class="sample-chip" data-audio-sample="genuine_agriculture" style="border-color: var(--status-safe); color: var(--status-safe);">🌾 Kisan Mandi Dhan Call (.wav) [Safe]</span>
-                </div>
-
-                <div style="margin: var(--space-2) 0 var(--space-3) 0; padding: var(--space-2) var(--space-3); background: var(--bg-card-subtle); border: 1px solid var(--border-color); border-radius: 6px;">
-                  <div style="font-size: var(--text-xs); font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">
-                    🔊 ऑफ़लाइन क्षेत्रीय आवाज़ चेतावनी टेस्ट (Offline Audio Warning Test):
-                  </div>
-                  <div class="sample-chips" style="margin-top: 4px;">
-                    <button type="button" class="sample-chip" onclick="CallDetector.playAlertPreview('upi_pin')">⚠️ UPI PIN चेतावनी</button>
-                    <button type="button" class="sample-chip" onclick="CallDetector.playAlertPreview('otp')">⚠️ OTP चेतावनी</button>
-                    <button type="button" class="sample-chip" onclick="CallDetector.playAlertPreview('police')">🚨 डिजिटल अरेस्ट चेतावनी</button>
-                    <button type="button" class="sample-chip" onclick="CallDetector.playAlertPreview('remote_access')">🛡️ AnyDesk / रिमोट ऐप</button>
-                    <button type="button" class="sample-chip" onclick="CallDetector.playAlertPreview('bank_kyc')">🏦 बैंक KYC चेतावनी</button>
-                  </div>
                 </div>
 
                 <div style="font-size: var(--text-xs); font-weight: 700; color: var(--text-secondary); margin-bottom: var(--space-1);" data-i18n="call_scenarios_label">
@@ -1299,170 +1249,6 @@
       </div>
     </div>
 
-    <!-- Citizen Cyber Safety Advisory Slip / Receipt Modal -->
-    <div class="modal-overlay" id="advisoryReceiptModalOverlay" role="dialog" aria-modal="true" aria-labelledby="receiptModalTitle">
-      <div class="modal-content receipt-modal-card" style="max-width: 620px;">
-        <!-- Printable Receipt Container -->
-        <div class="printable-receipt" id="printableReceiptArea">
-          <!-- Official Slip Header -->
-          <div class="receipt-header-banner">
-            <div class="receipt-emblem-row">
-              <span class="tiranga-flag" aria-hidden="true">
-                <span class="flag-stripe saffron"></span>
-                <span class="flag-stripe white"><span class="chakra">☸</span></span>
-                <span class="flag-stripe green"></span>
-              </span>
-              <div class="receipt-gov-titles">
-                <div class="receipt-gov-main">छत्तीसगढ़ शासन • CHHATTISGARH GOVT</div>
-                <div class="receipt-gov-sub">जन सुरक्षा (Jan Suraksha) — नागरिक साइबर सुरक्षा परामर्श पावती</div>
-              </div>
-            </div>
-            <div class="receipt-meta-grid">
-              <div><strong data-i18n="receipt_ref_id">संदर्भ क्रमांक:</strong> <span id="rcptRefId" class="mono-badge">JS-CG-2026-XXXX</span></div>
-              <div><strong data-i18n="receipt_date">दिनांक:</strong> <span id="rcptDate">--/--/----</span></div>
-            </div>
-          </div>
-
-          <hr class="receipt-divider" />
-
-          <!-- Risk Assessment Badge -->
-          <div style="text-align: center; margin: var(--space-3) 0;">
-            <div id="rcptRiskBadge" class="rcpt-risk-badge danger">सावधान! उच्च जोखिम (HIGH RISK SCAM)</div>
-            <div style="font-size: var(--text-xs); color: var(--text-secondary); margin-top: 4px;">
-              श्रेणी: <strong id="rcptScamType">बिजली बिल ठगी</strong> • <span id="rcptConfidence">92% विश्वास स्तर</span>
-            </div>
-          </div>
-
-          <!-- Content Snippet -->
-          <div class="receipt-section">
-            <div class="receipt-section-title">जांच किया गया संदेश / विवरण (Analyzed Input):</div>
-            <div class="receipt-snippet-box" id="rcptMessageSnippet"></div>
-          </div>
-
-          <!-- Threat Indicators -->
-          <div class="receipt-section">
-            <div class="receipt-section-title">पाए गए मुख्य खतरे (Threat Indicators):</div>
-            <ul class="receipt-threat-list" id="rcptThreatList"></ul>
-          </div>
-
-          <!-- Prescribed Action -->
-          <div class="receipt-section">
-            <div class="receipt-section-title" data-i18n="receipt_action_required">नागरिक हेतु आवश्यक निर्देश:</div>
-            <div class="receipt-action-box" id="rcptActionAdvice"></div>
-          </div>
-
-          <!-- Emergency Contacts Footer -->
-          <div class="receipt-footer-box">
-            <div class="receipt-helpline-row">
-              <span class="receipt-helpline-badge">🚨 राष्ट्रीय साइबर अपराध हेल्पलाइन: 1930 (Toll-Free 24x7)</span>
-              <span>पोर्टल: cybercrime.gov.in</span>
-            </div>
-            <div class="receipt-disclaimer-text">
-              * यह पावती जन सुरक्षा ऑन-डिवाइस AI सुरक्षा प्रणाली द्वारा ग्रामीण नागरिकों की सहायता हेतु जारी की गई है। वित्तीय लेन-देन से पूर्व संबंधित बैंक या विभाग से पुष्टि अवश्य करें।
-            </div>
-          </div>
-        </div>
-
-        <!-- Receipt Modal Actions (Not printed) -->
-        <div class="receipt-modal-controls">
-          <button type="button" class="btn btn-primary" id="btnPrintReceipt">
-            <svg viewBox="0 0 24 24" width="16" height="16"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="6" y="14" width="12" height="8" fill="none" stroke="currentColor" stroke-width="2"/></svg>
-            <span>🖨️ पावती प्रिंट करें (Print Slip)</span>
-          </button>
-          <button type="button" class="btn btn-secondary" id="btnDownloadReceiptText">
-            <span>📥 टेक्स्ट पावती (.txt)</span>
-          </button>
-          <button type="button" class="btn btn-ghost" id="btnCloseReceiptModal">✕ बंद करें</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Gram Panchayat / CSC Operator Offline Log Modal -->
-    <div class="modal-overlay" id="kioskLogModalOverlay" role="dialog" aria-modal="true" aria-labelledby="kioskLogModalTitle">
-      <div class="modal-content" style="max-width: 780px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-3);">
-          <div>
-            <div style="font-size: var(--text-xs); font-weight: 700; color: var(--color-primary); text-transform: uppercase;">चॉइस सेंटर / कियोस्क रिकॉर्ड</div>
-            <h3 class="modal-title" id="kioskLogModalTitle" style="margin-bottom: 0;">📋 ग्राम पंचायत नागरिक परामर्श लॉग</h3>
-          </div>
-          <button type="button" class="btn btn-secondary" id="btnCloseKioskLogModal" style="padding: 2px 10px; min-height: 32px; font-size: 1.25rem;">×</button>
-        </div>
-
-        <div style="max-height: 360px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: var(--space-3);">
-          <table style="width: 100%; border-collapse: collapse; font-size: var(--text-sm);">
-            <thead>
-              <tr style="background: var(--bg-card-subtle); border-bottom: 1px solid var(--border-color); text-align: left;">
-                <th style="padding: 8px 12px;">संदर्भ ID</th>
-                <th style="padding: 8px 12px;">दिनांक व समय</th>
-                <th style="padding: 8px 12px;">श्रेणी</th>
-                <th style="padding: 8px 12px;">जोखिम</th>
-                <th style="padding: 8px 12px;">विश्वास</th>
-              </tr>
-            </thead>
-            <tbody id="kioskLogTbody"></tbody>
-          </table>
-        </div>
-
-        <div style="display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); flex-wrap: wrap;">
-          <button type="button" class="btn btn-primary" id="btnExportKioskLogCsv">
-            <span>📥 CSV रिपोर्ट डाउनलोड करें</span>
-          </button>
-          <button type="button" class="btn btn-ghost" id="btnClearKioskLog" style="color: var(--color-danger);">
-            <span>🗑️ सभी रिकॉर्ड हटाएं</span>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 3-Minute Hackathon Quick Demo Modal -->
-    <div class="modal-overlay" id="quickDemoModalOverlay" role="dialog" aria-modal="true" aria-labelledby="quickDemoModalTitle">
-      <div class="modal-content" style="max-width: 580px;">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-3);">
-          <div>
-            <div style="font-size: var(--text-xs); font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-primary); margin-bottom: 2px;">
-              3-मिनट हैकथॉन प्रस्तुति व मूल्यांकन
-            </div>
-            <h3 class="modal-title" id="quickDemoModalTitle" style="margin-bottom: 0;">⚡ 1-क्लिक लाइव डेमो लॉन्चर</h3>
-          </div>
-          <button type="button" class="btn btn-secondary" id="btnCloseQuickDemoModal" style="padding: 2px 10px; min-height: 32px; font-size: 1.25rem;">×</button>
-        </div>
-
-        <p style="font-size: var(--text-sm); color: var(--text-secondary); margin-bottom: var(--space-4);">
-          जज व मूल्यांकनकर्ताओं के समक्ष त्वरित प्रस्तुति हेतु नीचे दिए गए किसी भी परिदृश्य पर एक क्लिक करें:
-        </p>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); margin-bottom: var(--space-4);">
-          <button type="button" class="card" id="btnDemoElectricity" style="cursor: pointer; text-align: left; padding: var(--space-3); border: 2px solid rgba(239, 68, 68, 0.4); background: var(--bg-card-subtle); transition: all 0.2s;">
-            <div style="font-size: 1.3rem; margin-bottom: 4px;">⚡</div>
-            <div style="font-weight: 800; font-size: var(--text-sm); color: var(--color-danger);">CSPDCL बिजली बिल ठगी</div>
-            <div style="font-size: var(--text-xs); color: var(--text-secondary); margin-top: 4px;">बिजली काटने की धमकी व अनधिकृत नंबर पर कॉल दबाव (SMS AI)</div>
-          </button>
-
-          <button type="button" class="card" id="btnDemoDigitalArrest" style="cursor: pointer; text-align: left; padding: var(--space-3); border: 2px solid rgba(14, 165, 233, 0.4); background: var(--bg-card-subtle); transition: all 0.2s;">
-            <div style="font-size: 1.3rem; margin-bottom: 4px;">🚨</div>
-            <div style="font-weight: 800; font-size: var(--text-sm); color: var(--color-primary);">डिजिटल अरेस्ट व फर्जी पुलिस</div>
-            <div style="font-size: var(--text-xs); color: var(--text-secondary); margin-top: 4px;">CBI/नारकोटिक्स पार्सल जबरन वसूली (कॉल ऑडियो व वॉर्निंग)</div>
-          </button>
-
-          <button type="button" class="card" id="btnDemoChhattisgarhi" style="cursor: pointer; text-align: left; padding: var(--space-3); border: 2px solid rgba(16, 185, 129, 0.4); background: var(--bg-card-subtle); transition: all 0.2s;">
-            <div style="font-size: 1.3rem; margin-bottom: 4px;">🌾</div>
-            <div style="font-weight: 800; font-size: var(--text-sm); color: var(--status-safe);">छत्तीसगढ़ी महतारी वंदन</div>
-            <div style="font-size: var(--text-xs); color: var(--text-secondary); margin-top: 4px;">स्थानिक बोली में सरकारी योजना बोनस व OTP चोरी जांच</div>
-          </button>
-
-          <button type="button" class="card" id="btnDemoKioskReceipt" style="cursor: pointer; text-align: left; padding: var(--space-3); border: 2px solid rgba(245, 158, 11, 0.4); background: var(--bg-card-subtle); transition: all 0.2s;">
-            <div style="font-size: 1.3rem; margin-bottom: 4px;">🏛️</div>
-            <div style="font-weight: 800; font-size: var(--text-sm); color: #d97706;">CSC परामर्श पावती (Slip)</div>
-            <div style="font-size: var(--text-xs); color: var(--text-secondary); margin-top: 4px;">चॉइस सेंटर हेतु आधिकारिक शासन पावती व थर्मल प्रिंटर दृश्य</div>
-          </button>
-        </div>
-
-        <div style="font-size: var(--text-xs); color: var(--text-tertiary); text-align: center; border-top: 1px solid var(--border-color); padding-top: var(--space-2);">
-          ✓ 100% ऑन-डिवाइस ऑफलाइन काम करता है • शून्य क्लाउड निर्भरता • शून्य डेटा लीक
-        </div>
-      </div>
-    </div>
-
     <!-- MyGov Style Floating Civic Action Dock (Speed Dial / Emergency Shortcuts) -->
     <aside class="floating-civic-dock" aria-label="त्वरित नागरिक सहायता">
       <a href="tel:1930" class="floating-dock-btn dock-btn-danger" title="राष्ट्रीय हेल्पलाइन 1930 (कॉल करें)" aria-label="Call 1930 Helpline">
@@ -1522,8 +1308,6 @@
   <script src="/js/dashboard.js"></script>
   <script src="/js/crypto_verify.js"></script>
   <script src="/js/hero-slider.js"></script>
-  <script src="/js/kiosk.js"></script>
-  <script src="/js/demo.js"></script>
   <script src="/js/app.js"></script>
 
 </body>
