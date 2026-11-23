@@ -2101,3 +2101,76 @@ html[data-a11y-size="large"] {
   color: var(--text-secondary);
   margin-bottom: var(--space-5);
 }
+
+/* Helpline 1930 Modal Card */
+.helpline-number-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+  color: #ffffff;
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-4);
+  box-shadow: 0 4px 14px rgba(185, 28, 28, 0.28);
+}
+
+.helpline-digits {
+  font-size: 2.25rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  font-family: var(--font-heading);
+  line-height: 1.1;
+}
+
+.helpline-subtext {
+  font-size: var(--text-xs);
+  opacity: 0.92;
+  margin-top: 2px;
+}
+
+.helpline-copy-btn {
+  background: #ffffff;
+  color: #991b1b;
+  border: none;
+  font-weight: 700;
+  font-size: var(--text-xs);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  transition: transform var(--transition-fast), background-color var(--transition-fast);
+}
+
+.helpline-copy-btn:hover {
+  background: #fef2f2;
+  transform: translateY(-1px);
+}
+
+.helpline-steps-list {
+  background: var(--bg-surface-elevated, var(--bg-surface));
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+}
+
+.helpline-step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  color: var(--text-primary);
+  line-height: 1.45;
+}
+
+.helpline-step-num {
+  font-weight: 800;
+  color: var(--color-danger, #dc2626);
+  min-width: 18px;
+}

@@ -19,16 +19,19 @@ window.App = {
     // 3. Setup Navigation
     this.setupNavigation();
 
-    // 4. Setup Theme Toggle
+    // 4. Setup 1930 Emergency Helpline Modal (Laptop & Desktop Fix)
+    this.setupHelplineModal();
+
+    // 5. Setup Theme Toggle
     this.setupTheme();
 
-    // 5. Setup Network Status Monitoring
+    // 6. Setup Network Status Monitoring
     this.setupNetworkStatus();
 
-    // 6. Register Service Worker
+    // 7. Register Service Worker
     this.registerServiceWorker();
 
-    // 7. Load Evaluation Metrics
+    // 8. Load Evaluation Metrics
     this.loadEvaluationMetrics();
   },
 
@@ -138,6 +141,100 @@ window.App = {
     const savedSize = localStorage.getItem('suraksha_a11y_size') || 'normal';
     if (savedSize === 'small' && a11yDec) setA11ySize('small', a11yDec);
     else if (savedSize === 'large' && a11yInc) setA11ySize('large', a11yInc);
+  },
+
+  setupHelplineModal() {
+    const modal = document.getElementById('helpline1930ModalOverlay');
+    const btnClose = document.getElementById('btnClose1930Modal');
+    const btnCopy = document.getElementById('btnCopy1930Number');
+    const copyText = document.getElementById('copy1930BtnText');
+    const btnChecklist = document.getElementById('btnModalOpenChecklist');
+    const btnTryPcCall = document.getElementById('btnModalTryPcCall');
+
+    const openModal = () => {
+      if (modal) modal.classList.add('open');
+    };
+
+    const closeModal = () => {
+      if (modal) modal.classList.remove('open');
+    };
+
+    this.open1930Modal = openModal;
+    this.close1930Modal = closeModal;
+
+    // Detect if the user is on mobile
+    const isMobileDevice = () => {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+             (window.matchMedia && window.matchMedia('(max-width: 768px) and (pointer: coarse)').matches);
+    };
+
+    // Attach to all tel:1930 links
+    document.querySelectorAll('a[href="tel:1930"]').forEach((link) => {
+      link.addEventListener('click', (e) => {
+        // On laptop/desktop, tel: links don't dial naturally -> always show the helpful emergency guidance modal!
+        if (!isMobileDevice()) {
+          e.preventDefault();
+          openModal();
+        }
+      });
+    });
+
+    if (btnClose) {
+      btnClose.addEventListener('click', closeModal);
+    }
+
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+      });
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal && modal.classList.contains('open')) {
+        closeModal();
+      }
+    });
+
+    // Copy number action
+    if (btnCopy) {
+      btnCopy.addEventListener('click', async () => {
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText('1930');
+          } else {
+            const ta = document.createElement('textarea');
+            ta.value = '1930';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+          }
+          if (copyText) copyText.textContent = '✓ कॉपी हुआ!';
+          this.showToast('✓ 1930 नंबर क्लिपबोर्ड में कॉपी हो गया');
+          setTimeout(() => {
+            if (copyText) copyText.textContent = 'कॉपी करें';
+          }, 2500);
+        } catch (err) {
+          console.warn('Clipboard write failed:', err);
+          this.showToast('1930 डायल करें');
+        }
+      });
+    }
+
+    // Open checklist action
+    if (btnChecklist) {
+      btnChecklist.addEventListener('click', () => {
+        closeModal();
+        this.navigate('help');
+      });
+    }
+
+    // Try PC Call action
+    if (btnTryPcCall) {
+      btnTryPcCall.addEventListener('click', () => {
+        window.location.href = 'tel:1930';
+      });
+    }
   },
 
   navigate(viewName) {
