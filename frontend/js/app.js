@@ -18,6 +18,9 @@ window.App = {
     if (window.HeroSlider) {
       window.HeroSlider.init();
     }
+    if (window.VoiceHelper) {
+      window.VoiceHelper.init();
+    }
 
     // 3. Setup Navigation
     this.setupNavigation();

@@ -203,5 +203,22 @@
   "stt_copy_btn": "टेक्स्ट कॉपी करव (Copy)",
   "stt_download_btn": "TXT फ़ाइल डाउनलोड करव (Download TXT)",
   "stt_check_fraud_btn": "स्कैम डिटेक्टर म जांचव (Check Fraud)",
-  "stt_clear_btn": "साफ़ करव (Clear)"
+  "stt_clear_btn": "साफ़ करव (Clear)",
+  "voice_home_title": "लिखे बर नइ आवय? बोलके बतावव!",
+  "voice_home_sub": "\"मोला व्हाट्सएप म मैसेज आइस\", \"पईसा कट गे\", या \"फोन आइस\" बोलव",
+  "voice_btn_speak": "बोलके पूछव (Tap to Speak)",
+  "voice_status_listening": "सुनत हंव... बोलव।",
+  "voice_status_understood": "समझ गेंव! पेज खोलत हन…",
+  "voice_status_unrecognized": "माफ करव, समझ नइ पाएन। फेर ले बोलव।",
+  "voice_status_timeout": "कोनो आवाज नइ आइस।",
+  "voice_btn_try_again": "फेर ले बोलव (Try Again)",
+  "voice_fallback_msg": "संदेश / WhatsApp",
+  "voice_fallback_call": "संदिग्ध फोन कॉल",
+  "voice_fallback_qr": "UPI क्यूआर",
+  "voice_fallback_lost": "पईसा कट गे (1930)",
+  "voice_prompt_paste_whatsapp": "व्हाट्सएप मैसेज ल इहां पेस्ट करव",
+  "voice_prompt_paste_sms": "एसएमएस संदेश ल इहां पेस्ट करव",
+  "voice_prompt_paste_sub": "नीचे \"पेस्ट करव\" बटन दबावा या डिब्बा म दाब के रखव",
+  "voice_paste_longpress": "👉 डिब्बा ल दाब के रखव अउ पेस्ट करव",
+  "btn_voice_paste": "पेस्ट करव (Paste)"
 }

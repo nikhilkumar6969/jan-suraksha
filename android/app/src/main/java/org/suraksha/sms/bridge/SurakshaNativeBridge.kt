@@ -181,4 +181,35 @@ class SurakshaNativeBridge(
      */
     @JavascriptInterface
     fun isSmsProtectionActive(): Boolean = true
+
+    /**
+     * Checks whether offline native Android SpeechRecognizer is available on this device.
+     */
+    @JavascriptInterface
+    fun hasNativeSpeechRecognizer(): Boolean {
+        return try {
+            android.speech.SpeechRecognizer.isRecognitionAvailable(context)
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    /**
+     * Starts native offline speech recognition with EXTRA_PREFER_OFFLINE.
+     */
+    @JavascriptInterface
+    fun startNativeSpeechRecognition(lang: String) {
+        activity.runOnUiThread {
+            try {
+                val intent = Intent(android.speech.RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                    putExtra(android.speech.RecognizerIntent.EXTRA_LANGUAGE_MODEL, android.speech.RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                    putExtra(android.speech.RecognizerIntent.EXTRA_LANGUAGE, if (lang.startsWith("en")) "en-IN" else "hi-IN")
+                    putExtra(android.speech.RecognizerIntent.EXTRA_PREFER_OFFLINE, true)
+                }
+                Log.i(TAG, "Native offline speech recognition requested for $lang")
+            } catch (e: Exception) {
+                Log.w(TAG, "Native speech recognizer error: ${e.message}")
+            }
+        }
+    }
 }

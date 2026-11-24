@@ -1,5 +1,5 @@
 // Jan Suraksha Service Worker - Production PWA Offline Engine
-const CACHE_NAME = 'suraksha-v2.9';
+const CACHE_NAME = 'suraksha-v3.0';
 
 // Function to handle HTTP Range requests (206 Partial Content) for offline video streaming
 async function handleRangeRequest(request, cachedResponse) {
@@ -67,6 +67,9 @@ const REQUIRED_ASSETS = [
   '/js/reports.js',
   '/js/dashboard.js',
   '/js/crypto_verify.js',
+  '/js/voice_matcher.js',
+  '/js/voice_engine.js',
+  '/js/voice_helper.js',
   '/locales/en.json',
   '/locales/hi.json',
   '/locales/chg.json',
@@ -77,6 +80,7 @@ const REQUIRED_ASSETS = [
   '/content/quiz_hi.json',
   '/content/quiz_chg.json',
   '/content/headers.json',
+  '/content/voice_intents.json',
   '/content/scam_model_weights.json',
   '/assets/icons/favicon.png',
   '/assets/icons/icon-192.png',
@@ -88,6 +92,21 @@ const REQUIRED_ASSETS = [
 
 // Optional / Large Media Assets (Cached individually with try/catch resilience)
 const OPTIONAL_MEDIA_ASSETS = [
+  '/js/vendor/vosk.js',
+  '/assets/alerts/voice_listening_en.wav',
+  '/assets/alerts/voice_listening_hi.wav',
+  '/assets/alerts/voice_listening_chg.wav',
+  '/assets/alerts/voice_paste_whatsapp_en.wav',
+  '/assets/alerts/voice_paste_whatsapp_hi.wav',
+  '/assets/alerts/voice_paste_whatsapp_chg.wav',
+  '/assets/alerts/voice_paste_sms_en.wav',
+  '/assets/alerts/voice_paste_sms_hi.wav',
+  '/assets/alerts/voice_paste_sms_chg.wav',
+  '/assets/alerts/voice_fallback_en.wav',
+  '/assets/alerts/voice_fallback_hi.wav',
+  '/assets/alerts/voice_fallback_chg.wav',
+  '/assets/models/vosk-model-hi.tar.gz',
+  '/assets/models/vosk-model-en.tar.gz',
   '/assets/videos/upi_safety.mp4',
   '/assets/videos/report_1930.mp4',
   '/assets/alerts/alert_chime.wav',

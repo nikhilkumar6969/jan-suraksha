@@ -22,5 +22,7 @@ backend/models/ed25519_signing_key.bin
 *.bin
 output/
 *.zip
+node_modules/
+package-lock.json
 !backend/models/headers.json
 !backend/models/update_pack.json

@@ -202,5 +202,22 @@
   "stt_copy_btn": "Copy Transcript",
   "stt_download_btn": "Download as TXT",
   "stt_check_fraud_btn": "Check in Scam Detector",
-  "stt_clear_btn": "Clear Transcript"
+  "stt_clear_btn": "Clear Transcript",
+  "voice_home_title": "Can't type? Just speak!",
+  "voice_home_sub": "Say \"I got a WhatsApp message\", \"lost money\", or \"fake call\"",
+  "voice_btn_speak": "Tap to Speak",
+  "voice_status_listening": "Listening… Please speak now.",
+  "voice_status_understood": "Understood! Opening section…",
+  "voice_status_unrecognized": "Could not understand. Please try again.",
+  "voice_status_timeout": "No speech detected.",
+  "voice_btn_try_again": "Try Again",
+  "voice_fallback_msg": "Message / WhatsApp",
+  "voice_fallback_call": "Suspicious Call",
+  "voice_fallback_qr": "UPI QR Code",
+  "voice_fallback_lost": "Lost Money (1930)",
+  "voice_prompt_paste_whatsapp": "Please paste the WhatsApp message here",
+  "voice_prompt_paste_sms": "Please paste the SMS here",
+  "voice_prompt_paste_sub": "Tap \"Paste\" below or long-press inside the box",
+  "voice_paste_longpress": "👉 Long-press inside box & tap Paste",
+  "btn_voice_paste": "Paste Message"
 }
