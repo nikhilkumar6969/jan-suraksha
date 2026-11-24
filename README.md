@@ -21,7 +21,7 @@
 3. [System Architecture: The Three Zones](#-system-architecture-the-three-zones)
 4. [Voice-First Helper: Hindi & Chhattisgarhi Dialect Support](#-voice-first-helper-hindi--chhattisgarhi-dialect-support)
 5. [Smishing & TRAI DLT Header Verification Guard](#-smishing--trai-dlt-header-verification-guard)
-6. [Native Android Companion App](#-native-android-companion-app)
+6. [Background Offline SMS Fraud Detection & In-App Threat Logging](#-background-offline-sms-fraud-detection--in-app-threat-logging)
 7. [Quickstart & Local Installation](#-quickstart--local-installation)
 8. [Automated Testing & Benchmark Results](#-automated-testing--benchmark-results)
 9. [3-Minute Live Hackathon Demo Script (Airplane Mode Proof)](#-3-minute-live-hackathon-demo-script-airplane-mode-proof)
@@ -58,7 +58,7 @@ Existing fraud detection systems suffer from severe structural drawbacks:
 | **📚 Interactive Safety Lessons** | Visual swipeable flashcards, video lessons, and interactive 10-scenario safety quizzes with score calculation. | Pre-cached vector assets and localized JSON content. |
 | **🚨 Emergency 1930 & Help Desk** | Direct `tel:1930` emergency dialer, Chakshu reporting guide, and offline downloadable legal evidence receipts (`.txt`). | Local checklist state engine with printable receipt export. |
 | **📊 District Radar Dashboard** | Visualizes anonymized scam trends across Chhattisgarh districts (Raipur, Bilaspur, Durg, Bastar, etc.) with $k \ge 5$ privacy suppression. | Unsupervised TF-IDF + cosine clustering with Ed25519-signed update packs. |
-| **📱 Native Android Background Interceptor** | Automatically intercepts incoming SMS, scans headers/text, logs to Room DB, and displays actionable warning notifications. | Native Kotlin BroadcastReceiver (`RECEIVE_SMS`) with local coroutine classifier. |
+| **📱 Background Offline SMS Interceptor** | Runs silently in the background with **100% zero internet**. Intercepts incoming SMS, detects fraud/suspicious messages, **triggers instant high-priority warning notifications**, and **automatically saves the threat in the in-app database log** for evidence. | Native Kotlin `BroadcastReceiver` (`RECEIVE_SMS`), on-device ML classifier, Room SQLite DB, and Android `NotificationManager`. |
 
 ---
 
@@ -134,14 +134,77 @@ Commercial SMS in India is strictly regulated by TRAI (Telecom Regulatory Author
 
 ---
 
-## 📱 Native Android Companion App
+## 📱 Background Offline SMS Fraud Detection & In-App Threat Logging
 
-The repository includes a complete native Android application in [`android/`](file:///c:/project/hackasol/android) implementing background SMS defense:
+A central capability of Jan Suraksha is its **24/7 Background Offline SMS Defense Engine** implemented in the native Android application ([`android/`](file:///c:/project/hackasol/android)). It runs silently in the background of the user's phone, requiring **zero internet connectivity**, zero cloud lookups, and no active user interaction.
 
-- **Background SMS Interceptor:** Uses a `BroadcastReceiver` listening to `android.provider.Telephony.SMS_RECEIVED`.
-- **On-Device Room SQLite Database:** Securely stores historical classifications on the phone.
-- **High-Priority Heads-Up Notifications:** Alerts citizens with clear risk reasons, masked safe previews, and one-tap action buttons.
-- **No "Default SMS App" Requirement:** Operates transparently alongside any default messaging application without intrusive permissions or risk of deleting legitimate messages.
+### How It Works: Instant Alerts & In-App Threat Persistence
+
+When any incoming SMS arrives on the device—even while the phone is locked, in a pocket, or in physical Airplane Mode:
+
+```
+                  Incoming SMS (Carrier Network)
+                                │
+                                ▼
+         [Device Background: 100% Offline / Zero Internet]
+                 IncomingSmsReceiver.kt (BroadcastReceiver)
+                                │
+         (goAsync() grabs multipart chunks & normalizes text)
+                                ▼
+         Offline ML Classifier (TF-IDF + Logistic Regression)
+                                ┼
+         TRAI DLT Header Guard (Levenshtein + Brand Domains)
+                                │
+        ┌───────────────────────┴───────────────────────┐
+        ▼                                               ▼
+ [FRAUD / SUSPICIOUS DETECTED]                    [SAFE MESSAGE]
+        │                                               │
+        ├─► 1. 🔔 Instant Heads-Up Notification         └─► Quietly logged in
+        │      • High-priority vibration + alert sound       local Room DB
+        │      • Red risk badge & explanation                (Zero user disturbance)
+        │      • Masked preview (links un-clickable)
+        │      • Action Buttons:
+        │        - 📞 [Call 1930 Helpline]
+        │        - 🛡️ [Mark as Safe (Override)]
+        │        - 📢 [Warn Family (Share)]
+        │
+        └─► 2. 💾 Automatic In-App Persistence
+               • Saved into phone's Room SQLite DB
+               • Visible in In-App "Threat History & Logs"
+               • Exportable as legal evidence receipt
+```
+
+### 1. Zero-Internet Background Interception
+- Uses an Android `BroadcastReceiver` (`IncomingSmsReceiver`) subscribed to `android.provider.Telephony.SMS_RECEIVED`.
+- Utilizes `goAsync()` with Kotlin Coroutines (`Dispatchers.IO`) to process messages without freezing the UI or draining battery.
+- Automatically handles multipart / concatenated long SMS messages across rural carrier networks.
+
+### 2. High-Priority Heads-Up Warning Notifications
+- Configured via Android `NotificationChannel` with `IMPORTANCE_HIGH`.
+- When a suspicious message (e.g. CSPDCL electricity bill disconnection threat, fake bank KYC from a personal 10-digit number, lottery lure) is identified:
+  - **Defanged Safe Preview:** Automatically truncates text and neutralizes clickable URLs to prevent accidental victim clicks.
+  - **Direct 1930 Dialer:** Provides an immediate one-tap button to dial the National Cyber Crime Helpline (`tel:1930`).
+  - **False Alarm Override:** Allows the citizen to tap **"Mark as Safe"** to adapt to personal preferences.
+  - **Family Alert:** One-tap action to share the fraud warning with family members via WhatsApp.
+
+### 3. Automatic In-App Threat History & Storage
+- Every intercepted message—whether flagged as suspicious or confirmed safe—is **automatically stored locally on the device** in a Room SQLite database (`SurakshaDatabase`).
+- **In-App Review Log:** When the citizen opens Jan Suraksha, they can browse the complete **Threat History**:
+  - Exact timestamp and sender header/number.
+  - Risk categorization (`Electricity Disconnection`, `Extortion`, `Bank KYC`, `Lottery`, etc.).
+  - Confidence percentage and highlighted risky trigger words.
+  - Option to generate and download an offline evidence receipt (`.txt`) for police complaints.
+
+### 4. Privacy & System Non-Intrusiveness
+- **No "Default SMS App" Role Required:** Unlike intrusive SMS managers, Jan Suraksha does not take over default SMS messaging or delete incoming messages. It monitors purely for defensive alerting.
+- **100% On-Device:** No message text, phone numbers, or metadata ever leave the device.
+
+### 5. Battery Optimization Settings (Ensuring Uninterrupted Background Defense)
+To prevent aggressive OEM battery managers from sleeping background receivers on popular Indian smartphones:
+- **Xiaomi / Redmi / POCO (MIUI / HyperOS):** `Settings -> Apps -> Manage Apps -> Jan Suraksha -> Battery Saver -> No Restrictions` (Enable `Autostart`).
+- **Samsung (One UI):** `Settings -> Apps -> Jan Suraksha -> Battery -> Unrestricted`.
+- **Oppo / Realme (ColorOS / Realme UI):** `Settings -> Battery -> App Battery Management -> Jan Suraksha -> Allow background activity`.
+- **Vivo / iQOO (Funtouch OS):** `Settings -> Battery -> Background Power Consumption -> Jan Suraksha -> High Background Power Usage`.
 
 ---
 
