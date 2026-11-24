@@ -1,5 +1,5 @@
 // Jan Suraksha Service Worker - Production PWA Offline Engine
-const CACHE_NAME = 'suraksha-v3.0';
+const CACHE_NAME = 'suraksha-v3.2';
 
 // Function to handle HTTP Range requests (206 Partial Content) for offline video streaming
 async function handleRangeRequest(request, cachedResponse) {

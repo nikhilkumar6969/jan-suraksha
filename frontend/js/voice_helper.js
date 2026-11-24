@@ -7,6 +7,7 @@
   const VoiceHelper = {
     initialized: false,
     isFlowActive: false,
+    selectedVoiceLang: 'auto',
     playbackToken: 0,
     retryCount: 0,
     currentIntentResult: null,
@@ -103,6 +104,64 @@
             targetSubtab: null
           });
         });
+      }
+
+      // 5. Type-instead Fallback Input
+      const fallbackInput = document.getElementById('voiceFallbackInput');
+      const btnFallbackSubmit = document.getElementById('btnVoiceFallbackSubmit');
+      const submitTypedIntent = () => {
+        if (!fallbackInput) return;
+        const text = fallbackInput.value.trim();
+        if (text) {
+          fallbackInput.value = '';
+          this.processRecognizedTranscript(text);
+        }
+      };
+
+      if (btnFallbackSubmit) {
+        btnFallbackSubmit.addEventListener('click', submitTypedIntent);
+      }
+      if (fallbackInput) {
+        fallbackInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            submitTypedIntent();
+          }
+        });
+      }
+
+      // 6. Language Mode Pills (Auto / Hindi / Chhattisgarhi / English)
+      document.querySelectorAll('.voice-lang-pill').forEach((pill) => {
+        pill.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const targetLang = pill.getAttribute('data-lang') || 'auto';
+          this.setVoiceLanguage(targetLang);
+        });
+      });
+    },
+
+    setVoiceLanguage(targetLang) {
+      this.selectedVoiceLang = targetLang;
+      document.querySelectorAll('.voice-lang-pill').forEach((p) => {
+        p.classList.toggle('active', p.getAttribute('data-lang') === targetLang);
+      });
+      const statusTitle = document.getElementById('voiceStatusTitle');
+      if (statusTitle) {
+        if (targetLang === 'chg') {
+          statusTitle.textContent = 'सुनत हन... बोलव (Listening in Chhattisgarhi)';
+        } else if (targetLang === 'hi') {
+          statusTitle.textContent = 'सुन रहे हैं... बोलिए (Listening in Hindi)';
+        } else if (targetLang === 'en') {
+          statusTitle.textContent = 'Listening... Please speak (English)';
+        } else {
+          statusTitle.textContent = 'सुन रहे हैं... / सुनत हन... बोलव (Hindi & Chhattisgarhi)';
+        }
+      }
+      if (this.isFlowActive) {
+        this.stopPromptAudio();
+        if (window.VoiceEngine) window.VoiceEngine.stop();
+        this.isFlowActive = false;
+        this.startListeningFlow();
       }
     },
 
@@ -233,83 +292,117 @@
       this.stopPromptAudio();
       this.openModal();
 
-      const lang = (window.I18n && window.I18n.currentLang) ? window.I18n.currentLang : 'hi';
+      const voiceMode = this.selectedVoiceLang || 'auto';
+      const appLang = (window.I18n && window.I18n.currentLang) ? window.I18n.currentLang : 'hi';
+      const effectiveLang = (voiceMode === 'auto') ? (appLang === 'en' ? 'hi' : appLang) : voiceMode;
+      const sttLang = (effectiveLang === 'en') ? 'en' : 'hi';
+      const promptLang = (voiceMode === 'chg' || (voiceMode === 'auto' && appLang === 'chg')) ? 'chg' : (effectiveLang === 'en' ? 'en' : 'hi');
+
       const statusTitle = document.getElementById('voiceStatusTitle');
       const transcriptBox = document.getElementById('voiceTranscriptLive');
       const progressWrap = document.getElementById('voiceProgressWrap');
       const progressBar = document.getElementById('voiceProgressBar');
       const progressText = document.getElementById('voiceProgressText');
 
+      // Update pills in case language changed
+      document.querySelectorAll('.voice-lang-pill').forEach((p) => {
+        p.classList.toggle('active', p.getAttribute('data-lang') === voiceMode);
+      });
+
+      // Status text depending on language mode
+      if (statusTitle) {
+        if (voiceMode === 'chg') {
+          statusTitle.textContent = 'सुनत हन... बोलव (Listening in Chhattisgarhi)';
+        } else if (voiceMode === 'hi') {
+          statusTitle.textContent = 'सुन रहे हैं... बोलिए (Listening in Hindi)';
+        } else if (voiceMode === 'en') {
+          statusTitle.textContent = 'Listening... Please speak (English)';
+        } else {
+          statusTitle.textContent = 'सुन रहे हैं... / सुनत हन... बोलव (Hindi & Chhattisgarhi)';
+        }
+      }
+
       // Play "listening" spoken audio prompt
-      this.playPromptAudio(`voice_listening_${lang}.wav`, (lang === 'en' ? 'Listening. Please speak now.' : 'सुन रहे हैं। कृपया बोलिए।'));
+      const promptFallback = (promptLang === 'chg')
+        ? 'सुनत हन। बोलव।'
+        : (promptLang === 'en' ? 'Listening. Please speak now.' : 'सुन रहे हैं। कृपया बोलिए।');
+      this.playPromptAudio(`voice_listening_${promptLang}.wav`, promptFallback);
 
       if (!window.VoiceEngine) {
         this.showFallbackOptions('Speech engine not available');
         return;
       }
 
-      await window.VoiceEngine.start({
-        lang: lang,
-        onProgress: (pct, msg) => {
-          if (progressWrap && progressBar && progressText) {
-            progressWrap.style.display = 'block';
-            progressBar.style.width = `${pct}%`;
-            progressText.textContent = msg;
-          }
-        },
-        onListening: () => {
-          if (progressWrap) progressWrap.style.display = 'none';
-          if (statusTitle) {
-            statusTitle.textContent = window.I18n ? window.I18n.t('voice_status_listening', 'सुन रहे हैं... (Listening…)') : 'सुन रहे हैं... (Listening…)';
-          }
-        },
-        onPartial: (partialText) => {
-          this.stopPromptAudio();
-          if (transcriptBox) {
-            transcriptBox.textContent = `"${partialText}"`;
-            transcriptBox.classList.add('has-text');
-          }
-          if (window.VoiceMatcher && partialText && partialText.trim().length > 3) {
-            const match = window.VoiceMatcher.match(partialText);
-            if (match && match.intent && match.confidence >= 0.8) {
-              console.log('[VoiceHelper] Early partial match achieved:', match);
-              if (window.VoiceEngine) window.VoiceEngine.stop('partial_match');
-              this.isFlowActive = false;
-              this.processRecognizedTranscript(partialText);
+      try {
+        await window.VoiceEngine.start({
+          lang: sttLang,
+          onProgress: (pct, msg) => {
+            if (progressWrap && progressBar && progressText) {
+              progressWrap.style.display = 'block';
+              progressBar.style.width = `${pct}%`;
+              progressText.textContent = msg;
             }
-          }
-        },
-        onTranscript: (finalText) => {
-          this.stopPromptAudio();
-          this.isFlowActive = false;
-          if (transcriptBox) {
-            transcriptBox.textContent = `"${finalText}"`;
-            transcriptBox.classList.add('has-text');
-          }
-          this.processRecognizedTranscript(finalText);
-        },
-        onError: (err) => {
-          console.warn('[VoiceHelper] Speech recognition error:', err);
-          this.isFlowActive = false;
-          this.retryCount++;
-          this.showFallbackOptions(err.message || 'Permission or hardware error');
-        },
-        onEnd: (endInfo) => {
-          this.isFlowActive = false;
-          if (!this.currentIntentResult && endInfo.reason === 'timeout') {
-            this.retryCount++;
-            if (this.retryCount >= 2) {
-              this.showFallbackOptions('Timeout after 2 attempts');
-            } else {
-              if (statusTitle) {
-                statusTitle.textContent = window.I18n ? window.I18n.t('voice_status_timeout', 'कोई आवाज़ सुनाई नहीं दी (No speech heard)') : 'कोई आवाज़ सुनाई नहीं दी';
+          },
+          onListening: () => {
+            if (progressWrap) progressWrap.style.display = 'none';
+          },
+          onPartial: (partialText) => {
+            this.stopPromptAudio();
+            if (transcriptBox) {
+              const detected = window.VoiceMatcher ? window.VoiceMatcher.detectLanguage(partialText) : 'hi';
+              const badge = detected === 'chg' ? '🌾 छत्तीसगढ़ी: ' : (detected === 'en' ? '🇬🇧 English: ' : '🇮🇳 हिन्दी: ');
+              transcriptBox.textContent = `${badge}"${partialText}"`;
+              transcriptBox.classList.add('has-text');
+            }
+            if (window.VoiceMatcher && partialText && partialText.trim().length > 3) {
+              const match = window.VoiceMatcher.match(partialText);
+              if (match && match.intent && match.confidence >= 0.8) {
+                console.log('[VoiceHelper] Early partial match achieved:', match);
+                if (window.VoiceEngine) window.VoiceEngine.stop('partial_match');
+                this.isFlowActive = false;
+                this.processRecognizedTranscript(partialText);
               }
-              const tryAgainBtn = document.getElementById('btnVoiceTryAgain');
-              if (tryAgainBtn) tryAgainBtn.style.display = 'inline-block';
+            }
+          },
+          onTranscript: (finalText) => {
+            this.stopPromptAudio();
+            this.isFlowActive = false;
+            if (transcriptBox) {
+              const detected = window.VoiceMatcher ? window.VoiceMatcher.detectLanguage(finalText) : 'hi';
+              const badge = detected === 'chg' ? '🌾 छत्तीसगढ़ी: ' : (detected === 'en' ? '🇬🇧 English: ' : '🇮🇳 हिन्दी: ');
+              transcriptBox.textContent = `${badge}"${finalText}"`;
+              transcriptBox.classList.add('has-text');
+            }
+            this.processRecognizedTranscript(finalText);
+          },
+          onError: (err) => {
+            console.warn('[VoiceHelper] Speech recognition error:', err);
+            this.isFlowActive = false;
+            this.retryCount++;
+            this.showFallbackOptions(err.message || 'Permission or hardware error');
+          },
+          onEnd: (endInfo) => {
+            this.isFlowActive = false;
+            if (!this.currentIntentResult && endInfo.reason === 'timeout') {
+              this.retryCount++;
+              if (this.retryCount >= 2) {
+                this.showFallbackOptions('Timeout after 2 attempts');
+              } else {
+                if (statusTitle) {
+                  statusTitle.textContent = window.I18n ? window.I18n.t('voice_status_timeout', 'कोई आवाज़ सुनाई नहीं दी (No speech heard)') : 'कोई आवाज़ सुनाई नहीं दी';
+                }
+                const tryAgainBtn = document.getElementById('btnVoiceTryAgain');
+                if (tryAgainBtn) tryAgainBtn.style.display = 'inline-block';
+              }
             }
           }
-        }
-      });
+        });
+      } catch (startErr) {
+        console.warn('[VoiceHelper] Failed to start voice engine:', startErr);
+        this.isFlowActive = false;
+        this.retryCount++;
+        this.showFallbackOptions(startErr.message || 'Speech engine failed');
+      }
     },
 
     processRecognizedTranscript(transcript) {
@@ -334,7 +427,8 @@
         this.currentIntentResult = match;
         const statusTitle = document.getElementById('voiceStatusTitle');
         if (statusTitle) {
-          statusTitle.textContent = window.I18n ? window.I18n.t('voice_status_understood', 'समझ गए! (Understood!)') : 'समझ गए! (Understood!)';
+          const isChg = (match.detectedLang === 'chg' || this.selectedVoiceLang === 'chg');
+          statusTitle.textContent = isChg ? 'समझ गेंव! पेज खोलत हन…' : (window.I18n ? window.I18n.t('voice_status_understood', 'समझ गए! (Understood!)') : 'समझ गए!');
         }
 
         // Slight pause so the user sees the recognized text, then navigate
@@ -358,7 +452,10 @@
     },
 
     dispatchIntent(intentResult) {
-      const lang = (window.I18n && window.I18n.currentLang) ? window.I18n.currentLang : 'hi';
+      const detected = intentResult.detectedLang;
+      const voiceMode = this.selectedVoiceLang;
+      const appLang = (window.I18n && window.I18n.currentLang) ? window.I18n.currentLang : 'hi';
+      const lang = detected || (voiceMode && voiceMode !== 'auto' ? voiceMode : null) || (appLang === 'en' ? 'hi' : appLang) || 'hi';
       const { intent, subType, targetView, targetSubtab } = intentResult;
 
       // 1. Navigate to target view and subtab
@@ -379,20 +476,23 @@
           smsInput.focus();
         }
 
-        // Spoken prompt & text announcement
+        // Spoken prompt & text announcement in matched language
         const audioFile = isWhatsapp ? `voice_paste_whatsapp_${lang}.wav` : `voice_paste_sms_${lang}.wav`;
         const fallbackText = isWhatsapp 
-          ? (lang === 'en' ? 'Please paste the WhatsApp message here.' : 'कृपया व्हाट्सएप संदेश यहाँ पेस्ट करें।')
-          : (lang === 'en' ? 'Please paste the SMS here.' : 'कृपया एसएमएस संदेश यहाँ पेस्ट करें।');
+          ? (lang === 'en' ? 'Please paste the WhatsApp message here.' : (lang === 'chg' ? 'व्हाट्सएप मैसेज ल इहां पेस्ट करव।' : 'कृपया व्हाट्सएप संदेश यहाँ पेस्ट करें।'))
+          : (lang === 'en' ? 'Please paste the SMS here.' : (lang === 'chg' ? 'एसएमएस संदेश ल इहां पेस्ट करव।' : 'कृपया एसएमएस संदेश यहाँ पेस्ट करें।'));
 
         this.playPromptAudio(audioFile, fallbackText);
       } else if (intent === 'phone_call') {
-        if (window.App) window.App.showToast('📞 कॉल जांच अनुभाग (Call Check Active)');
+        const msg = lang === 'chg' ? '📞 कॉल जांच अनुभाग (फोन कॉल चेक करव)' : '📞 कॉल जांच अनुभाग (Call Check Active)';
+        if (window.App) window.App.showToast(msg);
       } else if (intent === 'qr_payment') {
-        if (window.App) window.App.showToast('📷 UPI क्यूआर जांचें (Scan or Check QR)');
+        const msg = lang === 'chg' ? '📷 UPI क्यूआर जांचव (Scan QR)' : '📷 UPI क्यूआर जांचें (Scan or Check QR)';
+        if (window.App) window.App.showToast(msg);
       } else if (intent === 'lost_money') {
         if (window.App) {
-          window.App.showToast('🚨 आपातकालीन 1930 सहायता (Call 1930 Helpline)');
+          const msg = lang === 'chg' ? '🚨 आपातकालीन 1930 सहायता (तुरते 1930 लगाव)' : '🚨 आपातकालीन 1930 सहायता (Call 1930 Helpline)';
+          window.App.showToast(msg);
           // Emphasize 1930 emergency card
           const helpCallCard = document.getElementById('helpCallCard');
           if (helpCallCard) {
@@ -402,11 +502,12 @@
           }
         }
       } else if (intent === 'learn') {
-        if (window.App) window.App.showToast('📚 सुरक्षा पाठ एवं क्विज (Safety Lessons)');
+        const msg = lang === 'chg' ? '📚 सुरक्षा पाठ अउ क्विज (Safety Lessons)' : '📚 सुरक्षा पाठ एवं क्विज (Safety Lessons)';
+        if (window.App) window.App.showToast(msg);
       }
     },
 
-    showPasteWorkflowBanner(isWhatsapp, lang) {
+    showPasteWorkflowBanner(isWhatsapp, lang = 'hi') {
       const banner = document.getElementById('voicePasteBanner');
       const textEl = document.getElementById('voicePastePromptText');
       const subEl = document.getElementById('voicePasteSubText');
@@ -417,29 +518,30 @@
       banner.style.display = 'flex';
       banner.classList.add('active');
 
+      const isChg = (lang === 'chg');
       if (isWhatsapp) {
         if (iconEl) iconEl.textContent = '💬';
         if (textEl) {
-          textEl.textContent = window.I18n 
-            ? window.I18n.t('voice_prompt_paste_whatsapp', 'कृपया व्हाट्सएप संदेश यहाँ पेस्ट करें (Paste WhatsApp message here)') 
-            : 'कृपया व्हाट्सएप संदेश यहाँ पेस्ट करें';
+          textEl.textContent = isChg
+            ? 'व्हाट्सएप मैसेज ल इहां पेस्ट करव'
+            : (lang === 'en' ? 'Please paste the WhatsApp message here' : 'कृपया व्हाट्सएप संदेश यहाँ पेस्ट करें');
         }
         if (subEl) {
-          subEl.textContent = window.I18n
-            ? window.I18n.t('voice_prompt_paste_sub', 'नीचे "पेस्ट करें" बटन दबाएं या बॉक्स में दबाकर रखें')
-            : 'नीचे "पेस्ट करें" बटन दबाएं या बॉक्स में दबाकर रखें';
+          subEl.textContent = isChg
+            ? 'नीचे "पेस्ट करव" बटन दबावा या डिब्बा म दाब के रखव'
+            : (lang === 'en' ? 'Tap "Paste Message" below or long-press inside box' : 'नीचे "पेस्ट करें" बटन दबाएं या बॉक्स में दबाकर रखें');
         }
       } else {
         if (iconEl) iconEl.textContent = '✉️';
         if (textEl) {
-          textEl.textContent = window.I18n 
-            ? window.I18n.t('voice_prompt_paste_sms', 'कृपया एसएमएस संदेश यहाँ पेस्ट करें (Paste SMS here)') 
-            : 'कृपया एसएमएस संदेश यहाँ पेस्ट करें';
+          textEl.textContent = isChg
+            ? 'एसएमएस संदेश ल इहां पेस्ट करव'
+            : (lang === 'en' ? 'Please paste the SMS here' : 'कृपया एसएमएस संदेश यहाँ पेस्ट करें');
         }
         if (subEl) {
-          subEl.textContent = window.I18n
-            ? window.I18n.t('voice_prompt_paste_sub', 'नीचे "पेस्ट करें" बटन दबाएं या बॉक्स में दबाकर रखें')
-            : 'नीचे "पेस्ट करें" बटन दबाएं या बॉक्स में दबाकर रखें';
+          subEl.textContent = isChg
+            ? 'नीचे "पेस्ट करव" बटन दबावा या डिब्बा म दाब के रखव'
+            : (lang === 'en' ? 'Tap "Paste Message" below or long-press inside box' : 'नीचे "पेस्ट करें" बटन दबाएं या बॉक्स में दबाकर रखें');
         }
       }
 
@@ -457,7 +559,9 @@
       if (fallbackGrid) fallbackGrid.style.display = 'grid';
       if (tryAgainBtn) tryAgainBtn.style.display = 'inline-block';
 
-      const lang = (window.I18n && window.I18n.currentLang) ? window.I18n.currentLang : 'hi';
+      const voiceMode = this.selectedVoiceLang;
+      const appLang = (window.I18n && window.I18n.currentLang) ? window.I18n.currentLang : 'hi';
+      const lang = (voiceMode && voiceMode !== 'auto') ? voiceMode : (appLang === 'chg' ? 'chg' : (appLang === 'en' ? 'en' : 'hi'));
       const promptText = (lang === 'en')
         ? 'Sorry, please tap one of these options.'
         : (lang === 'chg' ? 'माफ करव, एमा ले एक ठो चुनव।' : 'माफ़ कीजिए, कृपया इनमें से एक विकल्प चुनें।');
@@ -472,7 +576,7 @@
     playPromptAudio(fileName, fallbackSpokenText = '') {
       this.stopPromptAudio();
       const currentToken = ++this.playbackToken;
-      const audioPath = `assets/alerts/${fileName}`;
+      const audioPath = `/assets/alerts/${fileName}`;
 
       const player = new Audio(audioPath);
       this.audioPlayer = player;

@@ -219,5 +219,7 @@
   "voice_prompt_paste_sms": "Please paste the SMS here",
   "voice_prompt_paste_sub": "Tap \"Paste\" below or long-press inside the box",
   "voice_paste_longpress": "👉 Long-press inside box & tap Paste",
-  "btn_voice_paste": "Paste Message"
+  "btn_voice_paste": "Paste Message",
+  "voice_fallback_input_placeholder": "Or type here... (e.g. got whatsapp message)",
+  "btn_voice_send": "Send"
 }

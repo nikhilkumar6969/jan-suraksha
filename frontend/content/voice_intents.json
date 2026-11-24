@@ -407,7 +407,10 @@
           "ज्ञान के बात बताओ",
           "ओटीपी सुरक्षा सीखव",
           "सुरक्षा वीडियो देखव",
-          "कइसे बचबो बताव"
+          "कइसे बचबो बताव",
+          "ठगी से कइसे बचबो सिखावव",
+          "मोला सिखाव",
+          "सुरक्षा के गोठ"
         ]
       }
     }
@@ -462,7 +465,21 @@
     "qur": "qr",
     "kyuar": "qr",
     "kyu aar": "qr",
-    "kew r": "qr"
+    "kew r": "qr",
+    "sikhav": "sikhao",
+    "sikhavav": "sikhao",
+    "seekhbo": "seekhna",
+    "bachbo": "bachna",
+    "jaanchav": "check",
+    "dekhav": "dikhao",
+    "aayis": "aaya",
+    "aayish": "aaya",
+    "hoge": "hoge",
+    "katge": "kat gaya",
+    "lutge": "lut gaya",
+    "chitti": "sandesh",
+    "bataav": "batao",
+    "bataavav": "batao"
   },
   "vosk_grammar_tokens": [
     "whatsapp", "message", "sms", "text", "link", "phone", "call", "police",

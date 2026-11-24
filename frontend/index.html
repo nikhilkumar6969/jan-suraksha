@@ -16,7 +16,7 @@
   <link rel="preload" as="image" href="/assets/backgrounds/media_1795408807123_f835ec6f.jpg">
   <link rel="preload" as="image" href="/assets/backgrounds/media_1795408866473_e3ecd55a.jpg">
   <link rel="stylesheet" href="/css/tokens.css">
-  <link rel="stylesheet" href="/css/app.css?v=2.5">
+  <link rel="stylesheet" href="/css/app.css?v=3.2">
 </head>
 <body>
 
@@ -290,9 +290,9 @@
         <!-- Voice-First Helper: Low-Literacy Tap-to-Speak Banner -->
         <div class="home-voice-assistant-card" id="homeVoiceCard">
           <div class="voice-card-content">
-            <div class="voice-card-badge">🎙️ वॉइस असिस्टेंट • बोलकर पूछें</div>
+            <div class="voice-card-badge">🎙️ वॉइस असिस्टेंट • हिन्दी / छत्तीसगढ़ी समझें</div>
             <h3 class="voice-card-title" data-i18n="voice_home_title">लिखना नहीं आता? बोलकर बताएं!</h3>
-            <p class="voice-card-sub" data-i18n="voice_home_sub">"मुझे व्हाट्सएप मैसेज आया", "पैसे कट गए", या "कॉल आया" बोलें</p>
+            <p class="voice-card-sub" data-i18n="voice_home_sub">"मुझे व्हाट्सएप मैसेज आया" या "मोला व्हाट्सएप म मैसेज आइस" बोलें</p>
           </div>
           <button type="button" class="btn-voice-mic-main" id="homeVoiceMicBtn" aria-label="Tap to speak with Voice Assistant">
             <div class="mic-icon-circle">
@@ -1685,6 +1685,14 @@
         </div>
 
         <h3 class="voice-status-title" id="voiceStatusTitle" data-i18n="voice_status_listening">सुन रहे हैं... (Listening…)</h3>
+
+        <!-- Language Mode Pills: Auto (Hindi + Chhattisgarhi), Hindi, Chhattisgarhi, English -->
+        <div class="voice-lang-bar" id="voiceLangBar">
+          <button type="button" class="voice-lang-pill active" id="btnVoiceLangAuto" data-lang="auto" title="हिन्दी और छत्तीसगढ़ी दोनों समझें">🌐 दोनों (हिन्दी / छत्तीसगढ़ी)</button>
+          <button type="button" class="voice-lang-pill" id="btnVoiceLangHi" data-lang="hi" title="हिन्दी में बोलें">🇮🇳 हिन्दी</button>
+          <button type="button" class="voice-lang-pill" id="btnVoiceLangChg" data-lang="chg" title="छत्तीसगढ़ी म बोलव">🌾 छत्तीसगढ़ी</button>
+          <button type="button" class="voice-lang-pill" id="btnVoiceLangEn" data-lang="en" title="Speak in English">🇬🇧 English</button>
+        </div>
         <div class="voice-transcript-live" id="voiceTranscriptLive">...</div>
 
         <!-- Progress bar for lazy-loaded offline STT model -->
@@ -1717,6 +1725,14 @@
             <span class="voice-fallback-icon">🚨</span>
             <span class="voice-fallback-label" data-i18n="voice_fallback_lost">पैसे कट गए (1930)</span>
           </button>
+        </div>
+
+        <!-- Type-Instead Input Fallback -->
+        <div class="voice-type-fallback" id="voiceTypeFallback" style="margin-top: 1rem; width: 100%;">
+          <div style="display: flex; gap: 0.5rem;">
+            <input type="text" id="voiceFallbackInput" class="voice-fallback-input" placeholder="या यहाँ लिखकर बताएं... (Type intent)" style="flex: 1; padding: 0.65rem 0.85rem; border-radius: 8px; border: 1px solid var(--border, #cbd5e1); font-size: 0.95rem; background: var(--bg-card, #ffffff); color: var(--text-main, #0f172a);" data-i18n-attr="placeholder:voice_fallback_input_placeholder">
+            <button type="button" id="btnVoiceFallbackSubmit" class="btn btn-primary" style="padding: 0.65rem 1rem; font-weight: 600;" data-i18n="btn_voice_send">भेजें</button>
+          </div>
         </div>
       </div>
     </div>

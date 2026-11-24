@@ -51,7 +51,21 @@
         "qur": "qr",
         "kyuar": "qr",
         "kyu aar": "qr",
-        "kew r": "qr"
+        "kew r": "qr",
+        "sikhav": "sikhao",
+        "sikhavav": "sikhao",
+        "seekhbo": "seekhna",
+        "bachbo": "bachna",
+        "jaanchav": "check",
+        "dekhav": "dikhao",
+        "aayis": "aaya",
+        "aayish": "aaya",
+        "hoge": "hoge",
+        "katge": "kat gaya",
+        "lutge": "lut gaya",
+        "chitti": "sandesh",
+        "bataav": "batao",
+        "bataavav": "batao"
       },
       fillerWords: new Set([
         "please", "bhai", "ji", "sir", "madam", "ek", "kripya", "zara",
@@ -186,6 +200,10 @@
         scores.qr_payment += 8;
       }
 
+      // --- Intent: learn ---
+      const isTeach = has('teach') || has('learn') || has('सीखना') || has('सीखें') || has('सिखाओ') || has('सिखाव') || has('सिखावव') || has('sikhao') || has('sikhav') || has('seekhna') || has('seekhbo') || has('बचबो') || has('bachbo') || has('कइसे बचबो') || has('कैसे बचें') || has('पढ़ाव');
+      const isLesson = has('lesson') || has('lessons') || has('पाठ') || has('क्विज') || has('quiz') || has('education') || has('rules') || has('नियम') || has('tips') || has('गोठ') || has('ज्ञान') || has('वीडियो');
+
       // --- Intent: lost_money ---
       const isMoney = has('paisa') || has('paise') || has('पैसे') || has('पईसा') || has('रुपये') || has('balance') || has('savings');
       const isCut = has('kat') || has('kat gaya') || has('cut') || has('कट') || has('उड़') || has('udd') || has('chala gaya') || has('stolen') || has('chori') || has('लुट') || has('lut');
@@ -194,27 +212,23 @@
       if (isMoney && isCut) {
         scores.lost_money += 12;
       }
-      if (isFraud && (isMoney || has('mere saath') || has('hoge') || has('ho gaya') || has('हो गया') || has('हो गे') || has('संग'))) {
+      if (isFraud && (isMoney || has('mere saath') || has('hoge') || has('ho gaya') || has('हो गया') || has('हो गे') || has('संग')) && !isTeach) {
         scores.lost_money += 12;
       }
       if (has('1930') || has('१९३०') || (has('helpline') && has('call'))) {
         scores.lost_money += 12;
       }
-      if (isFraud && !isCall && !isMsg) {
+      if (isFraud && !isCall && !isMsg && !isTeach) {
         scores.lost_money += 7;
       }
 
-      // --- Intent: learn ---
-      const isTeach = has('teach') || has('learn') || has('सीखना') || has('सीखें') || has('सिखाओ') || has('सिखाव') || has('sikhao') || has('seekhna');
-      const isLesson = has('lesson') || has('lessons') || has('पाठ') || has('क्विज') || has('quiz') || has('education') || has('rules') || has('नियम') || has('tips');
-
-      if (isTeach && (isLesson || has('me') || has('मुझे') || has('मोला') || has('सुरक्षा') || has('safety') || has('scam'))) {
-        scores.learn += 12;
+      if (isTeach && (isLesson || isFraud || has('me') || has('मुझे') || has('मोला') || has('सुरक्षा') || has('safety') || has('scam') || has('ठगी') || has('फ्रॉड'))) {
+        scores.learn += 15;
       } else if (isTeach) {
-        scores.learn += 7;
+        scores.learn += 9;
       }
-      if (isLesson && (has('show') || has('dikhao') || has('दिखाओ') || has('दिखाव') || has('खेलना') || has('start') || has('पढ़ाव'))) {
-        scores.learn += 10;
+      if (isLesson && (has('show') || has('dikhao') || has('दिखाओ') || has('दिखाव') || has('खेलना') || has('start') || has('पढ़ाव') || has('बताओ') || has('बताव'))) {
+        scores.learn += 12;
       } else if (isLesson) {
         scores.learn += 6;
       }
@@ -245,12 +259,14 @@
         };
 
         const target = targetMap[topIntent] || { view: 'home', subtab: null };
+        const detectedLang = this.detectLanguage(clean, rawText);
 
         return {
           intent: topIntent,
           subType: subType,
           confidence: Math.min(0.99, Number((0.55 + (topScore * 0.04)).toFixed(2))),
           score: topScore,
+          detectedLang: detectedLang,
           targetView: target.view,
           targetSubtab: target.subtab,
           cleanText: clean,
@@ -262,9 +278,38 @@
         intent: null,
         confidence: 0,
         score: topScore,
+        detectedLang: this.detectLanguage(clean, rawText),
         cleanText: clean,
         raw: rawText
       };
+    },
+
+    detectLanguage(cleanText, rawText) {
+      const text = `${cleanText || ''} ${rawText || ''}`.toLowerCase();
+      const chgTokens = [
+        'मोला', 'तोर', 'मोर', 'आइस', 'आए हे', 'पईसा', 'पइसा', 'रुपिया', 'कट गे',
+        'होगे', 'हो गे', 'जांचव', 'देखव', 'सिखाव', 'सिखावव', 'सीखबो', 'बचबो',
+        'झन', 'बर', 'ककरो', 'ओला', 'ठग लिस', 'लुट गे', 'कइसे', 'गोठ', 'कोनो',
+        'चिट्ठी', 'डारव', 'डारहू', 'छतीसगढ़', 'छत्तीसगढ़ी', 'बोलव', 'बताव', 'बतावव',
+        'mola', 'aayis', 'sikhav', 'seekhbo', 'bachbo', 'hoge', 'kat ge', 'jaanchav',
+        'dekhav', 'chitti', 'kakro', 'bataav'
+      ];
+      for (const tok of chgTokens) {
+        if (text.includes(tok)) return 'chg';
+      }
+
+      // Check if predominantly English
+      const enWords = ['i', 'got', 'a', 'the', 'whatsapp', 'message', 'call', 'police', 'someone', 'fake', 'lost', 'money', 'scam', 'qr', 'scan', 'teach', 'learn', 'check', 'sms'];
+      const words = cleanText.split(/\s+/);
+      let enCount = 0;
+      for (const w of words) {
+        if (enWords.includes(w)) enCount++;
+      }
+      if (enCount >= 2 && !/[\u0900-\u097F]/.test(cleanText)) {
+        return 'en';
+      }
+
+      return 'hi';
     },
 
     checkPhraseMatch(cleanText) {
@@ -272,18 +317,20 @@
 
       for (const [intentId, intentObj] of Object.entries(this.intentsData.intents)) {
         if (!intentObj.phrases) continue;
-        for (const langList of Object.values(intentObj.phrases)) {
+        for (const [langKey, langList] of Object.entries(intentObj.phrases)) {
           for (const phrase of langList) {
             const normPhrase = this.normalize(phrase);
             if (cleanText === normPhrase || cleanText.includes(normPhrase) || normPhrase.includes(cleanText)) {
               const isWa = cleanText.includes('whatsapp') || cleanText.includes('व्हाट्सएप');
               const isSms = cleanText.includes('sms') || cleanText.includes('एसएमएस');
+              const detectedLang = langKey === 'chg' ? 'chg' : (langKey === 'en' ? 'en' : 'hi');
               return {
                 intent: intentId,
                 subType: intentId === 'whatsapp_or_sms_message' ? (isWa ? 'whatsapp' : (isSms ? 'sms' : 'message')) : null,
                 confidence: 0.98,
                 score: 15,
                 matchedPhrase: phrase,
+                detectedLang: detectedLang,
                 targetView: intentObj.target_view,
                 targetSubtab: intentObj.target_subtab,
                 cleanText: cleanText

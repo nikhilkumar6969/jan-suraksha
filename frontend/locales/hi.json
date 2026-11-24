@@ -219,5 +219,7 @@
   "voice_prompt_paste_sms": "कृपया एसएमएस संदेश यहाँ पेस्ट करें",
   "voice_prompt_paste_sub": "नीचे \"पेस्ट करें\" बटन दबाएं या बॉक्स में दबाकर रखें",
   "voice_paste_longpress": "👉 बॉक्स को दबाकर रखें और पेस्ट करें",
-  "btn_voice_paste": "पेस्ट करें (Paste)"
+  "btn_voice_paste": "पेस्ट करें (Paste)",
+  "voice_fallback_input_placeholder": "या यहाँ लिखकर बताएं... (जैसे व्हाट्सएप मैसेज आया)",
+  "btn_voice_send": "भेजें"
 }

@@ -306,11 +306,13 @@ window.App = {
 
     document.querySelectorAll('.subtab-content').forEach((content) => {
       content.style.display = 'none';
+      content.classList.remove('active');
     });
 
     const activeContent = document.getElementById(subtabId);
     if (activeContent) {
       activeContent.style.display = 'block';
+      activeContent.classList.add('active');
     }
   },
 

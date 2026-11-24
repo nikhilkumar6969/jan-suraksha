@@ -220,5 +220,7 @@
   "voice_prompt_paste_sms": "एसएमएस संदेश ल इहां पेस्ट करव",
   "voice_prompt_paste_sub": "नीचे \"पेस्ट करव\" बटन दबावा या डिब्बा म दाब के रखव",
   "voice_paste_longpress": "👉 डिब्बा ल दाब के रखव अउ पेस्ट करव",
-  "btn_voice_paste": "पेस्ट करव (Paste)"
+  "btn_voice_paste": "पेस्ट करव (Paste)",
+  "voice_fallback_input_placeholder": "या इहां लिख के बतावव... (जैसे मैसेज आइस)",
+  "btn_voice_send": "भेजव"
 }
