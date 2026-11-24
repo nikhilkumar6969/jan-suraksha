@@ -269,11 +269,12 @@ The development team declares that the following AI tools and foundation models 
 1. **ChatGPT (OpenAI - GPT-4o / o1):**
    - Assisted in structuring realistic synthetic smishing templates based on reported CERT-In and I4C fraud advisories.
    - Brainstormed regional Chhattisgarhi conversational phrasing and colloquial speech variations.
-2. **Gemini (Google DeepMind - Gemini 2.0 / 1.5 Pro via Antigravity):**
+2. **Gemini (Google  - Gemini 3.8 flash  Antigravity):**
    - Assisted in refactoring offline WebAssembly (Vosk WASM) integration and AudioContext streaming lifecycle.
    - Code generation and test coverage expansion for the 114-test automated pytest and Playwright E2E suites.
    - Assisted in designing the decoupled Three-Zone architecture and Service Worker cache invalidation strategies.
-3. **Claude (Anthropic - Claude 3.5 Sonnet):**
+3. **Claude (Anthropic - Claude 5.5 Sonnet and 4.6
+4.  Sonnet):**
    - Assisted in drafting the TRAI DLT header regex schemas and Levenshtein lookalike scoring logic.
    - Assisted in crafting accessible bilingual CSS layout tokens and mobile viewport optimizations.
 
