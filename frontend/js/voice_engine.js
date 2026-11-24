@@ -181,24 +181,14 @@
       try {
         const model = await this.loadVoskModel(lang, this.callbacks.onProgress);
 
-        // Build restricted grammar from intent phrase lists
-        let grammarStr = undefined;
-        if (window.VoiceMatcher && window.VoiceMatcher.intentsData && window.VoiceMatcher.intentsData.vosk_grammar_tokens) {
-          grammarStr = JSON.stringify(window.VoiceMatcher.intentsData.vosk_grammar_tokens);
-        }
-
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
         this.audioContext = new AudioCtx({ sampleRate: 16000 });
-
-        if (grammarStr) {
-          try {
-            this.recognizer = new model.KaldiRecognizer(16000, grammarStr);
-          } catch (gErr) {
-            this.recognizer = new model.KaldiRecognizer(16000);
-          }
-        } else {
-          this.recognizer = new model.KaldiRecognizer(16000);
+        if (this.audioContext.state === 'suspended') {
+          try { await this.audioContext.resume(); } catch (e) {}
         }
+
+        // Initialize KaldiRecognizer with full acoustic & language vocabulary
+        this.recognizer = new model.KaldiRecognizer(16000);
 
         this.recognizer.on('result', (msg) => {
           const text = msg.result && msg.result.text ? msg.result.text.trim() : '';
@@ -277,6 +267,9 @@
       }
       this.silenceTimer = setTimeout(() => {
         console.log('[VoiceEngine] Silence / speech timeout elapsed');
+        if (this.recognizer) {
+          try { this.recognizer.retrieveFinalResult(); } catch (e) {}
+        }
         if (this.lastRecognizedText && this.callbacks.onTranscript) {
           this.callbacks.onTranscript(this.lastRecognizedText);
         }

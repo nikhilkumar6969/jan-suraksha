@@ -269,6 +269,15 @@
             transcriptBox.textContent = `"${partialText}"`;
             transcriptBox.classList.add('has-text');
           }
+          if (window.VoiceMatcher && partialText && partialText.trim().length > 3) {
+            const match = window.VoiceMatcher.match(partialText);
+            if (match && match.intent && match.confidence >= 0.8) {
+              console.log('[VoiceHelper] Early partial match achieved:', match);
+              if (window.VoiceEngine) window.VoiceEngine.stop('partial_match');
+              this.isFlowActive = false;
+              this.processRecognizedTranscript(partialText);
+            }
+          }
         },
         onTranscript: (finalText) => {
           this.stopPromptAudio();
