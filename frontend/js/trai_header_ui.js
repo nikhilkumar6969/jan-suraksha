@@ -312,9 +312,23 @@ const TraiHeaderUI = {
       }
     }
 
-    // 2. Client-side fully offline fallback
-    const localResult = this.clientSideCheck(sender, body, currentLang);
-    this.renderResult(localResult, null, currentLang);
+    // 2. Client-side fully offline fallback with 0.45 Header + 0.55 ML Score Fusion
+    const localHeaderResult = this.clientSideCheck(sender, body, currentLang);
+    let localContentResult = null;
+    if (body && window.SurakshaOfflineClassifier) {
+      if (!window.SurakshaOfflineClassifier.isLoaded) {
+        await window.SurakshaOfflineClassifier.init();
+      }
+      localContentResult = window.SurakshaOfflineClassifier.classify(body);
+      const headerScore = localHeaderResult.score;
+      const mlScore = localContentResult.probability_scam;
+      const fusedScore = (0.45 * headerScore) + (0.55 * mlScore);
+      localHeaderResult.score = fusedScore;
+      localHeaderResult.level = fusedScore >= 0.70 ? 'RED' : (fusedScore >= 0.35 ? 'AMBER' : 'GREEN');
+      localHeaderResult.verdict = localHeaderResult.level === 'RED' ? 'likely_scam' : (localHeaderResult.level === 'AMBER' ? 'unsure' : 'genuine');
+      localHeaderResult.explanation += ` [Fused Header+ML Score: ${(fusedScore * 100).toFixed(0)}%]`;
+    }
+    this.renderResult(localHeaderResult, localContentResult, currentLang);
   },
 
   clientSideCheck(sender, body, lang) {

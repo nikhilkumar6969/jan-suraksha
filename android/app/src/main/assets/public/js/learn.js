@@ -110,6 +110,11 @@ const LearnManager = {
         if (sourceCitation) sourceCitation.textContent = `Source: ${sourceTag}`;
         if (extLink) extLink.href = `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}`;
 
+        let resolvedSrc = localSrc;
+        if (resolvedSrc && window.location.protocol === 'file:' && resolvedSrc.startsWith('/')) {
+          resolvedSrc = resolvedSrc.replace(/^\/+/, '');
+        }
+
         let isUsingLocal = false;
 
         const renderYouTube = () => {
@@ -123,38 +128,114 @@ const LearnManager = {
               allowfullscreen>
             </iframe>
           `;
-          if (localSrc && btnToggleLocal) {
+          if (resolvedSrc && btnToggleLocal) {
             btnToggleLocal.style.display = 'inline-block';
             btnToggleLocal.textContent = '📁 ऑफलाइन वीडियो चलाएं (Play Offline MP4)';
+          } else if (btnToggleLocal) {
+            btnToggleLocal.style.display = 'none';
           }
         };
 
         const renderLocal = () => {
           isUsingLocal = true;
           container.innerHTML = `
-            <video class="video-player-element" controls autoplay controlslist="nodownload">
-              <source src="${encodeURI(localSrc)}" type="video/mp4">
-              Your browser does not support HTML5 video.
-            </video>
+            <div class="video-local-wrapper" style="position: relative; width: 100%; background: #000; border-radius: 8px; overflow: hidden;">
+              <video class="video-player-element" controls autoplay playsinline controlslist="nodownload" preload="auto" style="width: 100%; max-height: 400px; display: block;">
+                <source src="${encodeURI(resolvedSrc)}" type="video/mp4">
+                Your browser does not support HTML5 video.
+              </video>
+              <div class="video-offline-badge" style="position: absolute; top: 10px; right: 10px; background: rgba(22, 101, 52, 0.9); color: #fff; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 12px; display: flex; align-items: center; gap: 4px; pointer-events: none; z-index: 10;">
+                <span>📁</span> <span>ऑफ़लाइन मोड (Offline Mode)</span>
+              </div>
+            </div>
           `;
+          const vid = container.querySelector('video');
+          if (vid) {
+            vid.onerror = () => {
+              console.warn('[LearnVideo] Video source error:', resolvedSrc);
+              renderOfflineFallback();
+            };
+          }
           if (btnToggleLocal) {
             btnToggleLocal.style.display = 'inline-block';
             btnToggleLocal.textContent = '🌐 यूट्यूब पर देखें (Play YouTube)';
           }
         };
 
+        const renderOfflineFallback = () => {
+          isUsingLocal = false;
+          container.innerHTML = `
+            <div class="video-offline-notice" style="padding: 28px 16px; text-align: center; background: #1a202c; color: #fff; border-radius: 8px; min-height: 220px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+              <div style="font-size: 40px; margin-bottom: 10px;">📡</div>
+              <h4 style="margin: 0 0 8px; color: #f6ad55; font-size: 16px; font-weight: 700;">इंटरनेट कनेक्शन आवश्यक है (Internet Required)</h4>
+              <p style="font-size: 13px; color: #cbd5e0; max-width: 360px; margin: 0 0 16px; line-height: 1.5;">
+                यह वीडियो केवल YouTube पर ऑनलाइन उपलब्ध है। बिना इंटरनेट के देखने के लिए कृपया उपलब्ध ऑफ़लाइन वीडियो चुनें।
+              </p>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;">
+                <button type="button" id="btnPlayUpiOffline" class="btn btn-primary" style="font-size: 12px; padding: 6px 12px; border-radius: 6px; cursor: pointer;">
+                  ▶ UPI सुरक्षा वीडियो देखें (Offline)
+                </button>
+                <button type="button" id="btnPlayReportOffline" class="btn btn-secondary" style="font-size: 12px; padding: 6px 12px; border-radius: 6px; cursor: pointer;">
+                  ▶ 1930 रिपोर्ट वीडियो देखें (Offline)
+                </button>
+              </div>
+            </div>
+          `;
+          const btnUpi = document.getElementById('btnPlayUpiOffline');
+          if (btnUpi) {
+            btnUpi.onclick = () => {
+              const upiCard = document.querySelector('.video-card[data-local-src*="upi_safety"]');
+              if (upiCard) {
+                const btn = upiCard.querySelector('.video-watch-btn') || upiCard;
+                btn.click();
+              }
+            };
+          }
+          const btnRep = document.getElementById('btnPlayReportOffline');
+          if (btnRep) {
+            btnRep.onclick = () => {
+              const repCard = document.querySelector('.video-card[data-local-src*="report_1930"]');
+              if (repCard) {
+                const btn = repCard.querySelector('.video-watch-btn') || repCard;
+                btn.click();
+              }
+            };
+          }
+          if (btnToggleLocal) btnToggleLocal.style.display = 'none';
+        };
+
         if (btnToggleLocal) {
           btnToggleLocal.onclick = (e) => {
             e.preventDefault();
             if (isUsingLocal) {
-              renderYouTube();
+              if (!navigator.onLine) {
+                alert('यूट्यूब वीडियो देखने के लिए इंटरनेट चालू करें। (Please connect to the internet to watch YouTube videos.)');
+              } else {
+                renderYouTube();
+              }
             } else {
-              renderLocal();
+              if (resolvedSrc) {
+                renderLocal();
+              } else {
+                renderOfflineFallback();
+              }
             }
           };
         }
 
-        renderYouTube();
+        if (!navigator.onLine) {
+          if (resolvedSrc) {
+            renderLocal();
+          } else {
+            renderOfflineFallback();
+          }
+        } else {
+          if (window.location.protocol === 'file:' && resolvedSrc) {
+            renderLocal();
+          } else {
+            renderYouTube();
+          }
+        }
         if (modal) modal.classList.add('open');
       };
 

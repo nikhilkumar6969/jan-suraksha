@@ -255,9 +255,6 @@ window.App = {
       if (window.CallDetector && window.CallDetector.isListening) {
         window.CallDetector.stopLiveListening();
       }
-      if (window.WhisperSTT && window.WhisperSTT.isRecording) {
-        window.WhisperSTT.stopRecording();
-      }
     }
 
     document.querySelectorAll('.view-panel').forEach((panel) => {
@@ -292,11 +289,6 @@ window.App = {
     if (subtabId !== 'subtab-call') {
       if (window.CallDetector && window.CallDetector.isListening) {
         window.CallDetector.stopLiveListening();
-      }
-    }
-    if (subtabId !== 'subtab-stt') {
-      if (window.WhisperSTT && window.WhisperSTT.isRecording) {
-        window.WhisperSTT.stopRecording();
       }
     }
 

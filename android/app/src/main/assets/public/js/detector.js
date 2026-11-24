@@ -95,24 +95,51 @@ const MessageDetector = {
         this.renderVerdict(data);
         return;
       } catch (nativeErr) {
-        console.warn('Native on-device classification error, falling back to network/heuristic:', nativeErr);
+        console.warn('Native on-device classification error, falling back to in-browser model:', nativeErr);
       }
     }
 
-    // 2. Web / Localhost execution
-    try {
-      const res = await fetch('/api/detect/message', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text, language: lang })
-      });
+    // 2. In-Browser On-Device Machine Learning Model (100% Offline PWA)
+    let offlineResult = null;
+    if (window.SurakshaOfflineClassifier) {
+      try {
+        if (!window.SurakshaOfflineClassifier.isLoaded) {
+          await window.SurakshaOfflineClassifier.init();
+        }
+        offlineResult = window.SurakshaOfflineClassifier.classify(text);
+      } catch (mlErr) {
+        console.warn('In-browser ML execution warning:', mlErr);
+      }
+    }
 
-      if (!res.ok) throw new Error('Backend check failed');
-      const data = await res.json();
-      this.renderVerdict(data);
-    } catch (err) {
-      console.warn('Network error, using offline heuristic detection:', err);
-      // Client-side offline fallback
+    // 3. Optional Backend Enrichment when online (with fast 2.5s timeout)
+    if (navigator.onLine) {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2500);
+
+        const res = await fetch('/api/detect/message', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text, language: lang }),
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
+        if (res.ok) {
+          const data = await res.json();
+          this.renderVerdict(data);
+          return;
+        }
+      } catch (err) {
+        console.debug('Online backend unavailable or timed out, seamlessly using in-browser ML verdict');
+      }
+    }
+
+    // 4. Render in-browser offline ML verdict (never fail or throw error if backend is down)
+    if (offlineResult) {
+      this.renderVerdict(offlineResult);
+    } else {
       this.renderOfflineFallback(text);
     }
   },
