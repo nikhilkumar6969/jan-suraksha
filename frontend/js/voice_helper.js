@@ -5,11 +5,17 @@
   'use strict';
 
   const VoiceHelper = {
+    initialized: false,
+    isFlowActive: false,
+    playbackToken: 0,
     retryCount: 0,
     currentIntentResult: null,
     audioPlayer: null,
 
     init() {
+      if (this.initialized) return;
+      this.initialized = true;
+
       if (window.VoiceMatcher) {
         window.VoiceMatcher.init();
       }
@@ -149,8 +155,35 @@
 
     async handlePostPasteAnalysis(text) {
       if (!text || text.length < 5) return;
+      this.stopPromptAudio();
       if (window.MessageDetector) {
         await window.MessageDetector.analyzeMessage();
+        setTimeout(() => {
+          this.readVerdictAloud();
+        }, 400);
+      }
+    },
+
+    readVerdictAloud() {
+      this.stopPromptAudio();
+      const verdictBox = document.getElementById('smsVerdictBox');
+      const lang = (window.I18n && window.I18n.currentLang) ? window.I18n.currentLang : 'hi';
+      if (!verdictBox) return;
+
+      if (verdictBox.classList.contains('danger')) {
+        const inputVal = (document.getElementById('smsInput')?.value || '').toLowerCase();
+        let cat = 'extortion';
+        if (inputVal.includes('otp') || inputVal.includes('ओटीपी')) cat = 'otp';
+        else if (inputVal.includes('pin') || inputVal.includes('upi') || inputVal.includes('पिन')) cat = 'upi_pin';
+        else if (inputVal.includes('police') || inputVal.includes('cbi') || inputVal.includes('arrest') || inputVal.includes('पुलिस')) cat = 'police';
+        else if (inputVal.includes('kyc') || inputVal.includes('pan') || inputVal.includes('bank') || inputVal.includes('खाता')) cat = 'bank_kyc';
+        else if (inputVal.includes('apk') || inputVal.includes('app') || inputVal.includes('download')) cat = 'remote_access';
+
+        this.playPromptAudio(`alert_${cat}_${lang}.wav`, 'खतरा! यह संदेश संदिग्ध साइबर ठगी हो सकता है। किसी से OTP या PIN शेयर न करें।');
+      } else if (verdictBox.classList.contains('safe')) {
+        this.playPromptAudio('alert_chime.wav', 'यह संदेश सुरक्षित प्रतीत होता है।');
+      } else {
+        this.playPromptAudio(`alert_bank_kyc_${lang}.wav`, 'सावधान! इस संदेश की पुष्टि अपने बैंक या संबंधित विभाग से करें।');
       }
     },
 
@@ -161,6 +194,7 @@
     },
 
     closeModal() {
+      this.isFlowActive = false;
       if (window.VoiceEngine && window.VoiceEngine.isListening) {
         window.VoiceEngine.stop('user_closed');
       }
@@ -191,6 +225,12 @@
     },
 
     async startListeningFlow() {
+      if (this.isFlowActive) {
+        console.log('[VoiceHelper] Voice flow is already in progress');
+        return;
+      }
+      this.isFlowActive = true;
+      this.stopPromptAudio();
       this.openModal();
 
       const lang = (window.I18n && window.I18n.currentLang) ? window.I18n.currentLang : 'hi';
@@ -224,12 +264,15 @@
           }
         },
         onPartial: (partialText) => {
+          this.stopPromptAudio();
           if (transcriptBox) {
             transcriptBox.textContent = `"${partialText}"`;
             transcriptBox.classList.add('has-text');
           }
         },
         onTranscript: (finalText) => {
+          this.stopPromptAudio();
+          this.isFlowActive = false;
           if (transcriptBox) {
             transcriptBox.textContent = `"${finalText}"`;
             transcriptBox.classList.add('has-text');
@@ -238,10 +281,12 @@
         },
         onError: (err) => {
           console.warn('[VoiceHelper] Speech recognition error:', err);
+          this.isFlowActive = false;
           this.retryCount++;
           this.showFallbackOptions(err.message || 'Permission or hardware error');
         },
         onEnd: (endInfo) => {
+          this.isFlowActive = false;
           if (!this.currentIntentResult && endInfo.reason === 'timeout') {
             this.retryCount++;
             if (this.retryCount >= 2) {
@@ -417,19 +462,32 @@
 
     playPromptAudio(fileName, fallbackSpokenText = '') {
       this.stopPromptAudio();
+      const currentToken = ++this.playbackToken;
       const audioPath = `assets/alerts/${fileName}`;
 
-      this.audioPlayer = new Audio(audioPath);
-      this.audioPlayer.play().catch((audioErr) => {
+      const player = new Audio(audioPath);
+      this.audioPlayer = player;
+
+      player.play().catch((audioErr) => {
+        // If playback was aborted, paused, or interrupted by newer prompt, IGNORE!
+        if (audioErr && (audioErr.name === 'AbortError' || audioErr.code === 20)) {
+          return;
+        }
+        // If this player is no longer the active playback request, do nothing!
+        if (this.playbackToken !== currentToken) {
+          return;
+        }
+
         console.warn(`[VoiceHelper] Could not play ${audioPath}, falling back to Web Speech:`, audioErr);
         // Fallback 1: Local SpeechSynthesis (offline)
         if (fallbackSpokenText && window.speechSynthesis) {
           try {
+            if (this.playbackToken !== currentToken) return;
+            window.speechSynthesis.cancel();
             const lang = (window.I18n && window.I18n.currentLang) ? window.I18n.currentLang : 'hi';
             const utt = new SpeechSynthesisUtterance(fallbackSpokenText);
             utt.lang = (lang === 'en') ? 'en-IN' : 'hi-IN';
             utt.rate = 0.95;
-            window.speechSynthesis.cancel();
             window.speechSynthesis.speak(utt);
           } catch (synthErr) {
             console.warn('[VoiceHelper] SpeechSynthesis fallback notice:', synthErr);
@@ -439,15 +497,21 @@
     },
 
     stopPromptAudio() {
+      this.playbackToken++;
       if (this.audioPlayer) {
         try {
+          this.audioPlayer.onended = null;
+          this.audioPlayer.onerror = null;
           this.audioPlayer.pause();
           this.audioPlayer.currentTime = 0;
+          this.audioPlayer.src = '';
         } catch (e) {}
         this.audioPlayer = null;
       }
       if (window.speechSynthesis) {
-        try { window.speechSynthesis.cancel(); } catch (e) {}
+        try {
+          window.speechSynthesis.cancel();
+        } catch (e) {}
       }
     }
   };
